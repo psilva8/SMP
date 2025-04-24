@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - SMP Directory</title>
+    <meta name="description" content="Search results for scalp micropigmentation (SMP) and hair tattoo clinics in Los Angeles.">
+    
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            margin-top: 5px;
+            scrollbar-width: thin;
+            scrollbar-color: #4F46E5 #f1f1f1;
+        }
+        .dropdown-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .dropdown-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .dropdown-content::-webkit-scrollbar-thumb {
+            background-color: #4F46E5;
+            border-radius: 4px;
+        }
+        .dropdown-content a {
+            color: #333;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            color: #4F46E5;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold">SMP Hair Tattoo Directory</a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
+                    
+                    <!-- Areas Dropdown -->
+                    <div class="dropdown">
+                        <a href="neighborhoods.html" class="hover:text-blue-200 transition">Areas ▾</a>
+                        <div id="areas-dropdown" class="dropdown-content">
+                            <!-- Areas will be populated by JavaScript -->
+                            <div class="text-center py-2 text-gray-500 text-sm">Loading areas...</div>
+                        </div>
+                    </div>
+                    
+                    <a href="about.html" class="hover:text-blue-200 transition">About SMP</a>
+                </nav>
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile menu (hidden by default) -->
+            <div class="md:hidden hidden pt-4 pb-2">
+                <a href="index.html" class="block py-2">Home</a>
+                <a href="neighborhoods.html" class="block py-2 hover:text-blue-200 transition">Areas</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search Bar Section -->
+    <section class="bg-blue-700 text-white">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+                <div class="w-full md:w-2/3">
+                    <div class="flex">
+                        <input type="text" id="search-input" class="w-full px-4 py-3 rounded-l-lg text-gray-800 focus:outline-none" placeholder="Search for SMP clinics, neighborhoods, or services...">
+                        <button id="search-button" class="bg-blue-900 hover:bg-blue-800 px-6 py-3 rounded-r-lg transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Results Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-4 text-center">Search Results</h2>
+            <p id="search-query-display" class="text-center mb-12 text-lg">Showing results for: <span id="search-term" class="font-semibold"></span></p>
+            
+            <div id="search-results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Search results will be loaded here via JavaScript -->
+                <p id="loading-message" class="text-center py-8 col-span-full">Loading results...</p>
+            </div>
+            
+            <p id="no-results-message" class="hidden text-center py-8 text-gray-500 text-lg">No results found for your search. Try different keywords or browse our <a href="index.html" class="text-blue-600 hover:underline">top clinics</a>.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Column 1: About -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo Directory</h3>
+                    <p class="text-gray-300">
+                        The premier directory of Scalp Micropigmentation clinics in Los Angeles. 
+                        Find top-rated SMP providers and restore your confidence.
+                    </p>
+                </div>
+                
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-white transition">Home</a></li>
+                        <li><a href="neighborhoods.html" class="text-gray-300 hover:text-white transition">LA Neighborhoods</a></li>
+                        <li><a href="about.html" class="text-gray-300 hover:text-white transition">About SMP</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 3: Contact -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Contact</h3>
+                    <p class="text-gray-300 mb-2">Email: info@smpdirectory.com</p>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2023 SMP Hair Tattoo Directory. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="scripts.js"></script>
+</body>
+</html> 

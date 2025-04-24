@@ -1,0 +1,787 @@
+// Global variables
+let allBusinesses = [];
+let filteredBusinesses = [];
+
+// Document ready function
+document.addEventListener('DOMContentLoaded', function() {
+    fetchBusinessData();
+    handleSearch();
+    
+    // If on search results page, load the search results
+    if (window.location.pathname.includes('search.html')) {
+        loadSearchResults();
+    }
+});
+
+// Fetch business data from JSON file
+function fetchBusinessData() {
+    fetch('Outscraper-20250423020658xs04_micropigmentation_+1.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            processBusinessData(data);
+        })
+        .catch(error => {
+            console.error('Error fetching business data:', error);
+            document.getElementById('loading-message').textContent = 'Error loading data. Please try again later.';
+        });
+}
+
+// Process the raw business data
+function processBusinessData(businessData) {
+    console.log('Total businesses before filtering:', businessData.length);
+    
+    // LA County cities and nearby areas
+    const laCities = [
+        'los angeles', 'long beach', 'santa monica', 'malibu', 'calabasas', 
+        'beverly hills', 'west hollywood', 'hollywood', 'culver city', 
+        'marina del rey', 'venice', 'pacific palisades', 'brentwood', 
+        'bel air', 'encino', 'sherman oaks', 'studio city', 'north hollywood',
+        'burbank', 'glendale', 'pasadena', 'arcadia', 'monrovia', 'azusa',
+        'covina', 'west covina', 'pomona', 'claremont', 'la verne', 'san dimas',
+        'walnut', 'diamond bar', 'rowland heights', 'hacienda heights',
+        'whittier', 'la mirada', 'cerritos', 'norwalk', 'downey', 'compton',
+        'inglewood', 'hawthorne', 'el segundo', 'manhattan beach', 'hermosa beach',
+        'redondo beach', 'torrance', 'palos verdes', 'san pedro', 'wilmington',
+        'carson', 'lakewood', 'bellflower', 'paramount', 'south gate',
+        'lynwood', 'gardena', 'lawndale', 'lomita', 'rolling hills',
+        'montebello', 'pico rivera', 'santa fe springs', 'la puente',
+        'alhambra', 'monterey park', 'rosemead', 'el monte', 'south el monte',
+        'baldwin park', 'glendora', 'duarte', 'sierra madre', 'san gabriel',
+        'temple city', 'altadena', 'la canada flintridge', 'la crescenta-montrose',
+        'tujunga', 'sunland', 'sylmar', 'san fernando', 'newhall', 'santa clarita',
+        'valencia', 'stevenson ranch', 'canyon country', 'castaic', 'gorman',
+        'lancaster', 'palmdale', 'acton', 'agua dulce', 'littlerock'
+    ];
+    
+    // Cities to exclude
+    const excludedCities = ['san francisco'];
+    
+    // First filter out permanently closed businesses
+    let localBusinesses = businessData.filter(business => {
+        return business.permanently_closed !== true && business.business_status !== "CLOSED_PERMANENTLY";
+    });
+    
+    // Then filter to include only LA County businesses and exclude San Francisco
+    let excludedCount = 0;
+    localBusinesses = localBusinesses.filter(business => {
+        // Extract city from address
+        let city = '';
+        
+        if (business.city) {
+            city = business.city.toLowerCase();
+        } else if (business.address || business.full_address || business.formatted_address) {
+            const address = business.address || business.full_address || business.formatted_address;
+            const cityMatch = address ? address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/) : null;
+            if (cityMatch && cityMatch[1]) {
+                city = cityMatch[1].trim().toLowerCase();
+            }
+        }
+        
+        // Check if city is in the excluded list
+        if (excludedCities.some(excludedCity => city.includes(excludedCity))) {
+            console.log(`Excluded business: ${business.name} in ${city}`);
+            excludedCount++;
+            return false;
+        }
+        
+        // Check if city is in LA County
+        return laCities.some(laCity => city.includes(laCity));
+    });
+    
+    console.log(`Excluded ${excludedCount} businesses from San Francisco`);
+    console.log('LA County businesses after filtering:', localBusinesses.length);
+    
+    // Extract review counts properly for sorting
+    localBusinesses = localBusinesses.map(business => {
+        // Standardize the review count field
+        const reviewCount = business.reviews_count || business.reviews || business.user_ratings_total || 0;
+        return {
+            ...business,
+            standardized_review_count: parseInt(reviewCount) || 0
+        };
+    });
+    
+    // Sort businesses by review count (highest first) and then by rating
+    localBusinesses.sort((a, b) => {
+        // First sort by review count
+        if (b.standardized_review_count !== a.standardized_review_count) {
+            return b.standardized_review_count - a.standardized_review_count;
+        }
+        // If review counts are equal, sort by rating
+        return (b.rating || 0) - (a.rating || 0);
+    });
+    
+    // Extract neighborhood information
+    localBusinesses = localBusinesses.map(business => {
+        const neighborhood = extractNeighborhood(business.address || business.full_address || '');
+        return {
+            ...business,
+            neighborhood: neighborhood
+        };
+    });
+    
+    // Store processed data in global variables
+    allBusinesses = businessData; // Keep all businesses for reference
+    window.filteredBusinesses = localBusinesses; // Only LA County businesses for display
+    
+    // Update UI with processed data
+    updateUI(localBusinesses);
+    
+    // Populate the areas dropdown with cities
+    populateAreasDropdown(localBusinesses);
+    
+    return localBusinesses;
+}
+
+// Improved neighborhood extraction
+function extractNeighborhood(address) {
+    if (!address) return "Unknown Area";
+    
+    // Look for neighborhood patterns in the address
+    const parts = address.split(',').map(part => part.trim());
+    
+    // If we have multiple parts, the second to last is often the city
+    if (parts.length >= 2) {
+        // Check for city districts or neighborhoods
+        const cityPart = parts[parts.length - 2];
+        
+        // Check for neighborhood patterns like "Downtown Los Angeles" or "North Berkeley"
+        const neighborhoodPatterns = [
+            /\b(north|south|east|west|downtown|uptown|central|old)\s+\w+/i,
+            /\b(heights|hills|park|valley|village|district|vista)\b/i
+        ];
+        
+        for (const pattern of neighborhoodPatterns) {
+            const match = cityPart.match(pattern);
+            if (match) return match[0];
+        }
+        
+        // If no specific neighborhood, return the city
+        return cityPart;
+    }
+    
+    return "Unknown Area";
+}
+
+// Update UI with business data
+function updateUI(businessData) {
+    // Update top clinics section on home page (similar to Top Restaurants)
+    updateTopClinics(businessData);
+    
+    // Update neighborhoods section on home page
+    updateNeighborhoodsList(businessData);
+    
+    // If on neighborhood detail page, update the clinic list for that neighborhood
+    if (window.location.pathname.includes('neighborhood.html')) {
+        loadNeighborhoodClinics();
+    }
+    
+    // If on cuisines page (in our case, services/types), update the service types list
+    if (window.location.pathname.includes('services.html')) {
+        updateServiceTypesList(businessData);
+    }
+}
+
+// Update top clinics section (similar to Top Restaurants in Eating Vancouver)
+function updateTopClinics(businessData) {
+    const topClinicsContainer = document.getElementById('top-clinics-container');
+    if (!topClinicsContainer) return;
+    
+    // Clear loading message
+    topClinicsContainer.innerHTML = '';
+    
+    // Display total count
+    const totalClinics = businessData.length;
+    const countDisplay = document.createElement('div');
+    countDisplay.className = 'total-count';
+    countDisplay.style.marginBottom = '20px';
+    countDisplay.style.fontSize = '18px';
+    countDisplay.innerHTML = `<p style="text-align: center; font-weight: bold;">Total of ${totalClinics} SMP clinics found - Displaying top 12 by review count</p>`;
+    topClinicsContainer.appendChild(countDisplay);
+    
+    // Show View All toggle if more than 12 clinics
+    if (totalClinics > 12) {
+        const viewAllToggle = document.createElement('div');
+        viewAllToggle.className = 'view-toggle';
+        viewAllToggle.style.textAlign = 'center';
+        viewAllToggle.style.marginBottom = '20px';
+        viewAllToggle.innerHTML = '<button id="view-all-toggle" style="background-color: #4F46E5; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">View All Clinics</button>';
+        topClinicsContainer.appendChild(viewAllToggle);
+        
+        // Add event listener after appending
+        setTimeout(() => {
+            const toggleButton = document.getElementById('view-all-toggle');
+            if (toggleButton) {
+                toggleButton.addEventListener('click', function() {
+                    if (this.textContent === 'View All Clinics') {
+                        // Show all clinics
+                        displayClinics(businessData, topClinicsContainer);
+                        this.textContent = 'View Top 12';
+                    } else {
+                        // Show only top 12
+                        displayClinics(businessData.slice(0, 12), topClinicsContainer);
+                        this.textContent = 'View All Clinics';
+                    }
+                });
+            }
+        }, 0);
+    }
+    
+    // Display top 12 clinics by default, now sorted primarily by review count
+    displayClinics(businessData.slice(0, 12), topClinicsContainer);
+    
+    // Log total clinic count and top clinics to console
+    console.log(`Total clinics loaded: ${totalClinics}`);
+    console.log('Top 12 clinics (by review count):', businessData.slice(0, 12).map(clinic => ({
+        name: clinic.name,
+        reviews: clinic.standardized_review_count,
+        rating: clinic.rating || 0
+    })));
+}
+
+// Helper function to display clinics in a container
+function displayClinics(clinics, container) {
+    // Clear existing clinic cards (but keep count and toggle)
+    const existingElements = Array.from(container.children);
+    existingElements.forEach(element => {
+        if (!element.classList.contains('total-count') && !element.classList.contains('view-toggle')) {
+            container.removeChild(element);
+        }
+    });
+    
+    // Create and append clinic cards
+    clinics.forEach(clinic => {
+        const clinicCard = createClinicCard(clinic);
+        container.appendChild(clinicCard);
+    });
+}
+
+// Create a clinic card element (similar to Hair Restoration Life cards)
+function createClinicCard(clinic) {
+    const card = document.createElement('div');
+    card.className = 'clinic-card';
+    card.style.border = '1px solid #ccc';
+    card.style.padding = '15px';
+    card.style.margin = '10px 0';
+    card.style.borderRadius = '8px';
+    card.style.backgroundColor = '#fff';
+    card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+    
+    // Extract contact information
+    const phoneDisplay = clinic.phone_number ? formatPhoneNumber(clinic.phone_number) : 
+                        (clinic.phone ? formatPhoneNumber(clinic.phone) : 'N/A');
+    
+    const websiteUrl = clinic.website || clinic.site;
+    
+    const address = clinic.address || clinic.formatted_address || clinic.full_address || 'N/A';
+    
+    // Debug logging
+    console.log('Clinic: ' + clinic.name);
+    console.log('Address found: ' + address);
+    console.log('Raw address field: ' + (clinic.address || 'undefined'));
+    console.log('Raw formatted_address field: ' + (clinic.formatted_address || 'undefined'));
+    console.log('Raw full_address field: ' + (clinic.full_address || 'undefined'));
+    
+    // Create star rating display
+    const rating = clinic.rating || 0;
+    const ratingDisplay = rating ? rating.toFixed(1) : 'No Rating';
+    const reviewCount = clinic.reviews_count || clinic.reviews || clinic.user_ratings_total || 0;
+    
+    // Get city/neighborhood from address
+    const cityMatch = address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/);
+    const city = cityMatch ? cityMatch[1].trim() : (clinic.neighborhood || "");
+    
+    card.innerHTML = `
+        <div class="clinic-info" style="width: 100%;">
+            <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">${clinic.name}</h3>
+            
+            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <div style="font-size: 18px; font-weight: bold; color: #333;">${ratingDisplay} <span style="color: #FFD700;">★</span></div>
+                <div style="margin-left: 10px; color: #666;">(${reviewCount} review${reviewCount !== 1 ? 's' : ''})</div>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <div style="margin-bottom: 8px;">
+                    <div style="font-weight: bold; display: inline;">Address:</div>
+                    <div style="display: inline-block; margin-left: 5px; color: #333;">${address}</div>
+                </div>
+                
+                <div style="margin-bottom: 8px;">
+                    <div style="font-weight: bold; display: inline;">Phone:</div>
+                    <div style="display: inline-block; margin-left: 5px; color: #333;">${phoneDisplay}</div>
+                </div>
+                
+                <div style="margin-bottom: 8px;">
+                    <div style="font-weight: bold; display: inline;">City:</div>
+                    <div style="display: inline-block; margin-left: 5px; color: #333;">${city}</div>
+                </div>
+            </div>
+            
+            <div>
+                ${websiteUrl ? `<a href="${websiteUrl}" target="_blank" style="display: inline-block; background-color: #4F46E5; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold;">Visit Website</a>` : 
+                             `<span style="color: #888; font-style: italic;">No Website Available</span>`}
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Generate star rating HTML (simplified version for the filter/sort UI)
+function generateStarRating(rating) {
+    if (!rating) return '<span class="no-rating">No rating</span>';
+    
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    
+    let starsHtml = '';
+    
+    // Add numeric rating
+    starsHtml += `<span class="numeric-rating">${rating.toFixed(1)}</span> `;
+    
+    // Full stars
+    for (let i = 0; i < fullStars; i++) {
+        starsHtml += '<span class="star full">★</span>';
+    }
+    
+    // Half star
+    if (halfStar) {
+        starsHtml += '<span class="star half">★</span>';
+    }
+    
+    // Empty stars
+    for (let i = 0; i < emptyStars; i++) {
+        starsHtml += '<span class="star empty">☆</span>';
+    }
+    
+    return starsHtml;
+}
+
+// Format phone number
+function formatPhoneNumber(phoneNumber) {
+    if (!phoneNumber) return 'N/A';
+    
+    // Remove all non-numeric characters
+    const cleaned = phoneNumber.toString().replace(/\D/g, '');
+    
+    // Check if the number has the right length
+    if (cleaned.length === 10) {
+        return `(${cleaned.substring(0, 3)}) ${cleaned.substring(3, 6)}-${cleaned.substring(6, 10)}`;
+    } else if (cleaned.length === 11 && cleaned[0] === '1') {
+        return `(${cleaned.substring(1, 4)}) ${cleaned.substring(4, 7)}-${cleaned.substring(7, 11)}`;
+    }
+    
+    // If the format doesn't match, return the original
+    return phoneNumber;
+}
+
+// Update neighborhoods list on home page (similar to Hair Restoration Life's city lists)
+function updateNeighborhoodsList(businessData) {
+    const neighborhoodsContainer = document.getElementById('neighborhoods-container');
+    if (!neighborhoodsContainer) return;
+    
+    // Clear loading message
+    neighborhoodsContainer.innerHTML = '';
+    
+    // Get city counts from addresses
+    const cityCounts = {};
+    
+    businessData.forEach(business => {
+        let city = '';
+        
+        // Try to extract city from address fields
+        if (business.city) {
+            // Direct city field
+            city = business.city;
+        } else if (business.address || business.full_address || business.formatted_address) {
+            // Try to extract from address string
+            const address = business.address || business.full_address || business.formatted_address;
+            const cityMatch = address ? address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/) : null;
+            if (cityMatch && cityMatch[1]) {
+                city = cityMatch[1].trim();
+            }
+        }
+        
+        if (city && city !== '') {
+            if (!cityCounts[city]) {
+                cityCounts[city] = 0;
+            }
+            cityCounts[city]++;
+        }
+    });
+    
+    // Convert to array and sort by count (descending)
+    const citiesList = Object.entries(cityCounts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count);
+    
+    // Create the HTML structure - similar to Hair Restoration Life
+    const heading = document.createElement('h2');
+    heading.textContent = 'Browse by City';
+    heading.className = 'section-heading';
+    heading.style.fontSize = '24px';
+    heading.style.fontWeight = 'bold';
+    heading.style.textAlign = 'center';
+    heading.style.marginBottom = '20px';
+    neighborhoodsContainer.appendChild(heading);
+    
+    // Create a flex container for the city links
+    const citiesContainer = document.createElement('div');
+    citiesContainer.style.display = 'flex';
+    citiesContainer.style.flexWrap = 'wrap';
+    citiesContainer.style.justifyContent = 'center';
+    citiesContainer.style.gap = '10px';
+    
+    // Add cities (only show top 10)
+    const topCities = citiesList.slice(0, 10);
+    topCities.forEach(city => {
+        const cityLink = document.createElement('a');
+        cityLink.href = `#`;
+        cityLink.className = 'city-link';
+        cityLink.dataset.city = city.name;
+        cityLink.style.padding = '8px 16px';
+        cityLink.style.backgroundColor = '#f8f8f8';
+        cityLink.style.borderRadius = '4px';
+        cityLink.style.textDecoration = 'none';
+        cityLink.style.color = '#333';
+        cityLink.style.fontWeight = 'bold';
+        cityLink.style.display = 'inline-block';
+        cityLink.textContent = `${city.name} (${city.count})`;
+        
+        // Add click event to filter by city
+        cityLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            filterClinicsByCity(city.name);
+        });
+        
+        citiesContainer.appendChild(cityLink);
+    });
+    
+    neighborhoodsContainer.appendChild(citiesContainer);
+    
+    // Add a dropdown for all cities (like Hair Restoration Life)
+    const dropdownContainer = document.createElement('div');
+    dropdownContainer.style.marginTop = '30px';
+    dropdownContainer.style.textAlign = 'center';
+    
+    const dropdownLabel = document.createElement('label');
+    dropdownLabel.for = 'city-dropdown';
+    dropdownLabel.textContent = 'Select a city: ';
+    dropdownLabel.style.fontWeight = 'bold';
+    dropdownLabel.style.marginRight = '10px';
+    
+    const dropdown = document.createElement('select');
+    dropdown.id = 'city-dropdown';
+    dropdown.style.padding = '8px 16px';
+    dropdown.style.borderRadius = '4px';
+    dropdown.style.border = '1px solid #ccc';
+    
+    // Add default option
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'All Cities';
+    dropdown.appendChild(defaultOption);
+    
+    // Add all cities to dropdown
+    citiesList.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city.name;
+        option.textContent = `${city.name} (${city.count})`;
+        dropdown.appendChild(option);
+    });
+    
+    // Add change event to dropdown
+    dropdown.addEventListener('change', function() {
+        const selectedCity = this.value;
+        if (selectedCity === '') {
+            // Show all clinics
+            resetClinicFilters();
+        } else {
+            // Filter by selected city
+            filterClinicsByCity(selectedCity);
+        }
+    });
+    
+    dropdownContainer.appendChild(dropdownLabel);
+    dropdownContainer.appendChild(dropdown);
+    neighborhoodsContainer.appendChild(dropdownContainer);
+}
+
+// Filter clinics by city
+function filterClinicsByCity(cityName) {
+    console.log(`Filtering by city: ${cityName}`);
+    
+    // Get the clinics container
+    const clinicsContainer = document.getElementById('top-clinics-container');
+    if (!clinicsContainer) return;
+    
+    // Update heading to show filtered view
+    const filterNotice = document.getElementById('filter-notice') || document.createElement('div');
+    filterNotice.id = 'filter-notice';
+    filterNotice.style.textAlign = 'center';
+    filterNotice.style.padding = '10px';
+    filterNotice.style.margin = '10px 0';
+    filterNotice.style.backgroundColor = '#f0f8ff';
+    filterNotice.style.borderRadius = '4px';
+    filterNotice.style.fontWeight = 'bold';
+    filterNotice.innerHTML = `
+        <p>Showing clinics in <span style="color: #4F46E5;">${cityName}</span></p>
+        <button id="reset-filter" style="background-color: #4F46E5; color: white; padding: 4px 8px; border: none; border-radius: 4px; margin-top: 5px; cursor: pointer;">View All Locations</button>
+    `;
+    
+    // Add the filter notice if it doesn't exist yet
+    if (!document.getElementById('filter-notice')) {
+        // Insert after the count display but before the clinics
+        const countDisplay = document.querySelector('.total-count');
+        if (countDisplay) {
+            countDisplay.after(filterNotice);
+        } else {
+            clinicsContainer.prepend(filterNotice);
+        }
+    }
+    
+    // Add click event to reset button
+    setTimeout(() => {
+        const resetButton = document.getElementById('reset-filter');
+        if (resetButton) {
+            resetButton.addEventListener('click', resetClinicFilters);
+        }
+    }, 0);
+    
+    // Filter the clinics by the selected city
+    const filteredClinics = window.filteredBusinesses.filter(clinic => {
+        let clinicCity = '';
+        
+        // Try to extract city from various fields
+        if (clinic.city) {
+            clinicCity = clinic.city;
+        } else if (clinic.address || clinic.full_address || clinic.formatted_address) {
+            const address = clinic.address || clinic.full_address || clinic.formatted_address;
+            const cityMatch = address ? address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/) : null;
+            if (cityMatch && cityMatch[1]) {
+                clinicCity = cityMatch[1].trim();
+            }
+        }
+        
+        return clinicCity === cityName;
+    });
+    
+    // Display the filtered clinics
+    displayClinics(filteredClinics, clinicsContainer);
+    
+    // Update the city dropdown to match the selected city
+    const dropdown = document.getElementById('city-dropdown');
+    if (dropdown) {
+        dropdown.value = cityName;
+    }
+    
+    // Highlight the selected city link
+    document.querySelectorAll('.city-link').forEach(link => {
+        if (link.dataset.city === cityName) {
+            link.style.backgroundColor = '#4F46E5';
+            link.style.color = 'white';
+        } else {
+            link.style.backgroundColor = '#f8f8f8';
+            link.style.color = '#333';
+        }
+    });
+}
+
+// Reset clinic filters to show all clinics
+function resetClinicFilters() {
+    console.log('Resetting filters');
+    
+    // Remove the filter notice
+    const filterNotice = document.getElementById('filter-notice');
+    if (filterNotice) {
+        filterNotice.remove();
+    }
+    
+    // Reset the dropdown
+    const dropdown = document.getElementById('city-dropdown');
+    if (dropdown) {
+        dropdown.value = '';
+    }
+    
+    // Reset city link styles
+    document.querySelectorAll('.city-link').forEach(link => {
+        link.style.backgroundColor = '#f8f8f8';
+        link.style.color = '#333';
+    });
+    
+    // Display top 12 clinics
+    const clinicsContainer = document.getElementById('top-clinics-container');
+    if (clinicsContainer) {
+        displayClinics(window.filteredBusinesses.slice(0, 12), clinicsContainer);
+    }
+}
+
+// Load clinics for a specific neighborhood
+function loadNeighborhoodClinics() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const neighborhood = urlParams.get('name');
+    
+    if (!neighborhood) {
+        window.location.href = 'index.html';
+        return;
+    }
+    
+    // Update page title with neighborhood name
+    const pageTitle = document.getElementById('neighborhood-title');
+    if (pageTitle) {
+        pageTitle.textContent = neighborhood;
+    }
+    
+    // Filter businesses by neighborhood
+    const clinics = window.filteredBusinesses.filter(business => 
+        business.neighborhood === neighborhood
+    );
+    
+    // Display clinics
+    const clinicsContainer = document.getElementById('neighborhood-clinics');
+    if (clinicsContainer) {
+        clinicsContainer.innerHTML = '';
+        
+        if (clinics.length === 0) {
+            clinicsContainer.innerHTML = '<p class="no-results">No clinics found in this neighborhood.</p>';
+            return;
+        }
+        
+        // Create and append clinic cards
+        clinics.forEach(clinic => {
+            const clinicCard = createClinicCard(clinic);
+            clinicsContainer.appendChild(clinicCard);
+        });
+    }
+}
+
+// Update service types list (similar to Eating Vancouver's cuisines)
+function updateServiceTypesList(businessData) {
+    const servicesContainer = document.getElementById('services-container');
+    if (!servicesContainer) return;
+    
+    // Define service types (equivalent to cuisines in Eating Vancouver)
+    const serviceTypes = [
+        'Scalp Micropigmentation',
+        'Hair Restoration',
+        'Hair Transplant',
+        'Hair Loss Treatment',
+        'Micropigmentation',
+        'Permanent Makeup',
+        'Cosmetic Tattoo',
+        'Beauty Salon',
+        'Medical Spa',
+        'Consultation'
+    ];
+    
+    // Create a count of businesses per service type
+    // This is a simplification since we don't have actual service type data
+    // In a real implementation, you would extract this from business data
+    const serviceCounts = {};
+    serviceTypes.forEach(type => {
+        // Simulate count based on business name or description containing keywords
+        serviceCounts[type] = businessData.filter(business => 
+            (business.name && business.name.toLowerCase().includes(type.toLowerCase())) ||
+            (business.description && business.description.toLowerCase().includes(type.toLowerCase()))
+        ).length;
+    });
+    
+    // Convert to array and sort by count (descending)
+    const servicesList = Object.entries(serviceCounts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count);
+    
+    // Create the HTML structure
+    const listHTML = document.createElement('div');
+    listHTML.className = 'services-list';
+    
+    // Add heading
+    const heading = document.createElement('h2');
+    heading.textContent = 'All Services';
+    heading.className = 'section-heading';
+    listHTML.appendChild(heading);
+    
+    // Add description
+    const description = document.createElement('p');
+    description.textContent = 'Browse clinics by service type, sorted by popularity';
+    description.className = 'section-description';
+    listHTML.appendChild(description);
+    
+    // Add service types
+    servicesList.forEach(service => {
+        if (service.count > 0) {
+            const item = document.createElement('a');
+            item.href = `service.html?type=${encodeURIComponent(service.name)}`;
+            item.className = 'service-item';
+            item.innerHTML = `
+                <span class="name">${service.name}</span>
+                <span class="count">${service.count} clinic${service.count !== 1 ? 's' : ''}</span>
+            `;
+            listHTML.appendChild(item);
+        }
+    });
+    
+    servicesContainer.appendChild(listHTML);
+}
+
+// Populate the areas dropdown in the navigation menu
+function populateAreasDropdown(businessData) {
+    const dropdowns = document.querySelectorAll('#areas-dropdown');
+    if (!dropdowns.length) return;
+    
+    // Extract cities from business data
+    const cities = {};
+    
+    businessData.forEach(business => {
+        let city = '';
+        
+        // Try to extract city from address fields
+        if (business.city) {
+            // Direct city field
+            city = business.city;
+        } else if (business.address || business.full_address || business.formatted_address) {
+            // Try to extract from address string
+            const address = business.address || business.full_address || business.formatted_address;
+            const cityMatch = address ? address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/) : null;
+            if (cityMatch && cityMatch[1]) {
+                city = cityMatch[1].trim();
+            }
+        }
+        
+        if (city && city !== '') {
+            if (!cities[city]) {
+                cities[city] = 0;
+            }
+            cities[city]++;
+        }
+    });
+    
+    // Sort cities alphabetically
+    const sortedCities = Object.keys(cities).sort();
+    
+    // Create HTML elements for each dropdown
+    dropdowns.forEach(dropdown => {
+        // Clear loading message
+        dropdown.innerHTML = '';
+        
+        // Add "All Areas" option
+        const allAreasLink = document.createElement('a');
+        allAreasLink.href = 'neighborhoods.html';
+        allAreasLink.textContent = 'All Areas';
+        dropdown.appendChild(allAreasLink);
+        
+        // Add divider
+        const divider = document.createElement('div');
+        divider.className = 'border-t border-gray-200 my-1';
+        dropdown.appendChild(divider);
+        
+        // Add city links
+        sortedCities.forEach(city => {
+            const cityLink = document.createElement('a');
+            cityLink.href = `

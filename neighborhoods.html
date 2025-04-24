@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMP Clinics by Area | SMP Hair Tattoo Directory</title>
+    <meta name="description" content="Find top-rated SMP (Scalp Micropigmentation) clinics in your neighborhood. Browse SMP providers by area throughout Los Angeles and surrounding regions.">
+    
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        .neighborhood-item.active {
+            border-color: #2563eb;
+            border-width: 2px;
+        }
+        
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+            margin-top: 5px;
+            scrollbar-width: thin;
+            scrollbar-color: #4F46E5 #f1f1f1;
+        }
+        .dropdown-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .dropdown-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .dropdown-content::-webkit-scrollbar-thumb {
+            background-color: #4F46E5;
+            border-radius: 4px;
+        }
+        .dropdown-content a {
+            color: #333;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            color: #4F46E5;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold">SMP Hair Tattoo Directory</a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
+                    
+                    <!-- Areas Dropdown -->
+                    <div class="dropdown">
+                        <a href="neighborhoods.html" class="font-semibold border-b-2 border-white">Areas ▾</a>
+                        <div id="areas-dropdown" class="dropdown-content">
+                            <!-- Areas will be populated by JavaScript -->
+                            <div class="text-center py-2 text-gray-500 text-sm">Loading areas...</div>
+                        </div>
+                    </div>
+                    
+                    <a href="about.html" class="hover:text-blue-200 transition">About SMP</a>
+                </nav>
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile menu (hidden by default) -->
+            <div class="md:hidden hidden pt-4 pb-2">
+                <a href="index.html" class="block py-2 hover:text-blue-200 transition">Home</a>
+                <a href="neighborhoods.html" class="block py-2 font-semibold">Areas</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero section -->
+        <section class="mb-10 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4 text-gray-800">Find SMP Clinics Near You</h1>
+            <p class="text-gray-600 max-w-3xl mx-auto">
+                Browse top-rated SMP clinics by area. Our directory features the best Scalp Micropigmentation 
+                providers throughout Los Angeles and the surrounding regions. Find the perfect clinic in your neighborhood.
+            </p>
+        </section>
+        
+        <!-- Neighborhoods and clinics display -->
+        <section class="flex flex-col md:flex-row gap-8">
+            <!-- Neighborhoods sidebar -->
+            <div class="md:w-1/3 lg:w-1/4">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Areas</h2>
+                
+                <!-- Neighborhood links list -->
+                <div id="neighborhood-map-container" class="grid grid-cols-1 gap-3">
+                </div>
+            </div>
+            
+            <!-- Clinics display -->
+            <div class="md:w-2/3 lg:w-3/4">
+                <!-- Clinic cards -->
+                <div id="neighborhood-clinics-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Column 1: About -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo Directory</h3>
+                    <p class="text-gray-300">
+                        The premier directory of Scalp Micropigmentation clinics in Los Angeles. 
+                        Find top-rated SMP providers and restore your confidence.
+                    </p>
+                </div>
+                
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                        <li><a href="neighborhoods.html" class="hover:text-white transition">Areas</a></li>
+                        <li><a href="about.html" class="hover:text-white transition">About SMP</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 3: Contact -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Contact</h3>
+                    <p class="text-gray-300 mb-2">Email: info@smpdirectory.com</p>
+                    <p class="text-gray-300">Phone: (213) 555-1234</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2025 SMP Hair Tattoo Directory. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="scripts.js"></script>
+</body>
+</html> 
