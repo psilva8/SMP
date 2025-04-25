@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://psilva8.github.io/SMP/sitemap.xml 
