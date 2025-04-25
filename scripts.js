@@ -500,53 +500,33 @@ function updateNeighborhoodsList(businessData) {
     const neighborhoodsContainer = document.getElementById('neighborhoods-container');
     if (!neighborhoodsContainer) return;
     
-    // Clear loading message
-    neighborhoodsContainer.innerHTML = '';
+    // Remove loading message
+    const loadingMessage = neighborhoodsContainer.querySelector('#loading-message');
+    if (loadingMessage) {
+        neighborhoodsContainer.removeChild(loadingMessage);
+    }
     
-    // Get city counts from addresses
-    const cityCounts = {};
-    
+    // Get unique cities/areas
+    const cities = {};
     businessData.forEach(business => {
-        let city = '';
-        
-        // Try to extract city from address fields
-        if (business.city) {
-            // Direct city field
-            city = business.city;
-        } else if (business.address || business.full_address || business.formatted_address) {
-            // Try to extract from address string
-            const address = business.address || business.full_address || business.formatted_address;
-            const cityMatch = address ? address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/) : null;
-            if (cityMatch && cityMatch[1]) {
-                city = cityMatch[1].trim();
-            }
-        }
+        let city = business.city || '';
         
         if (city && city !== '') {
-            if (!cityCounts[city]) {
-                cityCounts[city] = 0;
+            if (!cities[city]) {
+                cities[city] = 0;
             }
-            cityCounts[city]++;
+            cities[city]++;
         }
     });
     
-    // Convert to array and sort by count (descending)
-    const citiesList = Object.entries(cityCounts)
+    // Sort cities by count
+    const citiesList = Object.entries(cities)
         .map(([name, count]) => ({ name, count }))
         .sort((a, b) => b.count - a.count);
     
-    // Create the HTML structure - similar to Hair Restoration Life
-    const heading = document.createElement('h2');
-    heading.textContent = 'Browse by City';
-    heading.className = 'section-heading';
-    heading.style.fontSize = '24px';
-    heading.style.fontWeight = 'bold';
-    heading.style.textAlign = 'center';
-    heading.style.marginBottom = '20px';
-    neighborhoodsContainer.appendChild(heading);
-    
-    // Create a flex container for the city links
+    // Create a container for the cities
     const citiesContainer = document.createElement('div');
+    citiesContainer.className = 'cities-list';
     citiesContainer.style.display = 'flex';
     citiesContainer.style.flexWrap = 'wrap';
     citiesContainer.style.justifyContent = 'center';
@@ -556,7 +536,7 @@ function updateNeighborhoodsList(businessData) {
     const topCities = citiesList.slice(0, 10);
     topCities.forEach(city => {
         const cityLink = document.createElement('a');
-        cityLink.href = `#`;
+        cityLink.href = `area.html?area=${encodeURIComponent(city.name)}`;
         cityLink.className = 'city-link';
         cityLink.dataset.city = city.name;
         cityLink.style.padding = '8px 16px';
@@ -567,12 +547,6 @@ function updateNeighborhoodsList(businessData) {
         cityLink.style.fontWeight = 'bold';
         cityLink.style.display = 'inline-block';
         cityLink.textContent = city.name;
-        
-        // Add click event to filter by city
-        cityLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            filterClinicsByCity(city.name);
-        });
         
         citiesContainer.appendChild(cityLink);
     });
@@ -615,10 +589,10 @@ function updateNeighborhoodsList(businessData) {
         const selectedCity = this.value;
         if (selectedCity === '') {
             // Show all clinics
-            resetClinicFilters();
+            window.location.href = 'neighborhoods.html';
         } else {
-            // Filter by selected city
-            filterClinicsByCity(selectedCity);
+            // Go to the city page
+            window.location.href = `area.html?area=${encodeURIComponent(selectedCity)}`;
         }
     });
     
@@ -905,31 +879,8 @@ function populateAreasDropdown(businessData) {
         // Add city links
         sortedCities.forEach(city => {
             const cityLink = document.createElement('a');
-            cityLink.href = `#`;
-            cityLink.dataset.city = city;
+            cityLink.href = `area.html?area=${encodeURIComponent(city)}`;
             cityLink.textContent = city;
-            
-            // Add click event
-            cityLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                filterClinicsByCity(city);
-                
-                // Scroll to clinics section if on home page
-                if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/')) {
-                    const clinicsSection = document.getElementById('clinics');
-                    if (clinicsSection) {
-                        clinicsSection.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }
-                
-                // Redirect to neighborhoods page if not on home or neighborhoods page
-                if (!window.location.pathname.endsWith('index.html') && 
-                    !window.location.pathname.endsWith('/') && 
-                    !window.location.pathname.includes('neighborhoods.html')) {
-                    window.location.href = 'neighborhoods.html';
-                }
-            });
-            
             dropdown.appendChild(cityLink);
         });
     });
@@ -977,34 +928,9 @@ function populateNeighborhoodMap(businessData) {
     // Create links for each neighborhood
     sortedNeighborhoods.forEach(neighborhood => {
         const link = document.createElement('a');
-        link.href = '#';
+        link.href = `area.html?area=${encodeURIComponent(neighborhood.name)}`;
         link.className = 'neighborhood-item bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all';
         link.textContent = `${neighborhood.name} (${neighborhood.count})`;
-        
-        // Add click event
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Remove active class from all links
-            document.querySelectorAll('.neighborhood-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Add active class to clicked link
-            this.classList.add('active');
-            
-            // Filter businesses by neighborhood
-            const neighborhoodClinics = businessData.filter(business => 
-                business.neighborhood === neighborhood.name
-            );
-            
-            // Display filtered clinics
-            const clinicsContainer = document.getElementById('neighborhood-clinics-container');
-            if (clinicsContainer) {
-                clinicsContainer.innerHTML = '';
-                displayClinics(neighborhoodClinics, clinicsContainer);
-            }
-        });
         
         mapContainer.appendChild(link);
     });

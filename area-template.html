@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMP Clinics in AREA_NAME | Hair Tattoo Directory</title>
+    <meta name="description" content="Find top-rated scalp micropigmentation (SMP) clinics in AREA_NAME, Los Angeles. Compare providers, services, and reviews.">
+    
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 50;
+            border-radius: 5px;
+            margin-top: 5px;
+            scrollbar-width: thin;
+            scrollbar-color: #4F46E5 #f1f1f1;
+        }
+        .dropdown-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .dropdown-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .dropdown-content::-webkit-scrollbar-thumb {
+            background-color: #4F46E5;
+            border-radius: 4px;
+        }
+        .dropdown-content a {
+            color: #333;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            color: #4F46E5;
+        }
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+        header {
+            position: relative;
+            z-index: 40;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold">SMP Hair Tattoo</a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
+                    
+                    <!-- Areas Dropdown -->
+                    <div class="dropdown">
+                        <a href="neighborhoods.html" class="font-semibold border-b-2 border-white">Areas ▾</a>
+                        <div id="areas-dropdown" class="dropdown-content">
+                            <!-- Areas will be populated by JavaScript -->
+                            <div class="text-center py-2 text-gray-500 text-sm">Loading areas...</div>
+                        </div>
+                    </div>
+                    
+                    <a href="about.html" class="hover:text-blue-200 transition">About SMP</a>
+                </nav>
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile menu (hidden by default) -->
+            <div class="md:hidden hidden pt-4 pb-2">
+                <a href="index.html" class="block py-2 hover:text-blue-200 transition">Home</a>
+                <a href="neighborhoods.html" class="block py-2 font-semibold">Areas</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Area Hero Section -->
+    <section class="bg-blue-700 text-white py-16">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl font-bold mb-4">Scalp Micropigmentation in AREA_NAME</h1>
+            <p class="text-xl max-w-3xl">Find the best SMP clinics and hair tattoo providers in AREA_NAME, Los Angeles. Compare services, prices, and read reviews.</p>
+        </div>
+    </section>
+
+    <!-- Area Clinics Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 text-center">Top SMP Clinics in AREA_NAME</h2>
+            <div id="area-clinics-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Clinic cards will be loaded here via JavaScript -->
+                <p id="loading-message" class="text-center py-8 col-span-full">Loading clinics in AREA_NAME...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Area Information Section -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-8">About AREA_NAME</h2>
+                <div class="prose prose-lg">
+                    <p class="mb-4">AREA_NAME is a vibrant neighborhood in Los Angeles known for its [characteristics]. The area offers several high-quality scalp micropigmentation clinics that provide exceptional service to residents and visitors.</p>
+                    
+                    <p class="mb-4">When choosing an SMP clinic in AREA_NAME, consider factors such as the practitioner's experience, the clinic's portfolio of before-and-after photos, client reviews, and the overall cleanliness and professionalism of the facility.</p>
+                    
+                    <p class="mb-4">Most SMP clinics in AREA_NAME offer free consultations where you can discuss your specific needs and goals with the practitioner. This is an excellent opportunity to ask questions and determine if the clinic is the right fit for you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nearby Areas Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8 text-center">Nearby Areas</h2>
+            <div id="nearby-areas-container" class="flex flex-wrap justify-center gap-4">
+                <!-- Nearby areas will be populated by JavaScript -->
+                <p id="loading-nearby" class="text-center py-8">Loading nearby areas...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Column 1: About -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo Directory</h3>
+                    <p class="text-gray-300">
+                        The premier directory of Scalp Micropigmentation clinics in Los Angeles. 
+                        Find top-rated SMP providers and restore your confidence.
+                    </p>
+                </div>
+                
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                        <li><a href="neighborhoods.html" class="hover:text-white transition">Areas</a></li>
+                        <li><a href="about.html" class="hover:text-white transition">About SMP</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 3: Contact -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Contact</h3>
+                    <p class="text-gray-300 mb-2">Email: info@smpdirectory.com</p>
+                    <p class="text-gray-300">Phone: (213) 555-1234</p>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2025 SMP Hair Tattoo Directory. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="scripts.js"></script>
+    
+    <!-- Area-specific script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get area name from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const areaName = urlParams.get('area') || 'AREA_NAME';
+            
+            // Update page content with area name
+            document.title = `SMP Clinics in ${areaName} | Hair Tattoo Directory`;
+            document.querySelectorAll('h1, h2, p, meta[name="description"]').forEach(el => {
+                if (el.textContent.includes('AREA_NAME')) {
+                    el.textContent = el.textContent.replace('AREA_NAME', areaName);
+                }
+                if (el.getAttribute('content') && el.getAttribute('content').includes('AREA_NAME')) {
+                    el.setAttribute('content', el.getAttribute('content').replace('AREA_NAME', areaName));
+                }
+            });
+            
+            // Load area-specific clinics
+            if (window.fetchBusinessData && window.displayClinics) {
+                fetchBusinessData().then(businesses => {
+                    // Filter businesses by area
+                    const areaBusinesses = businesses.filter(business => {
+                        return business.city === areaName || business.neighborhood === areaName;
+                    });
+                    
+                    // Display area clinics
+                    const clinicsContainer = document.getElementById('area-clinics-container');
+                    if (clinicsContainer) {
+                        // Clear loading message
+                        clinicsContainer.innerHTML = '';
+                        
+                        if (areaBusinesses.length > 0) {
+                            displayClinics(areaBusinesses, clinicsContainer);
+                        } else {
+                            clinicsContainer.innerHTML = `<p class="text-center py-8 col-span-full text-gray-500">No clinics found in ${areaName}. Try a different area or <a href="index.html" class="text-blue-600 hover:underline">browse all clinics</a>.</p>`;
+                        }
+                    }
+                    
+                    // Display nearby areas
+                    const nearbyContainer = document.getElementById('nearby-areas-container');
+                    if (nearbyContainer) {
+                        // Get all unique areas
+                        const allAreas = [];
+                        businesses.forEach(business => {
+                            if (business.city && !allAreas.includes(business.city)) {
+                                allAreas.push(business.city);
+                            }
+                            if (business.neighborhood && !allAreas.includes(business.neighborhood)) {
+                                allAreas.push(business.neighborhood);
+                            }
+                        });
+                        
+                        // Remove current area
+                        const nearbyAreas = allAreas.filter(area => area !== areaName).sort();
+                        
+                        // Clear loading message
+                        nearbyContainer.innerHTML = '';
+                        
+                        // Show up to 8 nearby areas
+                        nearbyAreas.slice(0, 8).forEach(area => {
+                            const areaLink = document.createElement('a');
+                            areaLink.href = `area.html?area=${encodeURIComponent(area)}`;
+                            areaLink.className = 'bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-lg transition';
+                            areaLink.textContent = area;
+                            nearbyContainer.appendChild(areaLink);
+                        });
+                    }
+                });
+            }
+            
+            // Dropdown handling
+            const dropdownButtons = document.querySelectorAll('.dropdown > a');
+            
+            dropdownButtons.forEach(button => {
+                // Handle click on dropdown button
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const dropdown = this.parentElement;
+                    dropdown.classList.toggle('active');
+                    
+                    // Close other dropdowns
+                    dropdownButtons.forEach(otherButton => {
+                        if (otherButton !== button) {
+                            otherButton.parentElement.classList.remove('active');
+                        }
+                    });
+                });
+            });
+            
+            // Prevent scroll events in dropdown content from closing the dropdown
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.addEventListener('wheel', function(e) {
+                    e.stopPropagation();
+                });
+                
+                content.addEventListener('touchmove', function(e) {
+                    e.stopPropagation();
+                });
+                
+                content.addEventListener('mousedown', function(e) {
+                    e.stopPropagation();
+                });
+            });
+            
+            // Close dropdowns when clicking outside, but not when interacting with dropdown content
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
