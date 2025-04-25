@@ -340,7 +340,22 @@
                 });
             });
             
-            // Close dropdowns when clicking outside
+            // Prevent scroll events in dropdown content from closing the dropdown
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.addEventListener('wheel', function(e) {
+                    e.stopPropagation();
+                });
+                
+                content.addEventListener('touchmove', function(e) {
+                    e.stopPropagation();
+                });
+                
+                content.addEventListener('mousedown', function(e) {
+                    e.stopPropagation();
+                });
+            });
+            
+            // Close dropdowns when clicking outside, but not when interacting with dropdown content
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.dropdown')) {
                     document.querySelectorAll('.dropdown').forEach(dropdown => {
