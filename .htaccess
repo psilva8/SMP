@@ -1,0 +1,32 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Remove trailing slashes
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# Handle neighborhoods URLs
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^neighborhoods/([^/]+)/?$ neighborhoods/$1.html [L]
+
+# Handle URLs without .html extension
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.*)$ $1.html [L]
+
+# Set default index file
+DirectoryIndex index.html
+
+# Set character encoding
+AddDefaultCharset UTF-8
+
+# Set content type for JSON files
+AddType application/json .json
+
+# Prevent directory listing
+Options -Indexes
+
+# Custom error pages
+ErrorDocument 404 /404.html 

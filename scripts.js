@@ -1,9 +1,13 @@
 // Global variables
 let allBusinesses = [];
 let filteredBusinesses = [];
+let searchAnalytics = {};
 
 // Document ready function
 document.addEventListener('DOMContentLoaded', function() {
+    // Load search analytics
+    loadSearchAnalytics();
+    
     fetchBusinessData();
     handleSearch();
     
@@ -19,22 +23,274 @@ function handleSearch() {
     const searchInput = document.getElementById('search-input');
     
     if (searchButton && searchInput) {
-        searchButton.addEventListener('click', function() {
-            const query = searchInput.value.trim();
-            if (query) {
-                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
-            }
-        });
+        // Create the suggestions container 
+        const suggestionsContainer = document.createElement('div');
+        suggestionsContainer.id = 'search-suggestions';
+        suggestionsContainer.style.position = 'absolute';
+        suggestionsContainer.style.zIndex = '1000';
+        suggestionsContainer.style.backgroundColor = 'white';
+        suggestionsContainer.style.width = '100%';
+        suggestionsContainer.style.maxHeight = '300px';
+        suggestionsContainer.style.overflowY = 'auto';
+        suggestionsContainer.style.borderRadius = '0 0 5px 5px';
+        suggestionsContainer.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+        suggestionsContainer.style.display = 'none';
         
-        // Add enter key functionality
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.trim();
-                if (query) {
+        // Insert suggestions container right after search input
+        if (searchInput.parentNode) {
+            // Make parent position relative to contain absolute-positioned dropdown
+            searchInput.parentNode.style.position = 'relative';
+            searchInput.parentNode.appendChild(suggestionsContainer);
+        }
+        
+        // Perform the search
+        const performSearch = (query) => {
+            if (query.trim()) {
+                // Track the search query
+                trackSearch(query);
+                
+                // Update URL with search query
+                const currentUrl = new URL(window.location.href);
+                
+                // If we're already on the search page, just update the URL
+                if (window.location.pathname.includes('search.html')) {
+                    currentUrl.searchParams.set('q', query);
+                    
+                    // Update URL without reloading the page
+                    window.history.pushState({ query }, '', currentUrl.toString());
+                    
+                    // Manually trigger search results display
+                    displaySearchResults(query);
+                } else {
+                    // Navigate to search page with query
                     window.location.href = `search.html?q=${encodeURIComponent(query)}`;
                 }
             }
+        };
+        
+        // Add click handler to search button
+        searchButton.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            performSearch(query);
         });
+        
+        // Function to generate and display search suggestions
+        const updateSuggestions = () => {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query.length < 2) {
+                suggestionsContainer.style.display = 'none';
+                return;
+            }
+            
+            // Wait for businesses to load
+            if (!window.filteredBusinesses || window.filteredBusinesses.length === 0) {
+                return;
+            }
+            
+            // Find matching business names, cities, and neighborhoods
+            const nameMatches = [];
+            const cityMatches = new Set();
+            const neighborhoodMatches = new Set();
+            
+            window.filteredBusinesses.forEach(business => {
+                // Check business name
+                if (business.name && business.name.toLowerCase().includes(query)) {
+                    nameMatches.push(business.name);
+                }
+                
+                // Check city
+                if (business.city && business.city.toLowerCase().includes(query)) {
+                    cityMatches.add(business.city);
+                }
+                
+                // Check neighborhood
+                if (business.neighborhood && business.neighborhood.toLowerCase().includes(query)) {
+                    neighborhoodMatches.add(business.neighborhood);
+                }
+            });
+            
+            // Get popular search terms from analytics that match the query
+            const popularSearches = [];
+            if (Object.keys(searchAnalytics).length > 0) {
+                // Sort by count (highest first) and filter to those containing the query
+                const sortedAnalytics = Object.entries(searchAnalytics)
+                    .filter(([term]) => term.includes(query) && term !== query) // exclude exact match
+                    .sort((a, b) => b[1].count - a[1].count)
+                    .slice(0, 3); // top 3 popular searches
+                
+                popularSearches.push(...sortedAnalytics.map(([term]) => term));
+            }
+            
+            // Limit to top 5 business names
+            const topNameMatches = [...new Set(nameMatches)].slice(0, 5);
+            
+            // Prepare all suggestions
+            const allSuggestions = [
+                ...popularSearches,
+                ...topNameMatches,
+                ...[...cityMatches].slice(0, 3).map(city => `${city} SMP`),
+                ...[...neighborhoodMatches].slice(0, 3).map(neighborhood => `${neighborhood} hair tattoo`)
+            ];
+            
+            // Get unique suggestions (no duplicates)
+            const uniqueSuggestions = [...new Set(allSuggestions)].slice(0, 10);
+            
+            // Display suggestions
+            if (uniqueSuggestions.length > 0) {
+                suggestionsContainer.innerHTML = '';
+                
+                uniqueSuggestions.forEach(suggestion => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'suggestion-item';
+                    suggestionItem.textContent = suggestion;
+                    suggestionItem.style.padding = '10px 15px';
+                    suggestionItem.style.borderBottom = '1px solid #eee';
+                    suggestionItem.style.cursor = 'pointer';
+                    
+                    // Add "Popular" badge for suggestions from analytics
+                    if (popularSearches.includes(suggestion)) {
+                        const popularBadge = document.createElement('span');
+                        popularBadge.textContent = 'Popular';
+                        popularBadge.style.fontSize = '10px';
+                        popularBadge.style.backgroundColor = '#4F46E5';
+                        popularBadge.style.color = 'white';
+                        popularBadge.style.padding = '2px 5px';
+                        popularBadge.style.borderRadius = '3px';
+                        popularBadge.style.marginLeft = '8px';
+                        suggestionItem.appendChild(popularBadge);
+                    }
+                    
+                    // Highlight the matching part
+                    const matchIndex = suggestion.toLowerCase().indexOf(query);
+                    if (matchIndex >= 0) {
+                        const matchEnd = matchIndex + query.length;
+                        const beforeMatch = suggestion.substring(0, matchIndex);
+                        const matchText = suggestion.substring(matchIndex, matchEnd);
+                        const afterMatch = suggestion.substring(matchEnd);
+                        
+                        suggestionItem.innerHTML = 
+                            beforeMatch +
+                            `<strong>${matchText}</strong>` +
+                            afterMatch;
+                        
+                        // Re-add the badge if it was a popular search
+                        if (popularSearches.includes(suggestion)) {
+                            const popularBadge = document.createElement('span');
+                            popularBadge.textContent = 'Popular';
+                            popularBadge.style.fontSize = '10px';
+                            popularBadge.style.backgroundColor = '#4F46E5';
+                            popularBadge.style.color = 'white';
+                            popularBadge.style.padding = '2px 5px';
+                            popularBadge.style.borderRadius = '3px';
+                            popularBadge.style.marginLeft = '8px';
+                            suggestionItem.appendChild(popularBadge);
+                        }
+                    }
+                    
+                    // Click handler for suggestion
+                    suggestionItem.addEventListener('click', () => {
+                        searchInput.value = suggestion;
+                        suggestionsContainer.style.display = 'none';
+                        performSearch(suggestion);
+                    });
+                    
+                    // Hover effect
+                    suggestionItem.addEventListener('mouseenter', () => {
+                        suggestionItem.style.backgroundColor = '#f0f0f0';
+                    });
+                    
+                    suggestionItem.addEventListener('mouseleave', () => {
+                        suggestionItem.style.backgroundColor = '';
+                    });
+                    
+                    suggestionsContainer.appendChild(suggestionItem);
+                });
+                
+                suggestionsContainer.style.display = 'block';
+            } else {
+                suggestionsContainer.style.display = 'none';
+            }
+        };
+        
+        // Add input handler for suggestions
+        searchInput.addEventListener('input', updateSuggestions);
+        
+        // Add focus handler
+        searchInput.addEventListener('focus', updateSuggestions);
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (e.target !== searchInput && e.target !== suggestionsContainer) {
+                suggestionsContainer.style.display = 'none';
+            }
+        });
+        
+        // Handle keyboard navigation in suggestions
+        searchInput.addEventListener('keydown', function(e) {
+            const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item');
+            const isVisible = suggestionsContainer.style.display === 'block';
+            
+            // Currently focused suggestion index
+            let focusedIndex = Array.from(suggestions).findIndex(
+                item => item === document.activeElement
+            );
+            
+            switch (e.key) {
+                case 'ArrowDown':
+                    if (isVisible) {
+                        e.preventDefault();
+                        if (focusedIndex < 0) {
+                            // Focus first suggestion
+                            suggestions[0]?.focus();
+                        } else if (focusedIndex < suggestions.length - 1) {
+                            // Focus next suggestion
+                            suggestions[focusedIndex + 1].focus();
+                        }
+                    }
+                    break;
+                    
+                case 'ArrowUp':
+                    if (isVisible) {
+                        e.preventDefault();
+                        if (focusedIndex > 0) {
+                            // Focus previous suggestion
+                            suggestions[focusedIndex - 1].focus();
+                        } else if (focusedIndex === 0) {
+                            // Back to search input
+                            searchInput.focus();
+                        }
+                    }
+                    break;
+                    
+                case 'Escape':
+                    suggestionsContainer.style.display = 'none';
+                    break;
+                    
+                case 'Enter':
+                    if (isVisible && focusedIndex >= 0) {
+                        e.preventDefault();
+                        // Use the focused suggestion
+                        searchInput.value = suggestions[focusedIndex].textContent;
+                        suggestionsContainer.style.display = 'none';
+                        performSearch(searchInput.value);
+                    } else if (searchInput.value.trim()) {
+                        // Normal search with input value
+                        performSearch(searchInput.value);
+                    }
+                    break;
+            }
+        });
+        
+        // Make suggestion items focusable
+        const makeItemsFocusable = () => {
+            suggestionsContainer.querySelectorAll('.suggestion-item').forEach(item => {
+                item.setAttribute('tabindex', '0');
+            });
+        };
+        
+        // Setup mutation observer to make new suggestion items focusable
+        const observer = new MutationObserver(makeItemsFocusable);
+        observer.observe(suggestionsContainer, { childList: true });
     }
 }
 
@@ -50,10 +306,10 @@ function loadSearchResults() {
         searchInput.value = query;
     }
     
-    // Update results heading
-    const resultsHeading = document.getElementById('search-results-heading');
-    if (resultsHeading) {
-        resultsHeading.textContent = query ? `Search Results for "${query}"` : 'All Clinics';
+    // Update search term display
+    const searchTerm = document.getElementById('search-term');
+    if (searchTerm && query) {
+        searchTerm.textContent = query;
     }
     
     // Filter businesses based on search query
@@ -71,6 +327,20 @@ function loadSearchResults() {
         // Clear interval after 10 seconds to prevent infinite checking
         setTimeout(() => clearInterval(checkInterval), 10000);
     }
+    
+    // Add popstate handler to handle browser back/forward navigation
+    window.addEventListener('popstate', (event) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const newQuery = urlParams.get('q');
+        
+        // Update search input
+        if (searchInput) {
+            searchInput.value = newQuery || '';
+        }
+        
+        // Update search results
+        displaySearchResults(newQuery);
+    });
 }
 
 // Display search results based on query
@@ -81,62 +351,136 @@ function displaySearchResults(query) {
     // Clear container
     resultsContainer.innerHTML = '';
     
+    // Update the search term display
+    const searchTerm = document.getElementById('search-term');
+    if (searchTerm) {
+        searchTerm.textContent = query || '';
+    }
+    
     if (!query) {
         // If no query, display all businesses
         displayClinics(window.filteredBusinesses.slice(0, 20), resultsContainer);
         return;
     }
     
-    // Search in business name, description, and address
-    const results = window.filteredBusinesses.filter(business => {
-        const searchTerms = query.toLowerCase().split(' ');
-        const businessText = [
-            business.name || '',
-            business.description || '',
-            business.address || business.full_address || '',
-            business.city || '',
-            business.neighborhood || ''
-        ].join(' ').toLowerCase();
+    // Search with ranking system
+    const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
+    
+    // Score and rank results
+    const scoredResults = window.filteredBusinesses.map(business => {
+        // Gather business text fields for searching
+        const businessName = (business.name || '').toLowerCase();
+        const businessDesc = (business.description || '').toLowerCase();
+        const businessAddress = (business.address || business.full_address || '').toLowerCase();
+        const businessCity = (business.city || '').toLowerCase();
+        const businessNeighborhood = (business.neighborhood || '').toLowerCase();
         
-        // Check if all search terms are found
-        return searchTerms.every(term => businessText.includes(term));
+        // Initialize score
+        let score = 0;
+        let matched = true;
+        
+        // Check each search term
+        for (const term of searchTerms) {
+            let termMatched = false;
+            
+            // Exact name match (highest score)
+            if (businessName === term) {
+                score += 100;
+                termMatched = true;
+            }
+            // Name contains term as a whole word
+            else if (businessName.includes(' ' + term + ' ') || 
+                     businessName.startsWith(term + ' ') || 
+                     businessName.endsWith(' ' + term)) {
+                score += 50;
+                termMatched = true;
+            }
+            // Name contains term as part of a word
+            else if (businessName.includes(term)) {
+                score += 25;
+                termMatched = true;
+            }
+            
+            // City/neighborhood exact match
+            if (businessCity === term || businessNeighborhood === term) {
+                score += 40;
+                termMatched = true;
+            }
+            // City/neighborhood contains term
+            else if (businessCity.includes(term) || businessNeighborhood.includes(term)) {
+                score += 20;
+                termMatched = true;
+            }
+            
+            // Address contains term
+            if (businessAddress.includes(term)) {
+                score += 15;
+                termMatched = true;
+            }
+            
+            // Description contains term
+            if (businessDesc.includes(term)) {
+                score += 10;
+                termMatched = true;
+            }
+            
+            // If this term didn't match anything, the result isn't relevant
+            if (!termMatched) {
+                matched = false;
+                break;
+            }
+        }
+        
+        // Return scored business with match status
+        return {
+            business,
+            score,
+            matched
+        };
     });
     
-    // Update results count
-    const resultsCount = document.getElementById('search-results-count');
-    if (resultsCount) {
-        resultsCount.textContent = `${results.length} result${results.length !== 1 ? 's' : ''} found`;
+    // Filter to only matched results and sort by score
+    const results = scoredResults
+        .filter(item => item.matched)
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.business);
+    
+    // Update analytics with result count
+    const normalizedQuery = query.toLowerCase().trim();
+    if (searchAnalytics[normalizedQuery]) {
+        searchAnalytics[normalizedQuery].results = results.length;
+        try {
+            localStorage.setItem('smp_search_analytics', JSON.stringify(searchAnalytics));
+        } catch (e) {
+            console.error('Failed to update search analytics results:', e);
+        }
     }
     
-    // Display results
+    // Update results count and no-results message
+    const noResultsMessage = document.getElementById('no-results-message');
+    
     if (results.length > 0) {
-        displayClinics(results, resultsContainer);
-    } else {
-        resultsContainer.innerHTML = `
-            <div class="text-center py-10">
-                <p class="text-gray-600 mb-4">No results found for "${query}"</p>
-                <p class="text-sm text-gray-500">Try different keywords or browse all clinics below</p>
-                <button id="show-all-clinics" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-                    Show All Clinics
-                </button>
-            </div>
-        `;
-        
-        // Add event listener to show all clinics button
-        const showAllButton = document.getElementById('show-all-clinics');
-        if (showAllButton) {
-            showAllButton.addEventListener('click', function() {
-                displayClinics(window.filteredBusinesses.slice(0, 20), resultsContainer);
-                
-                // Update heading and count
-                if (resultsHeading) {
-                    resultsHeading.textContent = 'All Clinics';
-                }
-                if (resultsCount) {
-                    resultsCount.textContent = `${window.filteredBusinesses.length} total clinics`;
-                }
-            });
+        if (noResultsMessage) {
+            noResultsMessage.classList.add('hidden');
         }
+        // Pass search terms for highlighting
+        displayClinics(results, resultsContainer, searchTerms);
+    } else {
+        if (noResultsMessage) {
+            noResultsMessage.classList.remove('hidden');
+        } else {
+            resultsContainer.innerHTML = `
+                <p id="no-results-message" class="text-center py-8 text-gray-500 text-lg">
+                    No results found for "${query}". Try different keywords or browse our <a href="index.html" class="text-blue-600 hover:underline">top clinics</a>.
+                </p>
+            `;
+        }
+    }
+    
+    // Remove the loading message if it exists
+    const loadingMessage = document.getElementById('loading-message');
+    if (loadingMessage) {
+        loadingMessage.remove();
     }
 }
 
@@ -364,19 +708,19 @@ function updateTopClinics(businessData) {
 }
 
 // Helper function to display clinics in a container
-function displayClinics(clinics, container) {
+function displayClinics(clinics, container, highlightTerms = []) {
     // Clear existing clinic cards
     container.innerHTML = '';
     
     // Create and append clinic cards
     clinics.forEach(clinic => {
-        const clinicCard = createClinicCard(clinic);
+        const clinicCard = createClinicCard(clinic, highlightTerms);
         container.appendChild(clinicCard);
     });
 }
 
 // Create a clinic card element (similar to Hair Restoration Life cards)
-function createClinicCard(clinic) {
+function createClinicCard(clinic, highlightTerms = []) {
     const card = document.createElement('div');
     card.className = 'clinic-card';
     card.style.border = '1px solid #ccc';
@@ -410,9 +754,67 @@ function createClinicCard(clinic) {
     const cityMatch = address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/);
     const city = cityMatch ? cityMatch[1].trim() : (clinic.neighborhood || "");
     
+    // Helper function to highlight matching terms
+    const highlightText = (text) => {
+        if (!highlightTerms || highlightTerms.length === 0 || !text) {
+            return text;
+        }
+        
+        let highlightedText = text;
+        // Convert to lowercase for case-insensitive matching, but preserve original case in display
+        const lowerText = text.toLowerCase();
+        
+        // Process longest terms first to avoid nested highlights
+        const sortedTerms = [...highlightTerms].sort((a, b) => b.length - a.length);
+        
+        for (const term of sortedTerms) {
+            if (!term || term.length === 0) continue;
+            
+            const lowerTerm = term.toLowerCase();
+            let startIndex = 0;
+            let foundIndex;
+            
+            // Add a wrapper with a highlight class around each occurrence
+            while ((foundIndex = lowerText.indexOf(lowerTerm, startIndex)) !== -1) {
+                // Get the actual case-preserved substring from the original text
+                const matchedText = text.substring(foundIndex, foundIndex + term.length);
+                
+                // Replace with highlighted version using a temporary placeholder to avoid issues with multiple replacements
+                const placeholder = `__HIGHLIGHT${foundIndex}__`;
+                highlightedText = highlightedText.substring(0, foundIndex) + 
+                                  placeholder + 
+                                  highlightedText.substring(foundIndex + matchedText.length);
+                
+                // Move past this occurrence
+                startIndex = foundIndex + placeholder.length;
+            }
+        }
+        
+        // Replace all placeholders with the actual highlighted HTML
+        for (let i = 0; i < text.length; i++) {
+            const placeholder = `__HIGHLIGHT${i}__`;
+            if (highlightedText.includes(placeholder)) {
+                // Get the original text at this position
+                const originalText = text.substring(i, i + 1);
+                // Replace with highlighted version
+                highlightedText = highlightedText.replace(
+                    placeholder, 
+                    `<span style="background-color: #FFEB3B; font-weight: bold;">${originalText}</span>`
+                );
+            }
+        }
+        
+        return highlightedText;
+    };
+    
+    // Highlight relevant fields
+    const highlightedName = highlightText(clinic.name);
+    const highlightedAddress = highlightText(address);
+    const highlightedCity = highlightText(city);
+    
     card.innerHTML = `
         <div class="clinic-info" style="width: 100%;">
-            <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">${clinic.name}</h3>
+            <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">${highlightedName}</h3>
             
             <div style="display: flex; align-items: center; margin-bottom: 15px;">
                 <div style="font-size: 18px; font-weight: bold; color: #333;">${ratingDisplay} <span style="color: #FFD700;">★</span></div>
@@ -422,7 +824,7 @@ function createClinicCard(clinic) {
             <div style="margin-bottom: 15px;">
                 <div style="margin-bottom: 8px;">
                     <div style="font-weight: bold; display: inline;">Address:</div>
-                    <div style="display: inline-block; margin-left: 5px; color: #333;">${address}</div>
+                    <div style="display: inline-block; margin-left: 5px; color: #333;">${highlightedAddress}</div>
                 </div>
                 
                 <div style="margin-bottom: 8px;">
@@ -432,7 +834,7 @@ function createClinicCard(clinic) {
                 
                 <div style="margin-bottom: 8px;">
                     <div style="font-weight: bold; display: inline;">City:</div>
-                    <div style="display: inline-block; margin-left: 5px; color: #333;">${city}</div>
+                    <div style="display: inline-block; margin-left: 5px; color: #333;">${highlightedCity}</div>
                 </div>
             </div>
             
@@ -876,10 +1278,24 @@ function populateAreasDropdown(businessData) {
         divider.className = 'border-t border-gray-200 my-1';
         dropdown.appendChild(divider);
         
-        // Add city links
+        // Add city links with new URL structure
         sortedCities.forEach(city => {
             const cityLink = document.createElement('a');
-            cityLink.href = `area.html?area=${encodeURIComponent(city)}`;
+            
+            // Create URL-friendly version of the city name
+            const urlFriendlyCity = city.toLowerCase().replace(/\s+/g, '-');
+            
+            // Determine proper relative path based on current page
+            let basePath = '';
+            if (window.location.pathname.includes('/neighborhoods/')) {
+                // We're already in a subdirectory, need to go up one level
+                basePath = '../neighborhoods/';
+            } else {
+                // We're at the root level
+                basePath = 'neighborhoods/';
+            }
+            
+            cityLink.href = `${basePath}${encodeURIComponent(urlFriendlyCity)}`;
             cityLink.textContent = city;
             dropdown.appendChild(cityLink);
         });
@@ -912,6 +1328,15 @@ function populateNeighborhoodMap(businessData) {
     // Get unique neighborhoods
     const neighborhoods = {};
     businessData.forEach(business => {
+        // Add city to neighborhoods if available
+        if (business.city && business.city !== '' && business.city !== 'Unknown Area') {
+            if (!neighborhoods[business.city]) {
+                neighborhoods[business.city] = 0;
+            }
+            neighborhoods[business.city]++;
+        }
+        
+        // Add neighborhood if available and not Unknown
         if (business.neighborhood && business.neighborhood !== 'Unknown Area') {
             if (!neighborhoods[business.neighborhood]) {
                 neighborhoods[business.neighborhood] = 0;
@@ -920,18 +1345,83 @@ function populateNeighborhoodMap(businessData) {
         }
     });
     
-    // Sort neighborhoods by count
+    // Sort neighborhoods by count and then alphabetically
     const sortedNeighborhoods = Object.entries(neighborhoods)
         .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count);
+        .sort((a, b) => {
+            // First sort by count (descending)
+            if (b.count !== a.count) {
+                return b.count - a.count;
+            }
+            // Then sort alphabetically
+            return a.name.localeCompare(b.name);
+        });
     
-    // Create links for each neighborhood
+    // Create links for each neighborhood using the new URL format
     sortedNeighborhoods.forEach(neighborhood => {
+        // Create URL-friendly neighborhood name
+        const urlFriendlyName = neighborhood.name.toLowerCase().replace(/\s+/g, '-');
+        
         const link = document.createElement('a');
-        link.href = `area.html?area=${encodeURIComponent(neighborhood.name)}`;
-        link.className = 'neighborhood-item bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all';
-        link.textContent = `${neighborhood.name} (${neighborhood.count})`;
+        link.href = `neighborhoods/${encodeURIComponent(urlFriendlyName)}`;
+        link.className = 'neighborhood-item bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all flex justify-between items-center';
+        
+        // Add neighborhood name and count
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'font-medium';
+        nameSpan.textContent = neighborhood.name;
+        
+        const countSpan = document.createElement('span');
+        countSpan.className = 'bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full';
+        countSpan.textContent = neighborhood.count;
+        
+        link.appendChild(nameSpan);
+        link.appendChild(countSpan);
         
         mapContainer.appendChild(link);
     });
+}
+
+// Track search queries for analytics
+function trackSearch(query) {
+    if (!query || query.trim() === '') return;
+    
+    // Normalize query
+    const normalizedQuery = query.toLowerCase().trim();
+    
+    // Initialize if not exists
+    if (!searchAnalytics[normalizedQuery]) {
+        searchAnalytics[normalizedQuery] = {
+            count: 0,
+            results: 0,
+            lastSearched: new Date().toISOString()
+        };
+    }
+    
+    // Update analytics
+    searchAnalytics[normalizedQuery].count++;
+    searchAnalytics[normalizedQuery].lastSearched = new Date().toISOString();
+    
+    // Store in localStorage for persistence
+    try {
+        localStorage.setItem('smp_search_analytics', JSON.stringify(searchAnalytics));
+    } catch (e) {
+        console.error('Failed to save search analytics to localStorage:', e);
+    }
+    
+    // Log for debugging
+    console.log('Search tracked:', normalizedQuery, searchAnalytics[normalizedQuery]);
+}
+
+// Load search analytics from localStorage
+function loadSearchAnalytics() {
+    try {
+        const savedAnalytics = localStorage.getItem('smp_search_analytics');
+        if (savedAnalytics) {
+            searchAnalytics = JSON.parse(savedAnalytics);
+            console.log('Loaded search analytics:', Object.keys(searchAnalytics).length, 'entries');
+        }
+    } catch (e) {
+        console.error('Failed to load search analytics from localStorage:', e);
+    }
 }
