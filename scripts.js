@@ -482,34 +482,42 @@ function displaySearchResults(query) {
 // Fetch business data from JSON file
 function fetchBusinessData() {
     return new Promise((resolve, reject) => {
-        console.log('Fetching business data...');
+        console.log('Fetching business data... [DEBUG]');
         
         // Check for cached data
         if (window.allBusinesses && window.allBusinesses.length > 0) {
-            console.log('Using cached data:', window.allBusinesses.length, 'businesses');
+            console.log('Using cached data:', window.allBusinesses.length, 'businesses [DEBUG]');
             resolve(window.allBusinesses);
             return;
         }
         
         // Use absolute path for JSON file
         const jsonUrl = '/Outscraper-20250423020658xs04_micropigmentation_+1.json';
-        console.log('Fetching from URL:', jsonUrl);
+        console.log('Fetching from URL:', jsonUrl, '[DEBUG]');
+        
+        // FOR DEBUGGING: Log all scripts on the page
+        const scripts = document.querySelectorAll('script');
+        console.log('Scripts on page:', scripts.length, '[DEBUG]');
+        scripts.forEach((script, index) => {
+            console.log(`Script ${index}:`, script.src || 'inline script', '[DEBUG]');
+        });
         
         // Use absolute path for the JSON file
         fetch(jsonUrl)
             .then(response => {
+                console.log('Fetch response status:', response.status, response.statusText, '[DEBUG]');
                 if (!response.ok) {
-                    console.error('Network response was not ok:', response.status, response.statusText);
+                    console.error('Network response was not ok:', response.status, response.statusText, '[DEBUG]');
                     throw new Error('Network response was not ok: ' + response.statusText);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Received data:', data.length, 'businesses');
+                console.log('Received JSON data:', data ? data.length : 'null or empty', 'items [DEBUG]');
                 
                 // Process the data
                 const processedData = processBusinessData(data);
-                console.log('Processed data:', processedData.length, 'businesses after filtering');
+                console.log('Processed data:', processedData.length, 'businesses after filtering [DEBUG]');
                 
                 // Cache the data
                 window.allBusinesses = processedData;
@@ -517,26 +525,50 @@ function fetchBusinessData() {
                 resolve(processedData);
             })
             .catch(error => {
-                console.error('Error fetching business data:', error);
+                console.error('Error fetching business data:', error, '[DEBUG]');
                 
                 // Try relative path as fallback
-                console.log('Trying relative path as fallback...');
-                fetch('../Outscraper-20250423020658xs04_micropigmentation_+1.json')
+                console.log('Trying relative path as fallback... [DEBUG]');
+                const fallbackUrl = 'Outscraper-20250423020658xs04_micropigmentation_+1.json';
+                console.log('Fallback URL:', fallbackUrl, '[DEBUG]');
+                
+                fetch(fallbackUrl)
                     .then(response => {
+                        console.log('Fallback fetch response:', response.status, response.statusText, '[DEBUG]');
                         if (!response.ok) {
                             throw new Error('Fallback fetch failed: ' + response.statusText);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Received data from fallback path:', data.length, 'businesses');
+                        console.log('Received data from fallback path:', data.length, 'businesses [DEBUG]');
                         const processedData = processBusinessData(data);
                         window.allBusinesses = processedData;
                         resolve(processedData);
                     })
                     .catch(fallbackError => {
-                        console.error('Fallback fetch also failed:', fallbackError);
-                        reject(error);
+                        console.error('Fallback fetch also failed:', fallbackError, '[DEBUG]');
+                        
+                        // Last resort: Try to load directly from a script tag
+                        console.log('Final attempt: Adding JSON as script tag... [DEBUG]');
+                        const script = document.createElement('script');
+                        script.src = 'data.js'; // Assuming we'll create this file
+                        script.onload = function() {
+                            if (window.businessData) {
+                                console.log('Loaded from script tag:', window.businessData.length, 'businesses [DEBUG]');
+                                const processedData = processBusinessData(window.businessData);
+                                window.allBusinesses = processedData;
+                                resolve(processedData);
+                            } else {
+                                console.error('Script loaded but no data found [DEBUG]');
+                                reject(new Error('Failed to load business data from all sources'));
+                            }
+                        };
+                        script.onerror = function() {
+                            console.error('Script tag loading failed [DEBUG]');
+                            reject(new Error('Failed to load business data from all sources'));
+                        };
+                        document.head.appendChild(script);
                     });
             });
     });
@@ -638,6 +670,10 @@ function processBusinessData(businessData) {
     // Keep a copy of the complete dataset
     window.allBusinesses = processedData;
     
+    // IMPORTANT: Set the filteredBusinesses variable for use throughout the site
+    window.filteredBusinesses = processedData;
+    console.log('window.filteredBusinesses set with', window.filteredBusinesses.length, 'businesses [DEBUG]');
+    
     // Update UI with the processed data
     updateUI(processedData);
     
@@ -718,160 +754,92 @@ function updateTopClinics(businessData) {
     })));
 }
 
-// Display clinics in the provided container
-function displayClinics(clinics, container, highlightTerms = []) {
-    console.log('Displaying clinics:', clinics.length, 'in container:', container.id);
+// Function to display clinics in the specified container
+function displayClinics(businesses, container) {
+    console.log('displayClinics called with', businesses ? businesses.length : 'null or empty', 'businesses [DEBUG]');
+    console.log('Container ID:', container ? container.id : 'container is null', '[DEBUG]');
     
+    // Check if container exists
     if (!container) {
-        console.error('Container not found for displaying clinics');
+        console.error('Container element not found for displaying clinics [DEBUG]');
+        return;
+    }
+    
+    // Check if businesses is valid
+    if (!businesses || !Array.isArray(businesses)) {
+        console.error('Invalid businesses data:', businesses, '[DEBUG]');
+        container.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-500">No clinic data available.</p></div>';
         return;
     }
     
     // Clear existing content
+    console.log('Clearing container content [DEBUG]');
     container.innerHTML = '';
     
-    // Check if we have clinics to display
-    if (!clinics || clinics.length === 0) {
-        console.log('No clinics to display');
-        container.innerHTML = '<p class="text-center py-4 col-span-full text-gray-500">No clinics found.</p>';
+    // Show message if no clinics found
+    if (businesses.length === 0) {
+        console.log('No clinics found to display [DEBUG]');
+        container.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-500">No clinics found in this area.</p></div>';
         return;
     }
     
-    // Create and append clinic cards
-    clinics.forEach((clinic, index) => {
-        console.log(`Creating card for clinic ${index+1}/${clinics.length}: ${clinic.name}`);
-        const card = createClinicCard(clinic, highlightTerms);
+    console.log('Creating clinic cards for', businesses.length, 'businesses [DEBUG]');
+    
+    // Create clinic cards for each business
+    businesses.forEach((business, index) => {
+        console.log(`Creating card ${index + 1} for ${business.name} [DEBUG]`);
+        
+        // Create clinic card
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition';
+        
+        // Create image element with fallback
+        let imageUrl = business.photos && business.photos.length > 0 
+            ? business.photos[0] 
+            : 'https://via.placeholder.com/400x250?text=SMP+Clinic';
+        
+        // Create star rating
+        let stars = '';
+        if (business.rating) {
+            const fullStars = Math.floor(business.rating);
+            const hasHalfStar = business.rating % 1 >= 0.5;
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '★';
+            }
+            
+            if (hasHalfStar) {
+                stars += '½';
+            }
+            
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '☆';
+            }
+        }
+        
+        // Set the card HTML
+        card.innerHTML = `
+            <div class="h-48 bg-gray-200 overflow-hidden">
+                <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover">
+            </div>
+            <div class="p-5">
+                <h3 class="text-xl font-bold mb-2">${business.name}</h3>
+                <div class="text-yellow-500 mb-2">${stars} <span class="text-gray-600">(${business.reviews || '0'})</span></div>
+                <p class="text-gray-600 mb-3 truncate">${business.full_address || business.address || 'Address not available'}</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-blue-600 font-medium">${business.phone_number || 'No phone listed'}</span>
+                    <a href="${business.url || '#'}" target="_blank" class="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition">View on Maps</a>
+                </div>
+            </div>
+        `;
+        
+        // Add the card to the container
         container.appendChild(card);
+        console.log(`Card ${index + 1} added to container [DEBUG]`);
     });
-}
-
-// Create a clinic card element (similar to Hair Restoration Life cards)
-function createClinicCard(clinic, highlightTerms = []) {
-    const card = document.createElement('div');
-    card.className = 'clinic-card';
-    card.style.border = '1px solid #ccc';
-    card.style.padding = '15px';
-    card.style.margin = '10px 0';
-    card.style.borderRadius = '8px';
-    card.style.backgroundColor = '#fff';
-    card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
     
-    // Extract contact information
-    const phoneDisplay = clinic.phone_number ? formatPhoneNumber(clinic.phone_number) : 
-                        (clinic.phone ? formatPhoneNumber(clinic.phone) : 'N/A');
-    
-    const websiteUrl = clinic.website || clinic.site;
-    
-    const address = clinic.address || clinic.formatted_address || clinic.full_address || 'N/A';
-    
-    // Debug logging
-    console.log('Clinic: ' + clinic.name);
-    console.log('Address found: ' + address);
-    console.log('Raw address field: ' + (clinic.address || 'undefined'));
-    console.log('Raw formatted_address field: ' + (clinic.formatted_address || 'undefined'));
-    console.log('Raw full_address field: ' + (clinic.full_address || 'undefined'));
-    
-    // Create star rating display
-    const rating = clinic.rating || 0;
-    const ratingDisplay = rating ? rating.toFixed(1) : 'No Rating';
-    const reviewCount = clinic.reviews_count || clinic.reviews || clinic.user_ratings_total || 0;
-    
-    // Get city/neighborhood from address
-    const cityMatch = address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/);
-    const city = cityMatch ? cityMatch[1].trim() : (clinic.neighborhood || "");
-    
-    // Helper function to highlight matching terms
-    const highlightText = (text) => {
-        if (!highlightTerms || highlightTerms.length === 0 || !text) {
-            return text;
-        }
-        
-        let highlightedText = text;
-        // Convert to lowercase for case-insensitive matching, but preserve original case in display
-        const lowerText = text.toLowerCase();
-        
-        // Process longest terms first to avoid nested highlights
-        const sortedTerms = [...highlightTerms].sort((a, b) => b.length - a.length);
-        
-        for (const term of sortedTerms) {
-            if (!term || term.length === 0) continue;
-            
-            const lowerTerm = term.toLowerCase();
-            let startIndex = 0;
-            let foundIndex;
-            
-            // Add a wrapper with a highlight class around each occurrence
-            while ((foundIndex = lowerText.indexOf(lowerTerm, startIndex)) !== -1) {
-                // Get the actual case-preserved substring from the original text
-                const matchedText = text.substring(foundIndex, foundIndex + term.length);
-                
-                // Replace with highlighted version using a temporary placeholder to avoid issues with multiple replacements
-                const placeholder = `__HIGHLIGHT${foundIndex}__`;
-                highlightedText = highlightedText.substring(0, foundIndex) + 
-                                  placeholder + 
-                                  highlightedText.substring(foundIndex + matchedText.length);
-                
-                // Move past this occurrence
-                startIndex = foundIndex + placeholder.length;
-            }
-        }
-        
-        // Replace all placeholders with the actual highlighted HTML
-        for (let i = 0; i < text.length; i++) {
-            const placeholder = `__HIGHLIGHT${i}__`;
-            if (highlightedText.includes(placeholder)) {
-                // Get the original text at this position
-                const originalText = text.substring(i, i + 1);
-                // Replace with highlighted version
-                highlightedText = highlightedText.replace(
-                    placeholder, 
-                    `<span style="background-color: #FFEB3B; font-weight: bold;">${originalText}</span>`
-                );
-            }
-        }
-        
-        return highlightedText;
-    };
-    
-    // Highlight relevant fields
-    const highlightedName = highlightText(clinic.name);
-    const highlightedAddress = highlightText(address);
-    const highlightedCity = highlightText(city);
-    
-    card.innerHTML = `
-        <div class="clinic-info" style="width: 100%;">
-            <h3 style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #333;">${highlightedName}</h3>
-            
-            <div style="display: flex; align-items: center; margin-bottom: 15px;">
-                <div style="font-size: 18px; font-weight: bold; color: #333;">${ratingDisplay} <span style="color: #FFD700;">★</span></div>
-                <div style="margin-left: 10px; color: #666;">(${reviewCount} review${reviewCount !== 1 ? 's' : ''})</div>
-            </div>
-            
-            <div style="margin-bottom: 15px;">
-                <div style="margin-bottom: 8px;">
-                    <div style="font-weight: bold; display: inline;">Address:</div>
-                    <div style="display: inline-block; margin-left: 5px; color: #333;">${highlightedAddress}</div>
-                </div>
-                
-                <div style="margin-bottom: 8px;">
-                    <div style="font-weight: bold; display: inline;">Phone:</div>
-                    <div style="display: inline-block; margin-left: 5px; color: #333;">${phoneDisplay}</div>
-                </div>
-                
-                <div style="margin-bottom: 8px;">
-                    <div style="font-weight: bold; display: inline;">City:</div>
-                    <div style="display: inline-block; margin-left: 5px; color: #333;">${highlightedCity}</div>
-                </div>
-            </div>
-            
-            <div>
-                ${websiteUrl ? `<a href="${websiteUrl}" target="_blank" style="display: inline-block; background-color: #4F46E5; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; font-weight: bold;">Visit Website</a>` : 
-                             `<span style="color: #888; font-style: italic;">No Website Available</span>`}
-            </div>
-        </div>
-    `;
-    
-    return card;
+    console.log('All clinic cards added to container [DEBUG]');
 }
 
 // Generate star rating HTML (simplified version for the filter/sort UI)
@@ -966,7 +934,7 @@ function updateNeighborhoodsList(businessData) {
         const cityLink = document.createElement('a');
         // Create URL-friendly city name
         const urlFriendlyCity = city.name.toLowerCase().replace(/\s+/g, '-');
-        cityLink.href = `neighborhoods/${encodeURIComponent(urlFriendlyCity)}`;
+        cityLink.href = `areas/${encodeURIComponent(urlFriendlyCity)}`;
         cityLink.className = 'city-link';
         cityLink.dataset.city = city.name;
         cityLink.style.padding = '8px 16px';
@@ -1019,11 +987,11 @@ function updateNeighborhoodsList(businessData) {
         const selectedCity = this.value;
         if (selectedCity === '') {
             // Show all clinics
-            window.location.href = 'neighborhoods.html';
+            window.location.href = 'index.html';
         } else {
             // Go to the city page using the new URL structure
             const urlFriendlyCity = selectedCity.toLowerCase().replace(/\s+/g, '-');
-            window.location.href = `neighborhoods/${encodeURIComponent(urlFriendlyCity)}`;
+            window.location.href = `areas/${encodeURIComponent(urlFriendlyCity)}`;
         }
     });
     
@@ -1150,40 +1118,83 @@ function resetClinicFilters() {
 
 // Load clinics for a specific neighborhood
 function loadNeighborhoodClinics() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const neighborhood = urlParams.get('name');
+    console.log('loadNeighborhoodClinics called [DEBUG]');
     
-    if (!neighborhood) {
-        window.location.href = 'index.html';
+    // Extract the area name from the URL path instead of a query parameter
+    let areaName = '';
+    
+    // Check if we're on an area page (both 'areas' and 'area' paths)
+    if (window.location.pathname.includes('/areas/') || window.location.pathname.includes('/area/')) {
+        // Extract the area name from the path
+        const pathParts = window.location.pathname.split('/');
+        console.log('Path parts:', pathParts, '[DEBUG]');
+        
+        const areaIndex = pathParts.indexOf('areas') + 1 || pathParts.indexOf('area') + 1;
+        console.log('Area index:', areaIndex, '[DEBUG]');
+        
+        if (areaIndex > 0 && areaIndex < pathParts.length) {
+            areaName = decodeURIComponent(pathParts[areaIndex]);
+            // Convert hyphenated format back to spaces
+            areaName = areaName.replace(/-/g, ' ').trim().replace(/\b\w/g, l => l.toUpperCase());
+            console.log('Extracted area name:', areaName, '[DEBUG]');
+        }
+    } else {
+        // Fallback to the old method using query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        areaName = urlParams.get('name');
+        console.log('Area name from query parameter:', areaName, '[DEBUG]');
+    }
+    
+    if (!areaName) {
+        console.log('No area name found, redirecting to home [DEBUG]');
+        window.location.href = '/';
         return;
     }
     
-    // Update page title with neighborhood name
-    const pageTitle = document.getElementById('neighborhood-title');
+    // Update page title with area name
+    const pageTitle = document.getElementById('neighborhood-title') || document.getElementById('area-title');
     if (pageTitle) {
-        pageTitle.textContent = neighborhood;
+        pageTitle.textContent = areaName;
+        console.log('Updated page title to:', areaName, '[DEBUG]');
     }
     
-    // Filter businesses by neighborhood
-    const clinics = window.filteredBusinesses.filter(business => 
-        business.neighborhood === neighborhood
-    );
+    // Check if filteredBusinesses is defined
+    if (!window.filteredBusinesses) {
+        console.error('filteredBusinesses is not defined! [DEBUG]');
+        return;
+    }
     
-    // Display clinics
-    const clinicsContainer = document.getElementById('neighborhood-clinics');
-    if (clinicsContainer) {
-        clinicsContainer.innerHTML = '';
-        
-        if (clinics.length === 0) {
-            clinicsContainer.innerHTML = '<p class="no-results">No clinics found in this neighborhood.</p>';
-            return;
+    console.log('Total businesses before filtering:', window.filteredBusinesses.length, '[DEBUG]');
+    
+    // Filter businesses by neighborhood/area
+    // Improved matching to handle more flexible naming
+    const areaNameLower = areaName.toLowerCase();
+    const clinics = window.filteredBusinesses.filter(business => {
+        // Direct match with city or neighborhood
+        if ((business.city && business.city.toLowerCase() === areaNameLower) || 
+            (business.neighborhood && business.neighborhood.toLowerCase() === areaNameLower)) {
+            return true;
         }
         
-        // Create and append clinic cards
-        clinics.forEach(clinic => {
-            const clinicCard = createClinicCard(clinic);
-            clinicsContainer.appendChild(clinicCard);
-        });
+        // Check if the address contains the area name
+        if (business.address && business.address.toLowerCase().includes(areaNameLower)) {
+            return true;
+        }
+        
+        return false;
+    });
+    
+    console.log('Found', clinics.length, 'clinics for', areaName, '[DEBUG]');
+    
+    // Display clinics
+    const clinicsContainer = document.getElementById('neighborhood-clinics') || document.getElementById('area-clinics');
+    if (clinicsContainer) {
+        console.log('Found clinics container with ID:', clinicsContainer.id, '[DEBUG]');
+        
+        // Use the displayClinics function instead of creating cards manually
+        displayClinics(clinics, clinicsContainer);
+    } else {
+        console.error('Could not find clinics container! [DEBUG]');
     }
 }
 
@@ -1283,8 +1294,9 @@ function populateAreasDropdown(businessData) {
         return a.localeCompare(b);
     });
     
-    // Check if we're on the neighborhoods page
+    // Check if we're on the neighborhoods page or areas page
     const isAreasPage = window.location.pathname.includes('neighborhoods') || 
+                        window.location.pathname.includes('areas/') ||
                         window.location.pathname.includes('area/');
     
     // Determine the base path
@@ -1300,9 +1312,9 @@ function populateAreasDropdown(businessData) {
         
         // Add .html extension for local development
         if (isLocalDev) {
-            link.href = `${basePath}area/${encodeURIComponent(urlFriendlyCity)}/index.html`;
+            link.href = `${basePath}areas/${encodeURIComponent(urlFriendlyCity)}/index.html`;
         } else {
-            link.href = `${basePath}area/${encodeURIComponent(urlFriendlyCity)}/`;
+            link.href = `${basePath}areas/${encodeURIComponent(urlFriendlyCity)}/`;
         }
         
         link.textContent = city;

@@ -5,30 +5,30 @@ RewriteEngine On
 RewriteBase /
 
 # Redirect old neighborhood URLs to new area URLs
-# Example: /neighborhoods/beverly-hills.html to /area/beverly-hills/
-RewriteRule ^neighborhoods/([^/]+)\.html$ /area/$1/ [R=301,L]
+# Example: /neighborhoods/beverly-hills.html to /areas/beverly-hills/
+RewriteRule ^neighborhoods/([^/]+)\.html$ /areas/$1/ [R=301,L]
 
 # Handle areas without trailing slash
-# Example: /area/beverly-hills to /area/beverly-hills/
-RewriteRule ^area/([^/]+)$ /area/$1/ [R=301,L]
+# Example: /areas/beverly-hills to /areas/beverly-hills/
+RewriteRule ^areas/([^/]+)$ /areas/$1/ [R=301,L]
 
 # Handle URLs without index.html
-# Example: /area/beverly-hills/ to /area/beverly-hills/index.html
+# Example: /areas/beverly-hills/ to /areas/beverly-hills/index.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^area/([^/]+)/$ area/$1/index.html [L]
+RewriteRule ^areas/([^/]+)/$ areas/$1/index.html [L]
 
 # Preserve query parameters
 RewriteCond %{QUERY_STRING} ^area=([^&]+)$
-RewriteRule ^neighborhoods\.html$ /area/%1/? [R=301,L]
+RewriteRule ^neighborhoods\.html$ /areas/%1/? [R=301,L]
 
-# Redirect neighborhood.html?area=xyz to area/xyz/
+# Redirect neighborhood.html?area=xyz to areas/xyz/
 RewriteCond %{QUERY_STRING} ^area=([^&]+)$
-RewriteRule ^neighborhoods\.html$ /area/%1/? [R=301,L]
+RewriteRule ^neighborhoods\.html$ /areas/%1/? [R=301,L]
 
-# Redirect old areas URLs to new area URLs
-RewriteRule ^areas/([^/]+)/$ /area/$1/ [R=301,L]
-RewriteRule ^areas/([^/]+)$ /area/$1/ [R=301,L]
+# Redirect old area URLs to new areas URLs
+RewriteRule ^area/([^/]+)/$ /areas/$1/ [R=301,L]
+RewriteRule ^area/([^/]+)$ /areas/$1/ [R=301,L]
 
 # Remove trailing slashes
 RewriteCond %{REQUEST_FILENAME} !-d

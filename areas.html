@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Los Angeles SMP Areas | Hair Tattoo Directory</title>
+    <meta name="description" content="Browse scalp micropigmentation clinics in Los Angeles by area. Find top-rated SMP providers in your neighborhood.">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="canonical" href="https://smpclinicsla.com/areas.html">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold">SMP Hair Tattoo</a>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html" class="hover:text-blue-200 transition">Home</a>
+                    
+                    <!-- Areas Dropdown -->
+                    <div class="dropdown">
+                        <a href="areas.html" class="font-semibold border-b-2 border-white">Areas ▾</a>
+                        <div id="areas-dropdown" class="dropdown-content">
+                            <!-- Areas will be populated by JavaScript -->
+                            <div class="text-center py-2 text-gray-500 text-sm">Loading areas...</div>
+                        </div>
+                    </div>
+                    
+                    <a href="about.html" class="hover:text-blue-200 transition">About SMP</a>
+                </nav>
+                <button id="mobile-menu-button" class="md:hidden bg-blue-700 text-white p-2 rounded">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile menu (hidden by default) -->
+            <div id="mobile-menu" class="md:hidden hidden pt-4 pb-2">
+                <a href="index.html" class="block py-2 hover:text-blue-200 transition">Home</a>
+                <a href="areas.html" class="block py-2 font-semibold">Areas</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Areas Hero Section -->
+    <section class="py-16 bg-gradient-to-b from-blue-900 to-indigo-900 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">SMP Clinics by Los Angeles Area</h1>
+            <p class="text-xl max-w-3xl mx-auto">
+                Browse top-rated scalp micropigmentation providers throughout Los Angeles County. Find SMP clinics near you by selecting your area.
+            </p>
+        </div>
+    </section>
+
+    <!-- Areas List Section -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-12 text-center">All Los Angeles Areas</h2>
+            <div id="areas-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Areas will be loaded here via JavaScript -->
+                <p id="loading-message" class="text-center py-8 col-span-full">Loading areas...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose By Area Section -->
+    <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold mb-8 text-center">Why Choose a Local SMP Provider?</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-3">Convenience</h3>
+                    <p class="text-gray-600">
+                        Choose a clinic close to home to simplify follow-up appointments and reduce travel time. SMP typically requires 2-3 sessions for optimal results.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-3">Local Knowledge</h3>
+                    <p class="text-gray-600">
+                        Local providers understand the LA lifestyle and can create styles that complement the unique Southern California aesthetic.
+                    </p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-3">Community Reputation</h3>
+                    <p class="text-gray-600">
+                        Area-specific clinics build their reputation within local communities, often leading to more personalized care and accountability.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Column 1: About -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo</h3>
+                    <p class="text-gray-300">
+                        The premier resource for Scalp Micropigmentation clinics in Los Angeles. 
+                        Find top-rated SMP providers and restore your confidence.
+                    </p>
+                </div>
+                
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
+                        <li><a href="areas.html" class="hover:text-white transition">Areas</a></li>
+                        <li><a href="about.html" class="hover:text-white transition">About SMP</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm">
+                <p>&copy; 2023 SMP Hair Tattoo Directory. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle mobile menu
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Load all areas for main listing
+            fetchBusinessData().then(function() {
+                populateAreasDropdown();
+                
+                // Create areas list
+                const areasListContainer = document.getElementById('areas-list');
+                const loadingMessage = document.getElementById('loading-message');
+                const uniqueAreas = {};
+                
+                // Count businesses in each area
+                allBusinesses.forEach(function(business) {
+                    // Skip if city is unknown or undefined
+                    const city = business.city || 'Unknown Area';
+                    if (city !== 'Unknown Area') {
+                        if (!uniqueAreas[city]) {
+                            uniqueAreas[city] = 0;
+                        }
+                        uniqueAreas[city]++;
+                    }
+                });
+                
+                // Convert to array and sort by count
+                const sortedAreas = Object.keys(uniqueAreas).map(function(area) {
+                    return { name: area, count: uniqueAreas[area] };
+                }).sort(function(a, b) {
+                    // Sort by count (descending) and then alphabetically
+                    if (b.count !== a.count) {
+                        return b.count - a.count;
+                    }
+                    return a.name.localeCompare(b.name);
+                });
+                
+                // Remove loading message
+                if (loadingMessage) {
+                    loadingMessage.remove();
+                }
+                
+                // Create links for each area
+                sortedAreas.forEach(function(area) {
+                    const urlFriendlyName = area.name.toLowerCase().replace(/\s+/g, '-');
+                    const areaLink = document.createElement('a');
+                    areaLink.href = `areas/${encodeURIComponent(urlFriendlyName)}/`;
+                    areaLink.className = 'bg-white hover:bg-blue-50 p-4 rounded-lg shadow-md transition flex flex-col items-center text-center';
+                    
+                    areaLink.innerHTML = `
+                        <h3 class="font-semibold text-lg text-blue-800">${area.name}</h3>
+                        <p class="text-gray-600 text-sm mt-1">${area.count} clinic${area.count !== 1 ? 's' : ''}</p>
+                    `;
+                    
+                    areasListContainer.appendChild(areaLink);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
