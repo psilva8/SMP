@@ -12,6 +12,12 @@ RewriteRule ^neighborhoods/([^/]+)\.html$ /areas/$1/ [R=301,L]
 # Example: /areas/beverly-hills to /areas/beverly-hills/
 RewriteRule ^areas/([^/]+)$ /areas/$1/ [R=301,L]
 
+# Redirect singular area URLs to plural areas URLs
+# Example: /area/beverly-hills/ to /areas/beverly-hills/
+RewriteRule ^area/([^/]+)/$ /areas/$1/ [R=301,L]
+RewriteRule ^area/([^/]+)$ /areas/$1/ [R=301,L]
+RewriteRule ^area/?$ /areas/ [R=301,L]
+
 # Handle URLs without index.html
 # Example: /areas/beverly-hills/ to /areas/beverly-hills/index.html
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -25,10 +31,6 @@ RewriteRule ^neighborhoods\.html$ /areas/%1/? [R=301,L]
 # Redirect neighborhood.html?area=xyz to areas/xyz/
 RewriteCond %{QUERY_STRING} ^area=([^&]+)$
 RewriteRule ^neighborhoods\.html$ /areas/%1/? [R=301,L]
-
-# Redirect old area URLs to new areas URLs
-RewriteRule ^area/([^/]+)/$ /areas/$1/ [R=301,L]
-RewriteRule ^area/([^/]+)$ /areas/$1/ [R=301,L]
 
 # Remove trailing slashes
 RewriteCond %{REQUEST_FILENAME} !-d

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Extract the area name from the URL path
+            let areaName = '';
+            
+            if (window.location.pathname.includes('/area/')) {
+                // Extract the area name from the path
+                const pathParts = window.location.pathname.split('/');
+                console.log('Path parts:', pathParts);
+                
+                const areaIndex = pathParts.indexOf('area') + 1;
+                console.log('Area index:', areaIndex);
+                
+                if (areaIndex > 0 && areaIndex < pathParts.length) {
+                    areaName = pathParts[areaIndex];
+                    console.log('Extracted area name:', areaName);
+                    
+                    // Redirect to the areas URL
+                    window.location.href = '/areas/' + areaName + '/';
+                } else {
+                    // If no area name is found, redirect to home
+                    window.location.href = '/';
+                }
+            } else {
+                // If not on an area page, redirect to home
+                window.location.href = '/';
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Redirecting to the correct page...</h1>
+    <p>If you are not redirected automatically, please click <a id="redirect-link" href="/">here</a>.</p>
+    
+    <script>
+        // Update the redirect link
+        document.addEventListener('DOMContentLoaded', function() {
+            const redirectLink = document.getElementById('redirect-link');
+            if (redirectLink && window.location.pathname.includes('/area/')) {
+                const pathParts = window.location.pathname.split('/');
+                const areaIndex = pathParts.indexOf('area') + 1;
+                
+                if (areaIndex > 0 && areaIndex < pathParts.length) {
+                    const areaName = pathParts[areaIndex];
+                    redirectLink.href = '/areas/' + areaName + '/';
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

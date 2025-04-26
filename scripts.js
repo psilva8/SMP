@@ -1129,11 +1129,16 @@ function loadNeighborhoodClinics() {
         const pathParts = window.location.pathname.split('/');
         console.log('Path parts:', pathParts, '[DEBUG]');
         
-        const areaIndex = pathParts.indexOf('areas') + 1 || pathParts.indexOf('area') + 1;
-        console.log('Area index:', areaIndex, '[DEBUG]');
+        // Find the index of either 'areas' or 'area' in the path
+        const areasIndex = pathParts.indexOf('areas');
+        const areaIndex = pathParts.indexOf('area');
         
-        if (areaIndex > 0 && areaIndex < pathParts.length) {
-            areaName = decodeURIComponent(pathParts[areaIndex]);
+        // Use whichever index is found (prefer 'areas' if both are present)
+        const indexToUse = areasIndex > -1 ? areasIndex + 1 : areaIndex + 1;
+        console.log('Index to use:', indexToUse, '[DEBUG]');
+        
+        if (indexToUse > 0 && indexToUse < pathParts.length) {
+            areaName = decodeURIComponent(pathParts[indexToUse]);
             // Convert hyphenated format back to spaces
             areaName = areaName.replace(/-/g, ' ').trim().replace(/\b\w/g, l => l.toUpperCase());
             console.log('Extracted area name:', areaName, '[DEBUG]');
