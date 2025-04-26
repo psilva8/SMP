@@ -219,6 +219,30 @@
                     });
                 }
             });
+            
+            // Check if there's a specific neighborhood in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const area = urlParams.get('area');
+            
+            if (area) {
+                // Convert to URL-friendly format
+                const urlFriendlyArea = area.toLowerCase().replace(/\s+/g, '-');
+                // Redirect to the new URL structure
+                window.location.href = `areas/${encodeURIComponent(urlFriendlyArea)}/`;
+            }
+            
+            // For old URLs like /neighborhoods/beverly-hills.html
+            const path = window.location.pathname;
+            const pathParts = path.split('/').filter(part => part);
+            
+            if (pathParts.length >= 2 && pathParts[0] === 'neighborhoods' && pathParts[1] && pathParts[1] !== 'neighborhoods.html') {
+                // Extract the neighborhood name from the path
+                const neighborhoodFile = pathParts[1];
+                // Remove the .html extension if present
+                const neighborhoodName = neighborhoodFile.replace('.html', '');
+                // Redirect to the new URL structure
+                window.location.href = `/areas/${neighborhoodName}/`;
+            }
         });
     </script>
 </body>

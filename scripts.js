@@ -1,19 +1,14 @@
 // Global variables
 let allBusinesses = [];
 let filteredBusinesses = [];
-let searchAnalytics = {};
 
 // Document ready function
 document.addEventListener('DOMContentLoaded', function() {
-    // Load search analytics
-    loadSearchAnalytics();
-    
     fetchBusinessData();
-    handleSearch();
     
-    // If on search results page, load the search results
+    // If on search.html page, load all clinics
     if (window.location.pathname.includes('search.html')) {
-        loadSearchResults();
+        displayAllClinics(window.filteredBusinesses || []);
     }
 });
 
@@ -938,7 +933,9 @@ function updateNeighborhoodsList(businessData) {
     const topCities = citiesList.slice(0, 10);
     topCities.forEach(city => {
         const cityLink = document.createElement('a');
-        cityLink.href = `area.html?area=${encodeURIComponent(city.name)}`;
+        // Create URL-friendly city name
+        const urlFriendlyCity = city.name.toLowerCase().replace(/\s+/g, '-');
+        cityLink.href = `neighborhoods/${encodeURIComponent(urlFriendlyCity)}`;
         cityLink.className = 'city-link';
         cityLink.dataset.city = city.name;
         cityLink.style.padding = '8px 16px';
@@ -993,8 +990,9 @@ function updateNeighborhoodsList(businessData) {
             // Show all clinics
             window.location.href = 'neighborhoods.html';
         } else {
-            // Go to the city page
-            window.location.href = `area.html?area=${encodeURIComponent(selectedCity)}`;
+            // Go to the city page using the new URL structure
+            const urlFriendlyCity = selectedCity.toLowerCase().replace(/\s+/g, '-');
+            window.location.href = `neighborhoods/${encodeURIComponent(urlFriendlyCity)}`;
         }
     });
     
@@ -1287,12 +1285,12 @@ function populateAreasDropdown(businessData) {
             
             // Determine proper relative path based on current page
             let basePath = '';
-            if (window.location.pathname.includes('/neighborhoods/')) {
+            if (window.location.pathname.includes('/areas/') || window.location.pathname.includes('/neighborhoods/')) {
                 // We're already in a subdirectory, need to go up one level
-                basePath = '../neighborhoods/';
+                basePath = '../areas/';
             } else {
                 // We're at the root level
-                basePath = 'neighborhoods/';
+                basePath = 'areas/';
             }
             
             cityLink.href = `${basePath}${encodeURIComponent(urlFriendlyCity)}`;
@@ -1363,7 +1361,7 @@ function populateNeighborhoodMap(businessData) {
         const urlFriendlyName = neighborhood.name.toLowerCase().replace(/\s+/g, '-');
         
         const link = document.createElement('a');
-        link.href = `neighborhoods/${encodeURIComponent(urlFriendlyName)}`;
+        link.href = `areas/${encodeURIComponent(urlFriendlyName)}`;
         link.className = 'neighborhood-item bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all flex justify-between items-center';
         
         // Add neighborhood name and count
@@ -1380,48 +1378,4 @@ function populateNeighborhoodMap(businessData) {
         
         mapContainer.appendChild(link);
     });
-}
-
-// Track search queries for analytics
-function trackSearch(query) {
-    if (!query || query.trim() === '') return;
-    
-    // Normalize query
-    const normalizedQuery = query.toLowerCase().trim();
-    
-    // Initialize if not exists
-    if (!searchAnalytics[normalizedQuery]) {
-        searchAnalytics[normalizedQuery] = {
-            count: 0,
-            results: 0,
-            lastSearched: new Date().toISOString()
-        };
-    }
-    
-    // Update analytics
-    searchAnalytics[normalizedQuery].count++;
-    searchAnalytics[normalizedQuery].lastSearched = new Date().toISOString();
-    
-    // Store in localStorage for persistence
-    try {
-        localStorage.setItem('smp_search_analytics', JSON.stringify(searchAnalytics));
-    } catch (e) {
-        console.error('Failed to save search analytics to localStorage:', e);
-    }
-    
-    // Log for debugging
-    console.log('Search tracked:', normalizedQuery, searchAnalytics[normalizedQuery]);
-}
-
-// Load search analytics from localStorage
-function loadSearchAnalytics() {
-    try {
-        const savedAnalytics = localStorage.getItem('smp_search_analytics');
-        if (savedAnalytics) {
-            searchAnalytics = JSON.parse(savedAnalytics);
-            console.log('Loaded search analytics:', Object.keys(searchAnalytics).length, 'entries');
-        }
-    } catch (e) {
-        console.error('Failed to load search analytics from localStorage:', e);
-    }
 }

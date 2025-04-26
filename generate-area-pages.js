@@ -2,115 +2,91 @@
 const fs = require('fs');
 const path = require('path');
 
+// Read the business data
+const businessDataPath = path.join(__dirname, 'Outscraper-20250423020658xs04_micropigmentation_+1.json');
+const businessData = JSON.parse(fs.readFileSync(businessDataPath, 'utf8'));
+
 // Read the area template
-const templatePath = path.join(__dirname, 'area.html');
-const template = fs.readFileSync(templatePath, 'utf8');
+const areaTemplatePath = path.join(__dirname, 'area.html');
+let areaTemplate = fs.readFileSync(areaTemplatePath, 'utf8');
 
-// Read the JSON data file to get all areas
-const dataPath = path.join(__dirname, 'Outscraper-20250423020658xs04_micropigmentation_+1.json');
-const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
-
-// Extract unique areas (neighborhoods and cities)
+// Extract unique areas from the data
 const areas = new Set();
 
-data.forEach(business => {
-    // Check if business is permanently closed
-    if (business.permanently_closed === true || business.business_status === "CLOSED_PERMANENTLY") {
-        return;
-    }
-    
+businessData.forEach(business => {
     // Add city if available
-    if (business.city && business.city.trim() !== '') {
-        areas.add(business.city.trim());
+    if (business.city && business.city !== '' && business.city !== 'Unknown Area') {
+        areas.add(business.city);
     }
     
-    // Try to extract city from address if not directly available
-    if (!business.city && (business.address || business.full_address || business.formatted_address)) {
-        const address = business.address || business.full_address || business.formatted_address;
-        const cityMatch = address ? address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/) : null;
-        if (cityMatch && cityMatch[1]) {
-            areas.add(cityMatch[1].trim());
-        }
-    }
-    
-    // Extract neighborhood if available
-    const neighborhood = extractNeighborhood(business.address || business.full_address || '');
-    if (neighborhood && neighborhood !== 'Unknown Area') {
-        areas.add(neighborhood);
+    // Add neighborhood if available and not Unknown
+    if (business.neighborhood && business.neighborhood !== 'Unknown Area') {
+        areas.add(business.neighborhood);
     }
 });
 
-// Helper function to extract neighborhood from address
-function extractNeighborhood(address) {
-    if (!address) return "Unknown Area";
+console.log(`Found ${areas.size} unique areas`);
+
+// Create the areas directory if it doesn't exist
+const areasDir = path.join(__dirname, 'areas');
+if (!fs.existsSync(areasDir)) {
+    fs.mkdirSync(areasDir);
+}
+
+// Create a directory and index.html file for each area
+areas.forEach(area => {
+    // Create URL-friendly area name
+    const urlFriendlyArea = area.toLowerCase().replace(/\s+/g, '-');
     
-    // Look for neighborhood patterns in the address
-    const parts = address.split(',').map(part => part.trim());
-    
-    // If we have multiple parts, the second to last is often the city
-    if (parts.length >= 2) {
-        // Check for city districts or neighborhoods
-        const cityPart = parts[parts.length - 2];
-        
-        // Check for neighborhood patterns like "Downtown Los Angeles" or "North Berkeley"
-        const neighborhoodPatterns = [
-            /\b(north|south|east|west|downtown|uptown|central|old)\s+\w+/i,
-            /\b(heights|hills|park|valley|village|district|vista)\b/i
-        ];
-        
-        for (const pattern of neighborhoodPatterns) {
-            const match = cityPart.match(pattern);
-            if (match) return match[0];
-        }
-        
-        // If no specific neighborhood, return the city
-        return cityPart;
+    // Create the area directory
+    const areaDir = path.join(areasDir, urlFriendlyArea);
+    if (!fs.existsSync(areaDir)) {
+        fs.mkdirSync(areaDir);
     }
     
-    return "Unknown Area";
-}
-
-// Create directories if they don't exist
-const neighborhoodsDir = path.join(__dirname, 'neighborhoods');
-if (!fs.existsSync(neighborhoodsDir)) {
-    fs.mkdirSync(neighborhoodsDir);
-}
-
-// Convert Set to array and sort alphabetically
-const sortedAreas = Array.from(areas).sort();
-
-// Generate page for each area
-console.log(`Generating pages for ${sortedAreas.length} areas...`);
-
-sortedAreas.forEach(area => {
-    if (area === 'Unknown Area') return;
+    // Create the index.html file using the template
+    const indexPath = path.join(areaDir, 'index.html');
     
-    // Create URL-friendly filename
-    const urlFriendlyName = area.toLowerCase().replace(/\s+/g, '-');
-    const filePath = path.join(neighborhoodsDir, `${urlFriendlyName}.html`);
+    // Replace AREA_NAME with the actual area name
+    let areaContent = areaTemplate;
     
-    // Copy template content
-    let pageContent = template;
+    // Make sure all paths reference the root correctly (../ for each resource)
+    areaContent = areaContent.replace(/href="([^"]*)"/g, (match, p1) => {
+        // Don't modify external URLs or already adjusted paths
+        if (p1.startsWith('http') || p1.startsWith('#') || p1.startsWith('../')) {
+            return match;
+        }
+        
+        // Add ../ to the path
+        return `href="../${p1}"`;
+    });
     
-    // Update meta title and description with area name
-    pageContent = pageContent.replace(
-        /<title>.*?<\/title>/,
-        `<title>SMP Clinics in ${area} | Hair Tattoo Directory</title>`
-    );
+    // Update script sources
+    areaContent = areaContent.replace(/src="([^"]*)"/g, (match, p1) => {
+        // Don't modify external URLs or already adjusted paths
+        if (p1.startsWith('http') || p1.startsWith('../')) {
+            return match;
+        }
+        
+        // Add ../ to the path
+        return `src="../${p1}"`;
+    });
     
-    pageContent = pageContent.replace(
-        /<meta name="description" content=".*?">/,
-        `<meta name="description" content="Find top-rated scalp micropigmentation (SMP) clinics in ${area}, Los Angeles. Compare providers, services, and read reviews.">`
-    );
+    // Update title and metadata
+    areaContent = areaContent.replace(/AREA_NAME/g, area);
+    areaContent = areaContent.replace(/<title>.*?<\/title>/, `<title>SMP Clinics in ${area} | Hair Tattoo Directory</title>`);
     
-    // Write the file
-    fs.writeFileSync(filePath, pageContent);
-    console.log(`Generated: ${filePath}`);
+    // Add canonical URL for SEO
+    const canonicalLink = `<link rel="canonical" href="https://yourdomain.com/areas/${urlFriendlyArea}/" />`;
+    areaContent = areaContent.replace('</head>', `  ${canonicalLink}\n</head>`);
+    
+    fs.writeFileSync(indexPath, areaContent);
+    console.log(`Created ${indexPath}`);
 });
 
-console.log('Area pages generation complete!');
+console.log('Finished generating area pages');
 
 // Instructions for running the script
 console.log('\nTo generate all area pages, run:');
 console.log('node generate-area-pages.js');
-console.log('\nThis will create individual HTML files in the neighborhoods/ directory.'); 
+console.log('\nThis will create individual HTML files in the areas/ directory.'); 

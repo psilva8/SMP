@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Results - SMP Directory</title>
-    <meta name="description" content="Search results for scalp micropigmentation (SMP) and hair tattoo clinics in Los Angeles.">
+    <title>Clinics - SMP Directory</title>
+    <meta name="description" content="View all scalp micropigmentation (SMP) and hair tattoo clinics in Los Angeles.">
     
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -96,36 +96,18 @@
         </div>
     </header>
 
-    <!-- Search Bar Section -->
-    <section class="bg-blue-700 text-white">
-        <div class="container mx-auto px-4 py-8">
-            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
-                <div class="w-full md:w-2/3">
-                    <div class="flex">
-                        <input type="text" id="search-input" class="w-full px-4 py-3 rounded-l-lg text-gray-800 focus:outline-none" placeholder="Search for SMP clinics, neighborhoods, or services...">
-                        <button id="search-button" class="bg-blue-900 hover:bg-blue-800 px-6 py-3 rounded-r-lg transition">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Search Results Section -->
+    <!-- Clinics Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-4 text-center">Search Results</h2>
-            <p id="search-query-display" class="text-center mb-12 text-lg">Showing results for: <span id="search-term" class="font-semibold"></span></p>
+            <h2 class="text-3xl font-bold mb-4 text-center">SMP Clinics Directory</h2>
+            <p class="text-center mb-12 text-lg">Showing all available scalp micropigmentation clinics in Los Angeles</p>
             
             <div id="search-results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Search results will be loaded here via JavaScript -->
-                <p id="loading-message" class="text-center py-8 col-span-full">Loading results...</p>
+                <!-- Clinics will be loaded here via JavaScript -->
+                <p id="loading-message" class="text-center py-8 col-span-full">Loading clinics...</p>
             </div>
             
-            <p id="no-results-message" class="hidden text-center py-8 text-gray-500 text-lg">No results found for your search. Try different keywords or browse our <a href="index.html" class="text-blue-600 hover:underline">top clinics</a>.</p>
+            <p id="no-results-message" class="hidden text-center py-8 text-gray-500 text-lg">No clinics found. Try browsing our <a href="index.html" class="text-blue-600 hover:underline">top clinics</a>.</p>
         </div>
     </section>
 
@@ -171,6 +153,47 @@
     <!-- Add dropdown handler script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Display all clinics instead of search results
+            const loadAllClinics = () => {
+                if (window.filteredBusinesses && window.filteredBusinesses.length > 0) {
+                    const resultsContainer = document.getElementById('search-results-container');
+                    if (resultsContainer) {
+                        resultsContainer.innerHTML = '';
+                        displayClinics(window.filteredBusinesses, resultsContainer);
+                    }
+                    
+                    // Remove the loading message
+                    const loadingMessage = document.getElementById('loading-message');
+                    if (loadingMessage) {
+                        loadingMessage.remove();
+                    }
+                } else {
+                    // If businesses not loaded yet, wait for them
+                    const checkInterval = setInterval(() => {
+                        if (window.filteredBusinesses && window.filteredBusinesses.length > 0) {
+                            clearInterval(checkInterval);
+                            const resultsContainer = document.getElementById('search-results-container');
+                            if (resultsContainer) {
+                                resultsContainer.innerHTML = '';
+                                displayClinics(window.filteredBusinesses, resultsContainer);
+                            }
+                            
+                            // Remove the loading message
+                            const loadingMessage = document.getElementById('loading-message');
+                            if (loadingMessage) {
+                                loadingMessage.remove();
+                            }
+                        }
+                    }, 100);
+                    
+                    // Clear interval after 10 seconds to prevent infinite checking
+                    setTimeout(() => clearInterval(checkInterval), 10000);
+                }
+            };
+            
+            // Call function to load all clinics
+            loadAllClinics();
+            
             // Dropdown handling
             const dropdownButtons = document.querySelectorAll('.dropdown > a');
             

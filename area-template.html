@@ -244,7 +244,7 @@
                         // Show up to 8 nearby areas
                         nearbyAreas.slice(0, 8).forEach(area => {
                             const areaLink = document.createElement('a');
-                            areaLink.href = `area.html?area=${encodeURIComponent(area)}`;
+                            areaLink.href = `areas/${encodeURIComponent(area)}`;
                             areaLink.className = 'bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-lg transition';
                             areaLink.textContent = area;
                             nearbyContainer.appendChild(areaLink);
