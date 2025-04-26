@@ -228,7 +228,7 @@
                 // Convert to URL-friendly format
                 const urlFriendlyArea = area.toLowerCase().replace(/\s+/g, '-');
                 // Redirect to the new URL structure
-                window.location.href = `areas/${encodeURIComponent(urlFriendlyArea)}/`;
+                window.location.href = `area/${encodeURIComponent(urlFriendlyArea)}/`;
             }
             
             // For old URLs like /neighborhoods/beverly-hills.html
@@ -241,7 +241,7 @@
                 // Remove the .html extension if present
                 const neighborhoodName = neighborhoodFile.replace('.html', '');
                 // Redirect to the new URL structure
-                window.location.href = `/areas/${neighborhoodName}/`;
+                window.location.href = `/area/${neighborhoodName}/`;
             }
         });
     </script>

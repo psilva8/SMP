@@ -27,10 +27,10 @@ businessData.forEach(business => {
 
 console.log(`Found ${areas.size} unique areas`);
 
-// Create the areas directory if it doesn't exist
-const areasDir = path.join(__dirname, 'areas');
-if (!fs.existsSync(areasDir)) {
-    fs.mkdirSync(areasDir);
+// Create the area directory if it doesn't exist
+const areaDir = path.join(__dirname, 'area');
+if (!fs.existsSync(areaDir)) {
+    fs.mkdirSync(areaDir);
 }
 
 // Create a directory and index.html file for each area
@@ -39,13 +39,13 @@ areas.forEach(area => {
     const urlFriendlyArea = area.toLowerCase().replace(/\s+/g, '-');
     
     // Create the area directory
-    const areaDir = path.join(areasDir, urlFriendlyArea);
-    if (!fs.existsSync(areaDir)) {
-        fs.mkdirSync(areaDir);
+    const specificAreaDir = path.join(areaDir, urlFriendlyArea);
+    if (!fs.existsSync(specificAreaDir)) {
+        fs.mkdirSync(specificAreaDir);
     }
     
     // Create the index.html file using the template
-    const indexPath = path.join(areaDir, 'index.html');
+    const indexPath = path.join(specificAreaDir, 'index.html');
     
     // Replace AREA_NAME with the actual area name
     let areaContent = areaTemplate;
@@ -77,7 +77,7 @@ areas.forEach(area => {
     areaContent = areaContent.replace(/<title>.*?<\/title>/, `<title>SMP Clinics in ${area} | Hair Tattoo Directory</title>`);
     
     // Add canonical URL for SEO
-    const canonicalLink = `<link rel="canonical" href="https://yourdomain.com/areas/${urlFriendlyArea}/" />`;
+    const canonicalLink = `<link rel="canonical" href="https://yourdomain.com/area/${urlFriendlyArea}/" />`;
     areaContent = areaContent.replace('</head>', `  ${canonicalLink}\n</head>`);
     
     fs.writeFileSync(indexPath, areaContent);
@@ -89,4 +89,4 @@ console.log('Finished generating area pages');
 // Instructions for running the script
 console.log('\nTo generate all area pages, run:');
 console.log('node generate-area-pages.js');
-console.log('\nThis will create individual HTML files in the areas/ directory.'); 
+console.log('\nThis will create individual HTML files in the area/ directory.'); 

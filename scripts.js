@@ -1227,76 +1227,45 @@ function updateServiceTypesList(businessData) {
 
 // Populate the areas dropdown in the navigation menu
 function populateAreasDropdown(businessData) {
-    const dropdowns = document.querySelectorAll('#areas-dropdown');
-    if (!dropdowns.length) return;
+    // Get the areas dropdown element
+    const areasDropdown = document.getElementById('areas-dropdown');
+    if (!areasDropdown) return;
     
-    // Extract cities from business data
+    // Clear any existing content
+    areasDropdown.innerHTML = '';
+    
+    // Get all unique cities from the business data
     const cities = {};
-    
     businessData.forEach(business => {
-        let city = '';
-        
-        // Try to extract city from address fields
-        if (business.city) {
-            // Direct city field
-            city = business.city;
-        } else if (business.address || business.full_address || business.formatted_address) {
-            // Try to extract from address string
-            const address = business.address || business.full_address || business.formatted_address;
-            const cityMatch = address ? address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/) : null;
-            if (cityMatch && cityMatch[1]) {
-                city = cityMatch[1].trim();
-            }
-        }
-        
-        if (city && city !== '') {
-            if (!cities[city]) {
-                cities[city] = 0;
-            }
-            cities[city]++;
+        if (business.city && business.city !== 'Unknown Area') {
+            cities[business.city] = (cities[business.city] || 0) + 1;
         }
     });
     
-    // Sort cities alphabetically
-    const sortedCities = Object.keys(cities).sort();
+    // Sort cities by count (descending) then alphabetically
+    const sortedCities = Object.keys(cities).sort((a, b) => {
+        // First sort by count (descending)
+        if (cities[b] !== cities[a]) {
+            return cities[b] - cities[a];
+        }
+        // If counts are equal, sort alphabetically
+        return a.localeCompare(b);
+    });
     
-    // Create HTML elements for each dropdown
-    dropdowns.forEach(dropdown => {
-        // Clear loading message
-        dropdown.innerHTML = '';
-        
-        // Add "All Areas" option
-        const allAreasLink = document.createElement('a');
-        allAreasLink.href = 'neighborhoods.html';
-        allAreasLink.textContent = 'All Areas';
-        dropdown.appendChild(allAreasLink);
-        
-        // Add divider
-        const divider = document.createElement('div');
-        divider.className = 'border-t border-gray-200 my-1';
-        dropdown.appendChild(divider);
-        
-        // Add city links with new URL structure
-        sortedCities.forEach(city => {
-            const cityLink = document.createElement('a');
-            
-            // Create URL-friendly version of the city name
-            const urlFriendlyCity = city.toLowerCase().replace(/\s+/g, '-');
-            
-            // Determine proper relative path based on current page
-            let basePath = '';
-            if (window.location.pathname.includes('/areas/') || window.location.pathname.includes('/neighborhoods/')) {
-                // We're already in a subdirectory, need to go up one level
-                basePath = '../areas/';
-            } else {
-                // We're at the root level
-                basePath = 'areas/';
-            }
-            
-            cityLink.href = `${basePath}${encodeURIComponent(urlFriendlyCity)}`;
-            cityLink.textContent = city;
-            dropdown.appendChild(cityLink);
-        });
+    // Check if we're on the neighborhoods page
+    const isAreasPage = window.location.pathname.includes('neighborhoods') || 
+                        window.location.pathname.includes('area/');
+    
+    // Determine the base path
+    const basePath = isAreasPage ? '../' : '';
+    
+    // Add a link for each city
+    sortedCities.forEach(city => {
+        const link = document.createElement('a');
+        const urlFriendlyCity = city.toLowerCase().replace(/\s+/g, '-');
+        link.href = `${basePath}area/${encodeURIComponent(urlFriendlyCity)}/`;
+        link.textContent = city;
+        areasDropdown.appendChild(link);
     });
 }
 
@@ -1320,62 +1289,44 @@ function populateNeighborhoodMap(businessData) {
     const mapContainer = document.getElementById('neighborhood-map-container');
     if (!mapContainer) return;
     
-    // Clear container
+    // Clear the container
     mapContainer.innerHTML = '';
     
-    // Get unique neighborhoods
+    // Get all unique neighborhoods and count occurrences
     const neighborhoods = {};
+    
     businessData.forEach(business => {
-        // Add city to neighborhoods if available
-        if (business.city && business.city !== '' && business.city !== 'Unknown Area') {
-            if (!neighborhoods[business.city]) {
-                neighborhoods[business.city] = 0;
-            }
-            neighborhoods[business.city]++;
+        // Check for city field
+        if (business.city && business.city !== 'Unknown Area') {
+            neighborhoods[business.city] = (neighborhoods[business.city] || 0) + 1;
         }
         
-        // Add neighborhood if available and not Unknown
+        // Check for neighborhood field
         if (business.neighborhood && business.neighborhood !== 'Unknown Area') {
-            if (!neighborhoods[business.neighborhood]) {
-                neighborhoods[business.neighborhood] = 0;
-            }
-            neighborhoods[business.neighborhood]++;
+            neighborhoods[business.neighborhood] = (neighborhoods[business.neighborhood] || 0) + 1;
         }
     });
     
-    // Sort neighborhoods by count and then alphabetically
-    const sortedNeighborhoods = Object.entries(neighborhoods)
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => {
-            // First sort by count (descending)
-            if (b.count !== a.count) {
-                return b.count - a.count;
-            }
-            // Then sort alphabetically
-            return a.name.localeCompare(b.name);
-        });
+    // Convert to array and sort
+    const sortedNeighborhoods = Object.keys(neighborhoods).sort((a, b) => {
+        // First sort by count (descending)
+        if (neighborhoods[b] !== neighborhoods[a]) {
+            return neighborhoods[b] - neighborhoods[a];
+        }
+        // If counts are equal, sort alphabetically
+        return a.localeCompare(b);
+    });
     
-    // Create links for each neighborhood using the new URL format
+    // Create links for each neighborhood
     sortedNeighborhoods.forEach(neighborhood => {
-        // Create URL-friendly neighborhood name
-        const urlFriendlyName = neighborhood.name.toLowerCase().replace(/\s+/g, '-');
-        
+        const urlFriendlyName = neighborhood.toLowerCase().replace(/\s+/g, '-');
         const link = document.createElement('a');
-        link.href = `areas/${encodeURIComponent(urlFriendlyName)}`;
-        link.className = 'neighborhood-item bg-white p-3 rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 hover:shadow-md transition-all flex justify-between items-center';
-        
-        // Add neighborhood name and count
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'font-medium';
-        nameSpan.textContent = neighborhood.name;
-        
-        const countSpan = document.createElement('span');
-        countSpan.className = 'bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded-full';
-        countSpan.textContent = neighborhood.count;
-        
-        link.appendChild(nameSpan);
-        link.appendChild(countSpan);
-        
+        link.href = `area/${encodeURIComponent(urlFriendlyName)}/`;
+        link.className = 'block px-4 py-2 bg-white hover:bg-blue-50 border border-gray-300 rounded-lg transition';
+        link.innerHTML = `
+            <span class="font-medium">${neighborhood}</span>
+            <span class="text-gray-500 text-sm ml-2">(${neighborhoods[neighborhood]} clinics)</span>
+        `;
         mapContainer.appendChild(link);
     });
 }
