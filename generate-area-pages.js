@@ -8,7 +8,12 @@ const businessData = JSON.parse(fs.readFileSync(businessDataPath, 'utf8'));
 
 // Load area template
 const areaTemplatePath = path.join(__dirname, 'area.html');
-const areaTemplate = fs.readFileSync(areaTemplatePath, 'utf8');
+let areaTemplate = fs.readFileSync(areaTemplatePath, 'utf8');
+
+// Fix any placeholders in the template
+areaTemplate = areaTemplate
+    .replace(/{{AREA_NAME}}/g, "Beverly Hills")
+    .replace(/{{AREA_SLUG}}/g, "beverly-hills");
 
 // Extract unique areas from business data
 const uniqueAreas = new Set();
@@ -43,14 +48,17 @@ uniqueAreas.forEach(area => {
     let areaHtml = areaTemplate
         // Update area name in various places
         .replace(/Beverly Hills/g, area)
-        // Update paths for resources to reference root
-        .replace(/src="\/scripts.js"/g, 'src="https://micropigmentationla.com/scripts.js"')
+        // Update paths for resources - ensure absolute URLs without double slashes
+        .replace(/<script src=".*?scripts\.js"><\/script>/, '<script src="https://micropigmentationla.com/scripts.js"></script>')
         // Update title and metadata
         .replace(/<title>.*?<\/title>/, `<title>SMP Clinics in ${area} | Hair Tattoo Directory</title>`)
         .replace(/<meta name="description" content=".*?"/, `<meta name="description" content="Find top-rated scalp micropigmentation (SMP) clinics in ${area}, Los Angeles. Compare providers, services, and reviews."`)
         .replace(/<link rel="canonical" href=".*?"/, `<link rel="canonical" href="https://smpdirectory.com/areas/${urlFriendlyArea}/"`)
         // Add error handling
         .replace(/document\.addEventListener\('DOMContentLoaded', function\(\) {/, `document.addEventListener('DOMContentLoaded', function() {\n            console.log('Area page DOM content loaded');`);
+    
+    // Final check for double slashes in URLs
+    areaHtml = areaHtml.replace(/https:\/\/micropigmentationla\.com\/area\/\/scripts\.js/g, 'https://micropigmentationla.com/scripts.js');
     
     // Write the file to the area directory
     fs.writeFileSync(path.join(areaDir, 'index.html'), areaHtml);
