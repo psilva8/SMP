@@ -1259,11 +1259,21 @@ function populateAreasDropdown(businessData) {
     // Determine the base path
     const basePath = isAreasPage ? '../' : '';
     
+    // Check if we're in local development mode (file:// protocol)
+    const isLocalDev = window.location.protocol === 'file:';
+    
     // Add a link for each city
     sortedCities.forEach(city => {
         const link = document.createElement('a');
         const urlFriendlyCity = city.toLowerCase().replace(/\s+/g, '-');
-        link.href = `${basePath}area/${encodeURIComponent(urlFriendlyCity)}/`;
+        
+        // Add .html extension for local development
+        if (isLocalDev) {
+            link.href = `${basePath}area/${encodeURIComponent(urlFriendlyCity)}/index.html`;
+        } else {
+            link.href = `${basePath}area/${encodeURIComponent(urlFriendlyCity)}/`;
+        }
+        
         link.textContent = city;
         areasDropdown.appendChild(link);
     });
@@ -1317,11 +1327,21 @@ function populateNeighborhoodMap(businessData) {
         return a.localeCompare(b);
     });
     
+    // Check if we're in local development mode (file:// protocol)
+    const isLocalDev = window.location.protocol === 'file:';
+    
     // Create links for each neighborhood
     sortedNeighborhoods.forEach(neighborhood => {
         const urlFriendlyName = neighborhood.toLowerCase().replace(/\s+/g, '-');
         const link = document.createElement('a');
-        link.href = `area/${encodeURIComponent(urlFriendlyName)}/`;
+        
+        // Add .html extension for local development
+        if (isLocalDev) {
+            link.href = `area/${encodeURIComponent(urlFriendlyName)}/index.html`;
+        } else {
+            link.href = `area/${encodeURIComponent(urlFriendlyName)}/`;
+        }
+        
         link.className = 'block px-4 py-2 bg-white hover:bg-blue-50 border border-gray-300 rounded-lg transition';
         link.innerHTML = `
             <span class="font-medium">${neighborhood}</span>

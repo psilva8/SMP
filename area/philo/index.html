@@ -295,10 +295,21 @@
                         // Clear loading message
                         nearbyContainer.innerHTML = '';
                         
+                        // Check if we're in local development mode (file:// protocol)
+                        const isLocalDev = window.location.protocol === 'file:';
+                        
                         // Add area links (limit to 15 to keep it manageable)
                         sortedAreas.slice(0, 15).forEach(area => {
                             const areaLink = document.createElement('a');
-                            areaLink.href = `../area/${encodeURIComponent(area.toLowerCase().replace(/\s+/g, '-'))}`;
+                            const encodedArea = encodeURIComponent(area.toLowerCase().replace(/\s+/g, '-'));
+                            
+                            // Add .html extension for local development
+                            if (isLocalDev) {
+                                areaLink.href = `../area/${encodedArea}/index.html`;
+                            } else {
+                                areaLink.href = `../area/${encodedArea}`;
+                            }
+                            
                             areaLink.className = 'bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-lg transition';
                             areaLink.textContent = area;
                             nearbyContainer.appendChild(areaLink);
