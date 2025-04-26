@@ -6,11 +6,48 @@ let filteredBusinesses = [];
 document.addEventListener('DOMContentLoaded', function() {
     fetchBusinessData();
     
+    // Initialize dropdowns
+    initDropdowns();
+    
     // If on search.html page, load all clinics
     if (window.location.pathname.includes('search.html')) {
         displayAllClinics(window.filteredBusinesses || []);
     }
 });
+
+// Initialize dropdown menus
+function initDropdowns() {
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const dropdownLink = dropdown.querySelector('a');
+        if (dropdownLink) {
+            dropdownLink.addEventListener('click', function(e) {
+                // Prevent navigation to areas.html
+                e.preventDefault();
+                
+                // Toggle the active class
+                dropdown.classList.toggle('active');
+                
+                // Close other dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
+                        otherDropdown.classList.remove('active');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+}
 
 // Handle search functionality
 function handleSearch() {
