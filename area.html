@@ -63,20 +63,20 @@
     <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <a href="../index.html" class="text-2xl font-bold">SMP Hair Tattoo</a>
+                <a href="/" class="text-2xl font-bold">SMP Hair Tattoo</a>
                 <nav class="hidden md:flex space-x-6">
-                    <a href="../index.html" class="hover:text-blue-200 transition">Home</a>
+                    <a href="/" class="hover:text-blue-200 transition">Home</a>
                     
                     <!-- Areas Dropdown -->
                     <div class="dropdown">
-                        <a href="../neighborhoods.html" class="font-semibold border-b-2 border-white">Areas ▾</a>
+                        <a href="/neighborhoods.html" class="font-semibold border-b-2 border-white">Areas ▾</a>
                         <div id="areas-dropdown" class="dropdown-content">
                             <!-- Areas will be populated by JavaScript -->
                             <div class="text-center py-2 text-gray-500 text-sm">Loading areas...</div>
                         </div>
                     </div>
                     
-                    <a href="../about.html" class="hover:text-blue-200 transition">About SMP</a>
+                    <a href="/about.html" class="hover:text-blue-200 transition">About SMP</a>
                 </nav>
                 
                 <!-- Mobile menu button -->
@@ -89,9 +89,9 @@
             
             <!-- Mobile menu (hidden by default) -->
             <div class="md:hidden hidden pt-4 pb-2">
-                <a href="../index.html" class="block py-2 hover:text-blue-200 transition">Home</a>
-                <a href="../neighborhoods.html" class="block py-2 font-semibold">Areas</a>
-                <a href="../about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
+                <a href="/" class="block py-2 hover:text-blue-200 transition">Home</a>
+                <a href="/neighborhoods.html" class="block py-2 font-semibold">Areas</a>
+                <a href="/about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
             </div>
         </div>
     </header>
@@ -159,9 +159,9 @@
                 <div>
                     <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
                     <ul class="space-y-2 text-gray-300">
-                        <li><a href="../index.html" class="hover:text-white transition">Home</a></li>
-                        <li><a href="../neighborhoods.html" class="hover:text-white transition">Areas</a></li>
-                        <li><a href="../about.html" class="hover:text-white transition">About SMP</a></li>
+                        <li><a href="/" class="hover:text-white transition">Home</a></li>
+                        <li><a href="/neighborhoods.html" class="hover:text-white transition">Areas</a></li>
+                        <li><a href="/about.html" class="hover:text-white transition">About SMP</a></li>
                     </ul>
                 </div>
                 
@@ -180,7 +180,7 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="../scripts.js"></script>
+    <script src="/scripts.js"></script>
     
     <!-- Area-specific script -->
     <script>
@@ -304,9 +304,9 @@
                             
                             // Add .html extension for local development
                             if (isLocalDev) {
-                                areaLink.href = `../area/${encodedArea}/index.html`;
+                                areaLink.href = `/area/${encodedArea}/index.html`;
                             } else {
-                                areaLink.href = `../area/${encodedArea}`;
+                                areaLink.href = `/area/${encodedArea}/`;
                             }
                             
                             areaLink.className = 'bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-lg transition';

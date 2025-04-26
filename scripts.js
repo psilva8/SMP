@@ -481,20 +481,35 @@ function displaySearchResults(query) {
 
 // Fetch business data from JSON file
 function fetchBusinessData() {
-    fetch('Outscraper-20250423020658xs04_micropigmentation_+1.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            processBusinessData(data);
-        })
-        .catch(error => {
-            console.error('Error fetching business data:', error);
-            document.getElementById('loading-message').textContent = 'Error loading data. Please try again later.';
-        });
+    return new Promise((resolve, reject) => {
+        // Check for cached data
+        if (window.allBusinesses && window.allBusinesses.length > 0) {
+            resolve(window.allBusinesses);
+            return;
+        }
+        
+        // Use absolute path for the JSON file
+        fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Process the data
+                const processedData = processBusinessData(data);
+                
+                // Cache the data
+                window.allBusinesses = processedData;
+                
+                resolve(processedData);
+            })
+            .catch(error => {
+                console.error('Error fetching business data:', error);
+                reject(error);
+            });
+    });
 }
 
 // Process the raw business data
