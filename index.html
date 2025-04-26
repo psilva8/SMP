@@ -320,11 +320,13 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="scripts.js"></script>
+    <script src="/scripts.js"></script>
     
     <!-- Add dropdown handler script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM content loaded, initializing dropdown handlers');
+            
             // Dropdown handling
             const dropdownButtons = document.querySelectorAll('.dropdown > a');
             
@@ -367,6 +369,14 @@
                     });
                 }
             });
+            
+            // Initialize by loading data
+            if (typeof fetchBusinessData === 'function') {
+                console.log('Calling fetchBusinessData on page load');
+                fetchBusinessData();
+            } else {
+                console.error('fetchBusinessData is not defined');
+            }
         });
     </script>
 </body>

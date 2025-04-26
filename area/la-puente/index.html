@@ -186,60 +186,96 @@
     <!-- Area-specific script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get area name from URL parameter or path
-            let areaName = null;
+            console.log('Area page DOM content loaded');
             
-            // Check if we're on a neighborhood-specific page like /area/beverly-hills/
-            const path = window.location.pathname;
-            const pathParts = path.split('/').filter(part => part);
-            
-            // For URLs like yourdomain.com/area/beverly-hills/
-            if (pathParts.length >= 2 && (pathParts[0] === 'area' || pathParts[0] === 'neighborhoods') && pathParts[1]) {
-                areaName = decodeURIComponent(pathParts[1].replace(/-/g, ' '));
+            // Initialize by loading the data
+            if (!window.allBusinesses || window.allBusinesses.length === 0) {
+                console.log('No cached business data found, fetching data...');
+                if (typeof fetchBusinessData === 'function') {
+                    fetchBusinessData().then(initializeAreaPage).catch(error => {
+                        console.error('Error loading business data:', error);
+                    });
+                } else {
+                    console.error('fetchBusinessData function not found');
+                }
             } else {
-                // Fallback to URL parameter for backward compatibility
-                const urlParams = new URLSearchParams(window.location.search);
-                areaName = urlParams.get('area');
+                console.log('Using cached business data');
+                initializeAreaPage(window.allBusinesses);
             }
             
-            if (areaName) {
-                // Update page content with area name
-                document.title = `SMP Clinics in ${areaName} | Hair Tattoo Directory`;
+            // Function to initialize the area page with business data
+            function initializeAreaPage(businesses) {
+                console.log('Initializing area page with business data:', businesses.length);
                 
-                // Update page metadata for SEO
-                const metaDescription = document.querySelector('meta[name="description"]');
-                if (metaDescription) {
-                    metaDescription.content = `Find the best scalp micropigmentation (SMP) clinics and hair tattoo providers in ${areaName}, Los Angeles. Compare services, prices, and read reviews.`;
+                // Get area name from URL parameter or path
+                let areaName = null;
+                
+                // Check if we're on a neighborhood-specific page like /area/beverly-hills/
+                const path = window.location.pathname;
+                const pathParts = path.split('/').filter(part => part);
+                
+                console.log('Path parts:', pathParts);
+                
+                // For URLs like yourdomain.com/area/beverly-hills/
+                if (pathParts.length >= 2 && (pathParts[0] === 'area' || pathParts[0] === 'neighborhoods') && pathParts[1]) {
+                    areaName = decodeURIComponent(pathParts[1].replace(/-/g, ' '));
+                    console.log('Area name from path:', areaName);
+                } else {
+                    // Fallback to URL parameter for backward compatibility
+                    const urlParams = new URLSearchParams(window.location.search);
+                    areaName = urlParams.get('area');
+                    console.log('Area name from URL parameter:', areaName);
                 }
                 
-                // Update page sections
-                document.getElementById('area-title').textContent = `Scalp Micropigmentation in ${areaName}`;
-                document.getElementById('area-subtitle').textContent = `Find the best SMP clinics and hair tattoo providers in ${areaName}, Los Angeles. Compare services, prices, and read reviews.`;
-                document.getElementById('clinics-title').textContent = `Top SMP Clinics in ${areaName}`;
-                document.getElementById('about-area-title').textContent = `About SMP in ${areaName}`;
-                
-                // Update area description with more detailed, SEO-friendly content
-                const areaDescription = document.getElementById('area-description');
-                areaDescription.innerHTML = `
-                    <p class="mb-4">${areaName} is a sought-after location in the Los Angeles area for high-quality scalp micropigmentation services. The SMP clinics in ${areaName} are known for their skilled practitioners, state-of-the-art equipment, and excellent customer service.</p>
+                if (areaName) {
+                    console.log('Processing area:', areaName);
                     
-                    <p class="mb-4">When choosing an SMP clinic in ${areaName}, we recommend considering several factors: the technician's experience and certification, the clinic's portfolio of before-and-after results, genuine client reviews, the cleanliness of the facility, and their use of quality pigments and equipment.</p>
+                    // Update page content with area name
+                    document.title = `SMP Clinics in ${areaName} | Hair Tattoo Directory`;
                     
-                    <p class="mb-4">Most reputable SMP clinics in ${areaName} offer complimentary consultations where you can discuss your specific hair loss concerns and goals with a qualified practitioner. During this session, you'll have the opportunity to ask questions about the procedure, view examples of their work, and determine if the clinic is the right fit for your needs.</p>
+                    // Update page metadata for SEO
+                    const metaDescription = document.querySelector('meta[name="description"]');
+                    if (metaDescription) {
+                        metaDescription.content = `Find the best scalp micropigmentation (SMP) clinics and hair tattoo providers in ${areaName}, Los Angeles. Compare services, prices, and read reviews.`;
+                    }
                     
-                    <p class="mb-4">Scalp micropigmentation in ${areaName} typically ranges from $2,000 to $4,000, depending on the extent of your hair loss and the number of sessions required. Most clients require 2-3 sessions spaced 10-14 days apart for optimal results.</p>
-                `;
-                
-                // Load area-specific clinics
-                if (window.fetchBusinessData && window.displayClinics) {
-                    fetchBusinessData().then(businesses => {
+                    // Update page sections
+                    document.getElementById('area-title').textContent = `Scalp Micropigmentation in ${areaName}`;
+                    document.getElementById('area-subtitle').textContent = `Find the best SMP clinics and hair tattoo providers in ${areaName}, Los Angeles. Compare services, prices, and read reviews.`;
+                    document.getElementById('clinics-title').textContent = `Top SMP Clinics in ${areaName}`;
+                    document.getElementById('about-area-title').textContent = `About SMP in ${areaName}`;
+                    
+                    // Update area description with more detailed, SEO-friendly content
+                    const areaDescription = document.getElementById('area-description');
+                    areaDescription.innerHTML = `
+                        <p class="mb-4">${areaName} is a sought-after location in the Los Angeles area for high-quality scalp micropigmentation services. The SMP clinics in ${areaName} are known for their skilled practitioners, state-of-the-art equipment, and excellent customer service.</p>
+                        
+                        <p class="mb-4">When choosing an SMP clinic in ${areaName}, we recommend considering several factors: the technician's experience and certification, the clinic's portfolio of before-and-after results, genuine client reviews, the cleanliness of the facility, and their use of quality pigments and equipment.</p>
+                        
+                        <p class="mb-4">Most reputable SMP clinics in ${areaName} offer complimentary consultations where you can discuss your specific hair loss concerns and goals with a qualified practitioner. During this session, you'll have the opportunity to ask questions about the procedure, view examples of their work, and determine if the clinic is the right fit for your needs.</p>
+                        
+                        <p class="mb-4">Scalp micropigmentation in ${areaName} typically ranges from $2,000 to $4,000, depending on the extent of your hair loss and the number of sessions required. Most clients require 2-3 sessions spaced 10-14 days apart for optimal results.</p>
+                    `;
+                    
+                    // Load area-specific clinics
+                    if (typeof displayClinics === 'function') {
+                        console.log('Filtering businesses for area:', areaName);
+                        
                         // Filter businesses by area
                         const areaBusinesses = businesses.filter(business => {
-                            return business.city === areaName || 
+                            const isMatch = business.city === areaName || 
                                    business.neighborhood === areaName ||
                                    (business.address && business.address.toLowerCase().includes(areaName.toLowerCase())) ||
                                    (business.full_address && business.full_address.toLowerCase().includes(areaName.toLowerCase()));
+                                   
+                            if (isMatch) {
+                                console.log('Match found:', business.name);
+                            }
+                            
+                            return isMatch;
                         });
+                        
+                        console.log('Found', areaBusinesses.length, 'businesses for area:', areaName);
                         
                         // Display area clinics
                         const clinicsContainer = document.getElementById('area-clinics-container');
@@ -248,8 +284,10 @@
                             clinicsContainer.innerHTML = '';
                             
                             if (areaBusinesses.length > 0) {
+                                console.log('Displaying area businesses...');
                                 displayClinics(areaBusinesses, clinicsContainer);
                             } else {
+                                console.log('No clinics found for this area, showing nearby clinics instead');
                                 clinicsContainer.innerHTML = `
                                     <div class="col-span-full text-center py-8">
                                         <p class="text-gray-500 mb-4">No clinics found specifically in ${areaName}.</p>
@@ -266,14 +304,12 @@
                                 }
                             }
                         }
-                    });
-                }
-            }
-            
-            // Load all areas for the nearby areas section
-            if (window.fetchBusinessData) {
-                fetchBusinessData().then(businesses => {
-                    // Get all unique areas
+                    } else {
+                        console.error('displayClinics function not found');
+                    }
+                    
+                    // Load all areas for the nearby areas section
+                    console.log('Loading nearby areas...');
                     const allAreas = new Set();
                     businesses.forEach(business => {
                         if (business.city && !allAreas.has(business.city)) {
@@ -288,6 +324,8 @@
                     const sortedAreas = Array.from(allAreas)
                         .filter(area => area !== areaName && area !== "Unknown Area")
                         .sort();
+                    
+                    console.log('Found', sortedAreas.length, 'other areas');
                     
                     // Display areas
                     const nearbyContainer = document.getElementById('nearby-areas-container');
@@ -315,7 +353,7 @@
                             nearbyContainer.appendChild(areaLink);
                         });
                     }
-                });
+                }
             }
             
             // Dropdown handling

@@ -482,23 +482,34 @@ function displaySearchResults(query) {
 // Fetch business data from JSON file
 function fetchBusinessData() {
     return new Promise((resolve, reject) => {
+        console.log('Fetching business data...');
+        
         // Check for cached data
         if (window.allBusinesses && window.allBusinesses.length > 0) {
+            console.log('Using cached data:', window.allBusinesses.length, 'businesses');
             resolve(window.allBusinesses);
             return;
         }
         
+        // Use absolute path for JSON file
+        const jsonUrl = '/Outscraper-20250423020658xs04_micropigmentation_+1.json';
+        console.log('Fetching from URL:', jsonUrl);
+        
         // Use absolute path for the JSON file
-        fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json')
+        fetch(jsonUrl)
             .then(response => {
                 if (!response.ok) {
+                    console.error('Network response was not ok:', response.status, response.statusText);
                     throw new Error('Network response was not ok: ' + response.statusText);
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('Received data:', data.length, 'businesses');
+                
                 // Process the data
                 const processedData = processBusinessData(data);
+                console.log('Processed data:', processedData.length, 'businesses after filtering');
                 
                 // Cache the data
                 window.allBusinesses = processedData;
@@ -507,14 +518,33 @@ function fetchBusinessData() {
             })
             .catch(error => {
                 console.error('Error fetching business data:', error);
-                reject(error);
+                
+                // Try relative path as fallback
+                console.log('Trying relative path as fallback...');
+                fetch('../Outscraper-20250423020658xs04_micropigmentation_+1.json')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Fallback fetch failed: ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Received data from fallback path:', data.length, 'businesses');
+                        const processedData = processBusinessData(data);
+                        window.allBusinesses = processedData;
+                        resolve(processedData);
+                    })
+                    .catch(fallbackError => {
+                        console.error('Fallback fetch also failed:', fallbackError);
+                        reject(error);
+                    });
             });
     });
 }
 
 // Process the raw business data
 function processBusinessData(businessData) {
-    console.log('Total businesses before filtering:', businessData.length);
+    console.log('Processing business data, received:', businessData.length, 'items');
     
     // LA County cities and nearby areas
     const laCities = [
@@ -539,21 +569,23 @@ function processBusinessData(businessData) {
         'lancaster', 'palmdale', 'acton', 'agua dulce', 'littlerock'
     ];
     
-    // Cities to exclude
-    const excludedCities = ['san francisco'];
+    // Log filtering steps
+    console.log('Filtering permanently closed businesses...');
     
-    // First filter out permanently closed businesses
-    let localBusinesses = businessData.filter(business => {
-        return business.permanently_closed !== true && business.business_status !== "CLOSED_PERMANENTLY";
+    // Filter out permanently closed businesses
+    const activeBusiness = businessData.filter(business => {
+        if (business.permanently_closed === true || business.business_status === "CLOSED_PERMANENTLY") {
+            console.log('Filtering out permanently closed business:', business.name);
+            return false;
+        }
+        return true;
     });
     
-    // Track excluded San Francisco businesses
-    let sfExcludedCount = 0;
-    let sfExcludedBusinesses = [];
+    console.log('After filtering closed businesses, kept:', activeBusiness.length);
     
-    // Create a new array for non-San Francisco businesses
-    let nonSFBusinesses = localBusinesses.filter(business => {
-        // Extract city from address
+    // Filter out San Francisco businesses
+    console.log('Filtering San Francisco businesses...');
+    const nonSFBusinesses = activeBusiness.filter(business => {
         let city = '';
         
         if (business.city) {
@@ -567,80 +599,49 @@ function processBusinessData(businessData) {
         }
         
         // Check if city is San Francisco
-        const isSanFrancisco = excludedCities.some(excludedCity => city.includes(excludedCity));
-        if (isSanFrancisco) {
-            console.log(`Excluded San Francisco business: ${business.name} in ${city}`);
-            sfExcludedCount++;
-            sfExcludedBusinesses.push(business.name);
+        if (city.includes('san francisco')) {
+            console.log('Filtering out San Francisco business:', business.name);
             return false;
         }
         
         return true;
     });
     
-    console.log(`Excluded ${sfExcludedCount} businesses from San Francisco:`, sfExcludedBusinesses);
-    
-    // Then filter to include only LA County businesses
-    localBusinesses = nonSFBusinesses.filter(business => {
-        // Extract city from address
-        let city = '';
-        
-        if (business.city) {
-            city = business.city.toLowerCase();
-        } else if (business.address || business.full_address || business.formatted_address) {
-            const address = business.address || business.full_address || business.formatted_address;
-            const cityMatch = address ? address.match(/([^,]+),\s*([^,]+),\s*([A-Z]{2})/) : null;
-            if (cityMatch && cityMatch[1]) {
-                city = cityMatch[1].trim().toLowerCase();
-            }
-        }
-        
-        // Check if city is in LA County
-        return laCities.some(laCity => city.includes(laCity));
-    });
-    
-    console.log('LA County businesses after filtering:', localBusinesses.length);
-    
-    // Extract review counts properly for sorting
-    localBusinesses = localBusinesses.map(business => {
-        // Standardize the review count field
-        const reviewCount = business.reviews_count || business.reviews || business.user_ratings_total || 0;
-        return {
-            ...business,
-            standardized_review_count: parseInt(reviewCount) || 0
-        };
-    });
-    
-    // Sort businesses by review count (highest first) and then by rating
-    localBusinesses.sort((a, b) => {
-        // First sort by review count
-        if (b.standardized_review_count !== a.standardized_review_count) {
-            return b.standardized_review_count - a.standardized_review_count;
-        }
-        // If review counts are equal, sort by rating
-        return (b.rating || 0) - (a.rating || 0);
-    });
+    console.log('After filtering SF businesses, kept:', nonSFBusinesses.length);
     
     // Extract neighborhood information
-    localBusinesses = localBusinesses.map(business => {
-        const neighborhood = extractNeighborhood(business.address || business.full_address || '');
-        return {
-            ...business,
-            neighborhood: neighborhood
-        };
+    console.log('Extracting neighborhood information...');
+    const processedData = nonSFBusinesses.map(business => {
+        // Extract neighborhood from address if not already present
+        if (!business.neighborhood && business.address) {
+            business.neighborhood = extractNeighborhood(business.address);
+        }
+        
+        return business;
     });
     
-    // Store processed data in global variables
-    allBusinesses = businessData; // Keep all businesses for reference
-    window.filteredBusinesses = localBusinesses; // Only LA County businesses for display
+    console.log('Processed and enhanced data, final count:', processedData.length);
     
-    // Update UI with processed data
-    updateUI(localBusinesses);
+    // Sort businesses by rating (highest first)
+    processedData.sort((a, b) => {
+        // If both have ratings, compare them
+        if (a.rating_value && b.rating_value) {
+            return b.rating_value - a.rating_value;
+        }
+        // If only one has a rating, prioritize the one with rating
+        if (a.rating_value) return -1;
+        if (b.rating_value) return 1;
+        // If neither has ratings, keep original order
+        return 0;
+    });
     
-    // Populate the areas dropdown with cities
-    populateAreasDropdown(localBusinesses);
+    // Keep a copy of the complete dataset
+    window.allBusinesses = processedData;
     
-    return localBusinesses;
+    // Update UI with the processed data
+    updateUI(processedData);
+    
+    return processedData;
 }
 
 // Improved neighborhood extraction
@@ -717,15 +718,30 @@ function updateTopClinics(businessData) {
     })));
 }
 
-// Helper function to display clinics in a container
+// Display clinics in the provided container
 function displayClinics(clinics, container, highlightTerms = []) {
-    // Clear existing clinic cards
+    console.log('Displaying clinics:', clinics.length, 'in container:', container.id);
+    
+    if (!container) {
+        console.error('Container not found for displaying clinics');
+        return;
+    }
+    
+    // Clear existing content
     container.innerHTML = '';
     
+    // Check if we have clinics to display
+    if (!clinics || clinics.length === 0) {
+        console.log('No clinics to display');
+        container.innerHTML = '<p class="text-center py-4 col-span-full text-gray-500">No clinics found.</p>';
+        return;
+    }
+    
     // Create and append clinic cards
-    clinics.forEach(clinic => {
-        const clinicCard = createClinicCard(clinic, highlightTerms);
-        container.appendChild(clinicCard);
+    clinics.forEach((clinic, index) => {
+        console.log(`Creating card for clinic ${index+1}/${clinics.length}: ${clinic.name}`);
+        const card = createClinicCard(clinic, highlightTerms);
+        container.appendChild(card);
     });
 }
 
