@@ -100,15 +100,15 @@
     <!-- Area Hero Section -->
     <section class="bg-blue-700 text-white py-16">
         <div class="container mx-auto px-4">
-            <h1 class="text-4xl font-bold mb-4" id="area-title">Buellton</h1>
-            <p class="text-xl max-w-3xl">Find top-rated scalp micropigmentation clinics in Buellton. Compare providers and services.</p>
+            <h1 class="text-4xl font-bold mb-4" id="area-title">{{AREA_NAME}}</h1>
+            <p class="text-xl max-w-3xl">Find top-rated scalp micropigmentation clinics in {{AREA_NAME}}. Compare providers and services.</p>
         </div>
     </section>
 
     <!-- Area Clinics Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-12 text-center">SMP Clinics in Buellton</h2>
+            <h2 class="text-3xl font-bold mb-12 text-center">SMP Clinics in {{AREA_NAME}}</h2>
             <div id="area-clinics" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Clinic cards will be loaded here via JavaScript -->
                 <p class="text-center py-8 col-span-full">Loading clinics...</p>
@@ -181,24 +181,60 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="/scripts.js"></script>
+    <script src="https://micropigmentationla.com/scripts.js"></script>
     
     <!-- Initialize area page -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Area page DOM content loaded');
+            console.log('Area page DOM content loaded');
+            
             // Fetch business data if not already loaded
             if (!window.allBusinesses || window.allBusinesses.length === 0) {
-                fetchBusinessData();
+                console.log('No cached business data found, fetching data...');
+                try {
+                    if (typeof fetchBusinessData === 'function') {
+                        fetchBusinessData();
+                    } else {
+                        console.error('fetchBusinessData function not found');
+                    }
+                } catch (e) {
+                    console.error('Error fetching business data:', e);
+                }
             }
             
             // Set up the areas dropdown
-            populateAreasDropdown();
+            try {
+                if (typeof populateAreasDropdown === 'function') {
+                    populateAreasDropdown();
+                } else {
+                    console.error('populateAreasDropdown function not found');
+                }
+            } catch (e) {
+                console.error('Error setting up areas dropdown:', e);
+            }
             
             // Load clinics for this area
-            loadNeighborhoodClinics();
+            try {
+                if (typeof loadNeighborhoodClinics === 'function') {
+                    loadNeighborhoodClinics();
+                } else {
+                    console.error('loadNeighborhoodClinics function not found');
+                }
+            } catch (e) {
+                console.error('Error loading neighborhood clinics:', e);
+            }
             
             // Populate the neighborhood map (for "Other Areas" section)
-            populateNeighborhoodMap();
+            try {
+                if (typeof populateNeighborhoodMap === 'function') {
+                    populateNeighborhoodMap();
+                } else {
+                    console.error('populateNeighborhoodMap function not found');
+                }
+            } catch (e) {
+                console.error('Error populating neighborhood map:', e);
+            }
         });
     </script>
 </body>

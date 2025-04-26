@@ -181,24 +181,59 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="/scripts.js"></script>
+    <script src="https://micropigmentationla.com/scripts.js"></script>
     
     <!-- Initialize area page -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Area page DOM content loaded');
+            
             // Fetch business data if not already loaded
             if (!window.allBusinesses || window.allBusinesses.length === 0) {
-                fetchBusinessData();
+                console.log('No cached business data found, fetching data...');
+                try {
+                    if (typeof fetchBusinessData === 'function') {
+                        fetchBusinessData();
+                    } else {
+                        console.error('fetchBusinessData function not found');
+                    }
+                } catch (e) {
+                    console.error('Error fetching business data:', e);
+                }
             }
             
             // Set up the areas dropdown
-            populateAreasDropdown();
+            try {
+                if (typeof populateAreasDropdown === 'function') {
+                    populateAreasDropdown();
+                } else {
+                    console.error('populateAreasDropdown function not found');
+                }
+            } catch (e) {
+                console.error('Error setting up areas dropdown:', e);
+            }
             
             // Load clinics for this area
-            loadNeighborhoodClinics();
+            try {
+                if (typeof loadNeighborhoodClinics === 'function') {
+                    loadNeighborhoodClinics();
+                } else {
+                    console.error('loadNeighborhoodClinics function not found');
+                }
+            } catch (e) {
+                console.error('Error loading neighborhood clinics:', e);
+            }
             
             // Populate the neighborhood map (for "Other Areas" section)
-            populateNeighborhoodMap();
+            try {
+                if (typeof populateNeighborhoodMap === 'function') {
+                    populateNeighborhoodMap();
+                } else {
+                    console.error('populateNeighborhoodMap function not found');
+                }
+            } catch (e) {
+                console.error('Error populating neighborhood map:', e);
+            }
         });
     </script>
 </body>
