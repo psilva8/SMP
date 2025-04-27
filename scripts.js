@@ -1107,19 +1107,27 @@ function displayAllClinics() {
     // Debug data
     console.log("Total businesses:", businessData.length);
     
-    // Sort businesses by rating (highest first)
+    // Sort businesses by review count first, then by rating
     const sortedBusinesses = [...businessData].sort((a, b) => {
-        // Get rating values, handling various field names and formats
+        // Get review counts, handling various field names and formats
+        const reviewsA = parseInt(a.reviews_count) || parseInt(a.reviews) || 0;
+        const reviewsB = parseInt(b.reviews_count) || parseInt(b.reviews) || 0;
+        
+        // First sort by review count (descending)
+        if (reviewsB !== reviewsA) {
+            return reviewsB - reviewsA;
+        }
+        
+        // If review counts are the same, sort by rating (descending)
         const ratingA = parseFloat(a.rating) || parseFloat(a.rating_value) || 0;
         const ratingB = parseFloat(b.rating) || parseFloat(b.rating_value) || 0;
-        
-        // Sort by rating desc
         return ratingB - ratingA;
     });
     
     // Log top clinics for debugging
-    console.log("Top 12 businesses by rating:", sortedBusinesses.slice(0, 12).map(business => ({
+    console.log("Top 12 businesses by review count:", sortedBusinesses.slice(0, 12).map(business => ({
         name: business.name,
+        reviews: parseInt(business.reviews_count) || parseInt(business.reviews) || 0,
         rating: parseFloat(business.rating) || parseFloat(business.rating_value) || 0
     })));
     
