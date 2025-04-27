@@ -100,13 +100,38 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Environment detection
+            const isLocalDev = window.location.protocol === 'file:' 
+                || window.location.hostname === 'localhost' 
+                || window.location.hostname === '127.0.0.1';
+            
+            // Update all links to work in local development
+            if (isLocalDev) {
+                document.querySelectorAll('a').forEach(link => {
+                    // Update paths that start with / to be relative
+                    if (link.getAttribute('href') && link.getAttribute('href').startsWith('/')) {
+                        link.href = link.getAttribute('href').substring(1);
+                    }
+                });
+                
+                // Update the "Browse All Areas" link specifically
+                const browseAreasLink = document.querySelector('a[href$="neighborhoods.html"]');
+                if (browseAreasLink) {
+                    browseAreasLink.href = 'areas.html';
+                }
+            }
+            
             // Extract what area they might have been looking for from URL
             const path = window.location.pathname;
             const pathParts = path.split('/').filter(part => part);
             
             let searchedArea = '';
-            if (pathParts.length >= 2 && pathParts[0] === 'neighborhoods') {
-                searchedArea = decodeURIComponent(pathParts[1].replace(/-/g, ' '));
+            
+            // Check for area in different URL formats
+            if (pathParts.length >= 2) {
+                if (pathParts[0] === 'neighborhoods' || pathParts[0] === 'area' || pathParts[0] === 'areas') {
+                    searchedArea = decodeURIComponent(pathParts[1].replace(/-/g, ' '));
+                }
             }
             
             // If they were looking for a specific area, update the page
@@ -139,7 +164,14 @@
                         popularAreas.forEach(area => {
                             const urlFriendlyName = area.toLowerCase().replace(/\s+/g, '-');
                             const areaLink = document.createElement('a');
-                            areaLink.href = `neighborhoods/${urlFriendlyName}`;
+                            
+                            // Create the proper href based on environment
+                            if (isLocalDev) {
+                                areaLink.href = `areas/${urlFriendlyName}/index.html`;
+                            } else {
+                                areaLink.href = `/areas/${urlFriendlyName}/`;
+                            }
+                            
                             areaLink.className = 'bg-blue-50 hover:bg-blue-100 text-blue-800 py-2 px-4 rounded-lg transition';
                             areaLink.textContent = area;
                             suggestedAreas.appendChild(areaLink);

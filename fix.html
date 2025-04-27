@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMP Directory Fix Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #2563eb;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .area-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .area-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+        }
+        .area-button:hover {
+            background-color: #1d4ed8;
+        }
+        .resource-fix {
+            background-color: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .navigation {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .navigation a {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 15px;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .navigation a:hover {
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>SMP Directory Fix Page</h1>
+    
+    <div class="section">
+        <h2>Quick Navigation</h2>
+        <p>This page helps you navigate directly to area pages without URL issues.</p>
+        
+        <div class="navigation">
+            <a href="index.html">Home Page</a>
+            <a href="areas.html">All Areas</a>
+            <a href="about.html">About SMP</a>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Popular Areas</h2>
+        <p>Click on an area to view SMP clinics in that location:</p>
+        
+        <div class="area-grid" id="popular-areas">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Troubleshooting Resources</h2>
+        
+        <div class="resource-fix">
+            <h3>Missing favicon.ico</h3>
+            <p>If you're seeing a 404 error for favicon.ico, add a favicon.ico file to your project's root directory.</p>
+        </div>
+        
+        <div class="resource-fix">
+            <h3>Image Loading Issues (400x250)</h3>
+            <p>If images fail to load with ERR_NAME_NOT_RESOLVED, check your image paths in scripts.js. Replace any invalid URLs with valid placeholder images.</p>
+        </div>
+        
+        <div class="resource-fix">
+            <h3>Page Not Found Issues</h3>
+            <p>When using Python's HTTP server for local development, direct URL paths like /areas/beverly-hills/ won't work correctly. Use the links on this page instead.</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configure popular areas
+            const areas = [
+                'beverly-hills', 'los-angeles', 'santa-monica', 'glendale',
+                'pasadena', 'burbank', 'long-beach', 'calabasas', 'compton',
+                'downey', 'encino', 'hollywood', 'malibu', 'orange',
+                'sherman-oaks', 'studio-city', 'van-nuys', 'venice', 'west-hollywood'
+            ];
+            
+            // Populate the grid
+            const popularAreasGrid = document.getElementById('popular-areas');
+            areas.forEach(area => {
+                const areaName = area.replace(/-/g, ' ');
+                
+                // Create link element
+                const link = document.createElement('a');
+                link.href = `areas/${area}/index.html`;
+                link.className = 'area-button';
+                link.textContent = areaName.replace(/\b\w/g, l => l.toUpperCase());
+                
+                popularAreasGrid.appendChild(link);
+            });
+            
+            // Handle form submission
+            const form = document.createElement('form');
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                const area = document.getElementById('area-input').value.trim();
+                if (area) {
+                    const formatted = area.toLowerCase().replace(/\s+/g, '-');
+                    window.location.href = `areas/${formatted}/index.html`;
+                }
+                return false;
+            };
+            
+            // Create custom area search
+            const customSearch = document.createElement('div');
+            customSearch.innerHTML = `
+                <h3>Look for a specific area:</h3>
+                <div style="display: flex; margin-top: 15px;">
+                    <input type="text" id="area-input" placeholder="Enter area name..." 
+                           style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px 0 0 4px;">
+                    <button type="submit" 
+                            style="background-color: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 0 4px 4px 0; cursor: pointer;">
+                        Go
+                    </button>
+                </div>
+            `;
+            
+            form.appendChild(customSearch);
+            document.querySelector('.section:nth-child(2)').appendChild(form);
+        });
+    </script>
+</body>
+</html> 

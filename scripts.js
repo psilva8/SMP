@@ -1,10 +1,12 @@
 // Global variables
 let allBusinesses = [];
 let filteredBusinesses = [];
+let businessData = [];
 
 // Document ready function
 document.addEventListener('DOMContentLoaded', function() {
-    fetchBusinessData();
+    // Initialize the site functionality
+    initSite();
     
     // Initialize dropdowns
     initDropdowns();
@@ -12,6 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // If on search.html page, load all clinics
     if (window.location.pathname.includes('search.html')) {
         displayAllClinics(window.filteredBusinesses || []);
+    }
+    
+    // Set current year in footer
+    const yearElement = document.getElementById('current-year');
+    if (yearElement) {
+        yearElement.textContent = new Date().getFullYear();
     }
 });
 
@@ -528,8 +536,14 @@ function fetchBusinessData() {
             return;
         }
         
-        // Use absolute path for JSON file
-        const jsonUrl = '/Outscraper-20250423020658xs04_micropigmentation_+1.json';
+        // Determine if we're in local development (file:// protocol)
+        const isLocalDev = window.location.protocol === 'file:';
+        
+        // Choose the appropriate path based on environment
+        const jsonUrl = isLocalDev 
+            ? 'Outscraper-20250423020658xs04_micropigmentation_+1.json' // Relative path for local development
+            : '/Outscraper-20250423020658xs04_micropigmentation_+1.json'; // Absolute path for production
+        
         console.log('Fetching from URL:', jsonUrl, '[DEBUG]');
         
         // FOR DEBUGGING: Log all scripts on the page
@@ -539,7 +553,7 @@ function fetchBusinessData() {
             console.log(`Script ${index}:`, script.src || 'inline script', '[DEBUG]');
         });
         
-        // Use absolute path for the JSON file
+        // Fetch the JSON data
         fetch(jsonUrl)
             .then(response => {
                 console.log('Fetch response status:', response.status, response.statusText, '[DEBUG]');
@@ -558,55 +572,48 @@ function fetchBusinessData() {
                 
                 // Cache the data
                 window.allBusinesses = processedData;
+                window.filteredBusinesses = processedData;
+                
+                // Update UI with the processed data
+                updateUI(processedData);
                 
                 resolve(processedData);
             })
             .catch(error => {
                 console.error('Error fetching business data:', error, '[DEBUG]');
                 
-                // Try relative path as fallback
-                console.log('Trying relative path as fallback... [DEBUG]');
-                const fallbackUrl = 'Outscraper-20250423020658xs04_micropigmentation_+1.json';
-                console.log('Fallback URL:', fallbackUrl, '[DEBUG]');
-                
-                fetch(fallbackUrl)
-                    .then(response => {
-                        console.log('Fallback fetch response:', response.status, response.statusText, '[DEBUG]');
-                        if (!response.ok) {
-                            throw new Error('Fallback fetch failed: ' + response.statusText);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Received data from fallback path:', data.length, 'businesses [DEBUG]');
-                        const processedData = processBusinessData(data);
-                        window.allBusinesses = processedData;
-                        resolve(processedData);
-                    })
-                    .catch(fallbackError => {
-                        console.error('Fallback fetch also failed:', fallbackError, '[DEBUG]');
-                        
-                        // Last resort: Try to load directly from a script tag
-                        console.log('Final attempt: Adding JSON as script tag... [DEBUG]');
-                        const script = document.createElement('script');
-                        script.src = 'data.js'; // Assuming we'll create this file
-                        script.onload = function() {
-                            if (window.businessData) {
-                                console.log('Loaded from script tag:', window.businessData.length, 'businesses [DEBUG]');
-                                const processedData = processBusinessData(window.businessData);
-                                window.allBusinesses = processedData;
-                                resolve(processedData);
-                            } else {
-                                console.error('Script loaded but no data found [DEBUG]');
-                                reject(new Error('Failed to load business data from all sources'));
+                // Try relative path as fallback if not already tried
+                if (jsonUrl.startsWith('/')) {
+                    console.log('Trying relative path as fallback... [DEBUG]');
+                    const fallbackUrl = 'Outscraper-20250423020658xs04_micropigmentation_+1.json';
+                    console.log('Fallback URL:', fallbackUrl, '[DEBUG]');
+                    
+                    fetch(fallbackUrl)
+                        .then(response => {
+                            console.log('Fallback fetch response:', response.status, response.statusText, '[DEBUG]');
+                            if (!response.ok) {
+                                throw new Error('Fallback fetch failed: ' + response.statusText);
                             }
-                        };
-                        script.onerror = function() {
-                            console.error('Script tag loading failed [DEBUG]');
-                            reject(new Error('Failed to load business data from all sources'));
-                        };
-                        document.head.appendChild(script);
-                    });
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Received data from fallback path:', data.length, 'businesses [DEBUG]');
+                            const processedData = processBusinessData(data);
+                            window.allBusinesses = processedData;
+                            window.filteredBusinesses = processedData;
+                            
+                            // Update UI with the processed data
+                            updateUI(processedData);
+                            
+                            resolve(processedData);
+                        })
+                        .catch(fallbackError => {
+                            console.error('Fallback fetch also failed:', fallbackError, '[DEBUG]');
+                            reject(fallbackError);
+                        });
+                } else {
+                    reject(error);
+                }
             });
     });
 }
@@ -830,42 +837,44 @@ function displayClinics(businesses, container) {
         const card = document.createElement('div');
         card.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition';
         
-        // Create image element with fallback
-        let imageUrl = business.photos && business.photos.length > 0 
-            ? business.photos[0] 
-            : 'https://via.placeholder.com/400x250?text=SMP+Clinic';
+        // FIX: Ensure valid image URL with proper HTTPS placeholder
+        let imageUrl;
         
-        // Create star rating
-        let stars = '';
-        if (business.rating) {
-            const fullStars = Math.floor(business.rating);
-            const hasHalfStar = business.rating % 1 >= 0.5;
-            
-            for (let i = 0; i < fullStars; i++) {
-                stars += '★';
-            }
-            
-            if (hasHalfStar) {
-                stars += '½';
-            }
-            
-            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-            for (let i = 0; i < emptyStars; i++) {
-                stars += '☆';
-            }
+        if (business.photos && business.photos.length > 0 && business.photos[0] && 
+            typeof business.photos[0] === 'string' && business.photos[0].startsWith('http')) {
+            // Use the business photo if it's a valid URL
+            imageUrl = business.photos[0];
+        } else {
+            // Use a secure placeholder image
+            imageUrl = 'https://via.placeholder.com/400x250?text=SMP+Clinic';
         }
         
-        // Set the card HTML
+        // Format rating if available
+        let ratingDisplay = '';
+        if (business.rating_value) {
+            ratingDisplay = `<div class="text-yellow-500 mb-2">${generateStarRating(business.rating_value)} <span class="text-gray-600">(${business.reviews || '0'})</span></div>`;
+        } else {
+            ratingDisplay = '<div class="text-gray-400 mb-2">No ratings yet</div>';
+        }
+        
+        // Format address
+        const address = business.full_address || business.address || 'Address not available';
+        
+        // Format phone
+        const phone = business.phone_number ? formatPhoneNumber(business.phone_number) : 'No phone listed';
+        
+        // Set the card HTML with improved image error handling
         card.innerHTML = `
             <div class="h-48 bg-gray-200 overflow-hidden">
-                <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover">
+                <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover" 
+                     onerror="this.src='https://via.placeholder.com/400x250?text=SMP+Clinic'; this.onerror=null;">
             </div>
             <div class="p-5">
                 <h3 class="text-xl font-bold mb-2">${business.name}</h3>
-                <div class="text-yellow-500 mb-2">${stars} <span class="text-gray-600">(${business.reviews || '0'})</span></div>
-                <p class="text-gray-600 mb-3 truncate">${business.full_address || business.address || 'Address not available'}</p>
+                ${ratingDisplay}
+                <p class="text-gray-600 mb-3 truncate">${address}</p>
                 <div class="flex justify-between items-center">
-                    <span class="text-blue-600 font-medium">${business.phone_number || 'No phone listed'}</span>
+                    <span class="text-blue-600 font-medium">${phone}</span>
                     <a href="${business.url || '#'}" target="_blank" class="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition">View on Maps</a>
                 </div>
             </div>
@@ -1160,25 +1169,28 @@ function loadNeighborhoodClinics() {
     // Extract the area name from the URL path instead of a query parameter
     let areaName = '';
     
+    // Handle different protocols and development environments
+    const isLocalDev = window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    console.log('Is local development:', isLocalDev, '[DEBUG]');
+    console.log('Full pathname:', window.location.pathname, '[DEBUG]');
+    
     // Check if we're on an area page (both 'areas' and 'area' paths)
     if (window.location.pathname.includes('/areas/') || window.location.pathname.includes('/area/')) {
         // Extract the area name from the path
-        const pathParts = window.location.pathname.split('/');
+        const pathParts = window.location.pathname.split('/').filter(p => p.length > 0);
         console.log('Path parts:', pathParts, '[DEBUG]');
         
         // Find the index of either 'areas' or 'area' in the path
-        const areasIndex = pathParts.indexOf('areas');
-        const areaIndex = pathParts.indexOf('area');
+        const areasIndex = pathParts.findIndex(part => part === 'areas' || part === 'area');
+        console.log('Areas index:', areasIndex, '[DEBUG]');
         
-        // Use whichever index is found (prefer 'areas' if both are present)
-        const indexToUse = areasIndex > -1 ? areasIndex + 1 : areaIndex + 1;
-        console.log('Index to use:', indexToUse, '[DEBUG]');
-        
-        if (indexToUse > 0 && indexToUse < pathParts.length) {
-            areaName = decodeURIComponent(pathParts[indexToUse]);
+        if (areasIndex > -1 && areasIndex + 1 < pathParts.length) {
+            areaName = decodeURIComponent(pathParts[areasIndex + 1]);
+            // In case there's an index.html at the end, remove it
+            areaName = areaName.replace(/\/index\.html$/, '').replace(/\.html$/, '');
             // Convert hyphenated format back to spaces
             areaName = areaName.replace(/-/g, ' ').trim().replace(/\b\w/g, l => l.toUpperCase());
-            console.log('Extracted area name:', areaName, '[DEBUG]');
+            console.log('Extracted area name from path:', areaName, '[DEBUG]');
         }
     } else {
         // Fallback to the old method using query parameters
@@ -1189,7 +1201,12 @@ function loadNeighborhoodClinics() {
     
     if (!areaName) {
         console.log('No area name found, redirecting to home [DEBUG]');
-        window.location.href = '/';
+        // In local development, redirect to index.html instead of /
+        if (isLocalDev) {
+            window.location.href = 'index.html';
+        } else {
+            window.location.href = '/';
+        }
         return;
     }
     
@@ -1200,15 +1217,29 @@ function loadNeighborhoodClinics() {
         console.log('Updated page title to:', areaName, '[DEBUG]');
     }
     
-    // Check if filteredBusinesses is defined
-    if (!window.filteredBusinesses) {
-        console.error('filteredBusinesses is not defined! [DEBUG]');
-        return;
+    // Wait for business data to load if needed
+    if (!window.filteredBusinesses || window.filteredBusinesses.length === 0) {
+        console.log('No filtered businesses found, fetching data first [DEBUG]');
+        
+        fetchBusinessData()
+            .then(data => {
+                console.log('Data fetched, filtering for area:', areaName, '[DEBUG]');
+                filterAndDisplayAreaClinics(areaName);
+            })
+            .catch(error => {
+                console.error('Failed to load business data for area:', error, '[DEBUG]');
+            });
+    } else {
+        console.log('Using existing filtered businesses data [DEBUG]');
+        filterAndDisplayAreaClinics(areaName);
     }
-    
+}
+
+// Helper function to filter and display clinics for an area
+function filterAndDisplayAreaClinics(areaName) {
+    console.log('Filtering clinics for area:', areaName, '[DEBUG]');
     console.log('Total businesses before filtering:', window.filteredBusinesses.length, '[DEBUG]');
     
-    // Filter businesses by neighborhood/area
     // Improved matching to handle more flexible naming
     const areaNameLower = areaName.toLowerCase();
     const clinics = window.filteredBusinesses.filter(business => {
@@ -1223,6 +1254,11 @@ function loadNeighborhoodClinics() {
             return true;
         }
         
+        // Check full_address as well if available
+        if (business.full_address && business.full_address.toLowerCase().includes(areaNameLower)) {
+            return true;
+        }
+        
         return false;
     });
     
@@ -1233,8 +1269,17 @@ function loadNeighborhoodClinics() {
     if (clinicsContainer) {
         console.log('Found clinics container with ID:', clinicsContainer.id, '[DEBUG]');
         
-        // Use the displayClinics function instead of creating cards manually
-        displayClinics(clinics, clinicsContainer);
+        if (clinics.length === 0) {
+            clinicsContainer.innerHTML = `
+                <div class="col-span-full text-center py-8">
+                    <p class="text-gray-500">No clinics found in ${areaName}.</p>
+                </div>
+            `;
+            console.log('No clinics found for this area [DEBUG]');
+        } else {
+            // Use the displayClinics function instead of creating cards manually
+            displayClinics(clinics, clinicsContainer);
+        }
     } else {
         console.error('Could not find clinics container! [DEBUG]');
     }
@@ -1422,9 +1467,9 @@ function populateNeighborhoodMap(businessData) {
         
         // Add .html extension for local development
         if (isLocalDev) {
-            link.href = `area/${encodeURIComponent(urlFriendlyName)}/index.html`;
+            link.href = `areas/${encodeURIComponent(urlFriendlyName)}/index.html`;
         } else {
-            link.href = `area/${encodeURIComponent(urlFriendlyName)}/`;
+            link.href = `areas/${encodeURIComponent(urlFriendlyName)}/`;
         }
         
         link.className = 'block px-4 py-2 bg-white hover:bg-blue-50 border border-gray-300 rounded-lg transition';
@@ -1434,4 +1479,478 @@ function populateNeighborhoodMap(businessData) {
         `;
         mapContainer.appendChild(link);
     });
+}
+
+// Load business data from JSON file
+async function loadBusinessData() {
+    try {
+        const response = await fetch('data/businesses.json');
+        if (!response.ok) {
+            throw new Error('Failed to load business data');
+        }
+        businessData = await response.json();
+        
+        // Initialize page elements after data is loaded
+        initializePage();
+    } catch (error) {
+        console.error('Error loading business data:', error);
+        document.querySelector('.loading-text').textContent = 'Error loading data. Please try again later.';
+    }
+}
+
+// Initialize page elements
+function initializePage() {
+    // Check if we're on a specific page type
+    const currentPath = window.location.pathname;
+    
+    if (currentPath === '/' || currentPath === '/index.html') {
+        // Home page
+        displayAllClinics();
+        populateAreasDropdown();
+        populateAreaMap();
+    } else if (currentPath.includes('/areas/')) {
+        // Area specific page
+        loadAreaClinics();
+    }
+    
+    // Initialize search functionality
+    initializeSearch();
+    
+    // Initialize service filter
+    initializeServiceFilter();
+}
+
+// Display all clinics on the home page
+function displayAllClinics() {
+    const clinicsContainer = document.querySelector('.clinic-cards');
+    if (!clinicsContainer) return;
+    
+    // Clear loading text
+    clinicsContainer.innerHTML = '';
+    
+    // Sort businesses by rating
+    const sortedBusinesses = [...businessData].sort((a, b) => b.rating - a.rating);
+    
+    // Display top 12 businesses
+    const topBusinesses = sortedBusinesses.slice(0, 12);
+    
+    topBusinesses.forEach(business => {
+        createClinicCard(business, clinicsContainer);
+    });
+}
+
+// Create a clinic card HTML element
+function createClinicCard(business, container) {
+    const card = document.createElement('div');
+    card.className = 'clinic-card';
+    
+    // Format address
+    const addressParts = [
+        business.address || '',
+        business.city || '',
+        business.state || '',
+        business.zip_code || ''
+    ].filter(Boolean);
+    
+    const formattedAddress = addressParts.join(', ');
+    
+    // Format services
+    const services = getBusinessServices(business);
+    
+    // Create star rating
+    const starRating = createStarRating(business.rating);
+    
+    card.innerHTML = `
+        <div class="clinic-image" style="background-image: url(${business.image_url || 'img/default-clinic.jpg'})"></div>
+        <div class="clinic-info">
+            <h3>${business.name}</h3>
+            <div class="clinic-rating">
+                <div class="stars">${starRating}</div>
+                <span>${business.rating || 'N/A'} (${business.reviews_count || 0} reviews)</span>
+            </div>
+            <div class="clinic-address">${formattedAddress}</div>
+            <div class="clinic-services">
+                ${services.map(service => `<span class="clinic-service">${service}</span>`).join('')}
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(card);
+}
+
+// Extract services from business data
+function getBusinessServices(business) {
+    const services = [];
+    
+    // Check business name and description for services
+    const textToCheck = (business.name + ' ' + (business.description || '')).toLowerCase();
+    
+    // Define common SMP services
+    const serviceKeywords = [
+        'scalp micropigmentation',
+        'smp',
+        'hair tattoo',
+        'scalp tattoo',
+        'hair density',
+        'hairline restoration',
+        'scar concealment'
+    ];
+    
+    serviceKeywords.forEach(service => {
+        if (textToCheck.includes(service.toLowerCase())) {
+            // Capitalize first letter of each word
+            const formattedService = service.split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+            
+            if (!services.includes(formattedService)) {
+                services.push(formattedService);
+            }
+        }
+    });
+    
+    // If no services found, add a default
+    if (services.length === 0) {
+        services.push('Scalp Micropigmentation');
+    }
+    
+    return services;
+}
+
+// Create star rating HTML
+function createStarRating(rating) {
+    // Round rating to nearest half star
+    const roundedRating = Math.round(rating * 2) / 2;
+    let stars = '';
+    
+    // Add full stars
+    for (let i = 1; i <= Math.floor(roundedRating); i++) {
+        stars += '★';
+    }
+    
+    // Add half star if needed
+    if (roundedRating % 1 !== 0) {
+        stars += '★';
+    }
+    
+    // Add empty stars to make 5 stars total
+    const emptyStars = 5 - Math.ceil(roundedRating);
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '☆';
+    }
+    
+    return stars;
+}
+
+// Populate area map
+function populateAreaMap() {
+    const areaMap = document.querySelector('.areas-map');
+    if (!areaMap) return;
+    
+    // Clear existing items
+    areaMap.innerHTML = '';
+    
+    // Count occurrences of each city
+    const cityCount = {};
+    
+    businessData.forEach(business => {
+        const city = business.city;
+        if (city && city !== 'Unknown Area') {
+            cityCount[city] = (cityCount[city] || 0) + 1;
+        }
+    });
+    
+    // Convert to array and sort by count (descending)
+    const sortedCities = Object.keys(cityCount)
+        .map(city => ({ name: city, count: cityCount[city] }))
+        .sort((a, b) => {
+            // Sort by count (descending), then alphabetically
+            if (b.count !== a.count) {
+                return b.count - a.count;
+            }
+            return a.name.localeCompare(b.name);
+        });
+    
+    // Add top 20 cities to area map
+    sortedCities.slice(0, 20).forEach(city => {
+        const urlFriendlyName = generateUrlFriendlyName(city.name);
+        const link = document.createElement('a');
+        link.href = `areas/${urlFriendlyName}`;
+        link.className = 'area-link';
+        link.innerHTML = `${city.name} <span class="area-count">${city.count}</span>`;
+        areaMap.appendChild(link);
+    });
+}
+
+// Load area-specific clinics
+function loadAreaClinics() {
+    // Extract area name from URL
+    const pathname = window.location.pathname;
+    const match = pathname.match(/\/areas\/([^\/]+)/i);
+    
+    if (!match) return;
+    
+    const areaSlug = match[1];
+    const areaName = decodeUrlFriendlyName(areaSlug);
+    
+    // Update page title
+    updatePageTitle(areaName);
+    
+    // Filter businesses by area
+    const filteredBusinesses = businessData.filter(business => {
+        // Check if business city or neighborhood matches the area name
+        return (
+            (business.city && business.city.toLowerCase() === areaName.toLowerCase()) ||
+            (business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase()) ||
+            (business.address && business.address.toLowerCase().includes(areaName.toLowerCase()))
+        );
+    });
+    
+    // Update clinic count
+    updateClinicCount(filteredBusinesses.length, areaName);
+    
+    // Display filtered clinics
+    const clinicsContainer = document.querySelector('.clinic-cards');
+    if (!clinicsContainer) return;
+    
+    // Clear loading text
+    clinicsContainer.innerHTML = '';
+    
+    if (filteredBusinesses.length === 0) {
+        clinicsContainer.innerHTML = `<p class="loading-text">No SMP clinics found in ${areaName}. Try another area nearby.</p>`;
+        return;
+    }
+    
+    // Sort businesses by rating
+    const sortedBusinesses = [...filteredBusinesses].sort((a, b) => b.rating - a.rating);
+    
+    sortedBusinesses.forEach(business => {
+        createClinicCard(business, clinicsContainer);
+    });
+}
+
+// Update page title for area pages
+function updatePageTitle(areaName) {
+    const titleElement = document.querySelector('title');
+    if (titleElement) {
+        titleElement.textContent = `SMP Clinics in ${areaName} | Hair Tattoo Directory`;
+    }
+    
+    const pageTitle = document.querySelector('.area-hero h1');
+    if (pageTitle) {
+        pageTitle.textContent = `SMP Clinics in ${areaName}`;
+    }
+}
+
+// Update clinic count display
+function updateClinicCount(count, areaName) {
+    const countElement = document.querySelector('.area-hero p');
+    if (countElement) {
+        const clinicText = count === 1 ? 'clinic' : 'clinics';
+        countElement.textContent = `${count} scalp micropigmentation ${clinicText} found in ${areaName}`;
+    }
+}
+
+// Initialize search functionality
+function initializeSearch() {
+    const searchInput = document.querySelector('.search-box input');
+    if (!searchInput) return;
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        filterClinicsBySearch(searchTerm);
+    });
+}
+
+// Filter clinics by search term
+function filterClinicsBySearch(searchTerm) {
+    const clinicsContainer = document.querySelector('.clinic-cards');
+    if (!clinicsContainer) return;
+    
+    // If on area page, only filter the area's clinics
+    let businessesToFilter = businessData;
+    
+    const pathname = window.location.pathname;
+    if (pathname.includes('/areas/')) {
+        const match = pathname.match(/\/areas\/([^\/]+)/i);
+        if (match) {
+            const areaSlug = match[1];
+            const areaName = decodeUrlFriendlyName(areaSlug);
+            
+            businessesToFilter = businessData.filter(business => {
+                return (
+                    (business.city && business.city.toLowerCase() === areaName.toLowerCase()) ||
+                    (business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase()) ||
+                    (business.address && business.address.toLowerCase().includes(areaName.toLowerCase()))
+                );
+            });
+        }
+    }
+    
+    // If search term is empty, show all relevant clinics
+    if (!searchTerm) {
+        clinicsContainer.innerHTML = '';
+        
+        if (pathname === '/' || pathname === '/index.html') {
+            // Home page - show top 12
+            const sortedBusinesses = [...businessesToFilter].sort((a, b) => b.rating - a.rating);
+            const topBusinesses = sortedBusinesses.slice(0, 12);
+            
+            topBusinesses.forEach(business => {
+                createClinicCard(business, clinicsContainer);
+            });
+        } else {
+            // Area page - show all area clinics
+            const sortedBusinesses = [...businessesToFilter].sort((a, b) => b.rating - a.rating);
+            
+            sortedBusinesses.forEach(business => {
+                createClinicCard(business, clinicsContainer);
+            });
+        }
+        
+        return;
+    }
+    
+    // Filter by search term
+    const filteredBusinesses = businessesToFilter.filter(business => {
+        return (
+            (business.name && business.name.toLowerCase().includes(searchTerm)) ||
+            (business.description && business.description.toLowerCase().includes(searchTerm)) ||
+            (business.address && business.address.toLowerCase().includes(searchTerm)) ||
+            (business.city && business.city.toLowerCase().includes(searchTerm))
+        );
+    });
+    
+    // Clear container
+    clinicsContainer.innerHTML = '';
+    
+    if (filteredBusinesses.length === 0) {
+        clinicsContainer.innerHTML = `<p class="loading-text">No clinics found matching "${searchTerm}". Please try another search term.</p>`;
+        return;
+    }
+    
+    // Sort and display filtered businesses
+    const sortedBusinesses = [...filteredBusinesses].sort((a, b) => b.rating - a.rating);
+    
+    sortedBusinesses.forEach(business => {
+        createClinicCard(business, clinicsContainer);
+    });
+}
+
+// Initialize service filter
+function initializeServiceFilter() {
+    const serviceFilter = document.querySelector('.service-filter select');
+    if (!serviceFilter) return;
+    
+    // Populate service options
+    populateServiceOptions(serviceFilter);
+    
+    // Add event listener
+    serviceFilter.addEventListener('change', function() {
+        const selectedService = this.value;
+        filterClinicsByService(selectedService);
+    });
+}
+
+// Populate service filter options
+function populateServiceOptions(selectElement) {
+    // Define common SMP services
+    const services = [
+        'All Services',
+        'Scalp Micropigmentation',
+        'Hair Density',
+        'Hairline Restoration',
+        'Scar Concealment'
+    ];
+    
+    // Add options to select element
+    services.forEach(service => {
+        const option = document.createElement('option');
+        option.value = service === 'All Services' ? '' : service;
+        option.textContent = service;
+        selectElement.appendChild(option);
+    });
+}
+
+// Filter clinics by service
+function filterClinicsByService(service) {
+    const clinicsContainer = document.querySelector('.clinic-cards');
+    if (!clinicsContainer) return;
+    
+    // If no service selected, show all relevant clinics
+    if (!service) {
+        const pathname = window.location.pathname;
+        
+        if (pathname === '/' || pathname === '/index.html') {
+            // Home page - show top 12
+            displayAllClinics();
+        } else if (pathname.includes('/areas/')) {
+            // Area page - reload area clinics
+            loadAreaClinics();
+        }
+        
+        return;
+    }
+    
+    // Filter businesses by service
+    const filteredBusinesses = businessData.filter(business => {
+        const services = getBusinessServices(business);
+        return services.includes(service);
+    });
+    
+    // Apply additional area filter if on area page
+    let businessesToShow = filteredBusinesses;
+    
+    const pathname = window.location.pathname;
+    if (pathname.includes('/areas/')) {
+        const match = pathname.match(/\/areas\/([^\/]+)/i);
+        if (match) {
+            const areaSlug = match[1];
+            const areaName = decodeUrlFriendlyName(areaSlug);
+            
+            businessesToShow = filteredBusinesses.filter(business => {
+                return (
+                    (business.city && business.city.toLowerCase() === areaName.toLowerCase()) ||
+                    (business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase()) ||
+                    (business.address && business.address.toLowerCase().includes(areaName.toLowerCase()))
+                );
+            });
+        }
+    }
+    
+    // Clear container
+    clinicsContainer.innerHTML = '';
+    
+    if (businessesToShow.length === 0) {
+        clinicsContainer.innerHTML = `<p class="loading-text">No clinics found offering "${service}". Please try another service.</p>`;
+        return;
+    }
+    
+    // Sort and display filtered businesses
+    const sortedBusinesses = [...businessesToShow].sort((a, b) => b.rating - a.rating);
+    
+    // Limit to top 12 on home page
+    const businessesToDisplay = pathname === '/' || pathname === '/index.html' 
+        ? sortedBusinesses.slice(0, 12) 
+        : sortedBusinesses;
+    
+    businessesToDisplay.forEach(business => {
+        createClinicCard(business, clinicsContainer);
+    });
+}
+
+// Helper function to generate URL-friendly name
+function generateUrlFriendlyName(name) {
+    return name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-')          // Replace spaces with hyphens
+        .replace(/-+/g, '-');          // Remove consecutive hyphens
+}
+
+// Helper function to decode URL-friendly name
+function decodeUrlFriendlyName(slug) {
+    return slug
+        .replace(/-/g, ' ')            // Replace hyphens with spaces
+        .replace(/(?:^|\s)\S/g, c => c.toUpperCase()); // Capitalize first letter of each word
 }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Redirect</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the area from the URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const area = urlParams.get('area');
+            
+            if (area) {
+                // Redirect to the area page
+                window.location.href = `areas/${area}/index.html`;
+            } else {
+                // Show area selection
+                document.getElementById('area-select').style.display = 'block';
+            }
+            
+            // Populate list of available areas
+            const popularAreas = [
+                'beverly-hills', 'los-angeles', 'santa-monica', 'glendale',
+                'burbank', 'pasadena', 'long-beach', 'compton', 'downey'
+            ];
+            
+            const areaList = document.getElementById('area-list');
+            popularAreas.forEach(area => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = `areas/${area}/index.html`;
+                link.textContent = area.replace(/-/g, ' ');
+                link.style.textTransform = 'capitalize';
+                li.appendChild(link);
+                areaList.appendChild(li);
+            });
+        });
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #4338ca;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            color: #4338ca;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Area Pages Navigation</h1>
+    
+    <div id="area-select" style="display: none;">
+        <p>Select an area to view SMP clinics:</p>
+        <ul id="area-list"></ul>
+        
+        <p><a href="index.html">Back to Home</a> | <a href="areas.html">All Areas</a></p>
+    </div>
+    
+    <div id="redirect-message">
+        <p>Redirecting to the selected area...</p>
+    </div>
+</body>
+</html> 

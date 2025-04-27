@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="Ogu1SU_oO4sI5Jvs82rDQJ8P3CKn9lEF6qWrwvvMsEo" />
-    <title>Top Hair Tattoo in Los Angeles - SMP Directory</title>
-    <meta name="description" content="Find the best scalp micropigmentation (SMP) and hair tattoo clinics in Los Angeles. Browse top-rated providers by neighborhood.">
-    
-    <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>SMP Directory | Find Top Scalp Micropigmentation Clinics</title>
+    <meta name="description" content="Find top-rated scalp micropigmentation (SMP) clinics in your area. Compare reviews, services, and pricing for the best hair tattoo treatment.">
+    <link rel="stylesheet" href="styles.css">
     <style>
         .dropdown {
             position: relative;
@@ -59,268 +57,118 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body>
     <!-- Header -->
-    <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <a href="index.html" class="text-2xl font-bold">SMP Hair Tattoo</a>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="index.html" class="font-semibold border-b-2 border-white">Home</a>
-                    
-                    <!-- Areas Dropdown -->
-                    <div class="dropdown">
-                        <a href="areas.html" class="hover:text-blue-200 transition">Areas ▾</a>
-                        <div id="areas-dropdown" class="dropdown-content">
-                            <!-- Areas will be populated by JavaScript -->
-                            <div class="text-center py-2 text-gray-500 text-sm">Loading areas...</div>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">
+                <a href="/">SMP Directory</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn">Areas</a>
+                        <div class="dropdown-menu">
+                            <div class="loading-text">Loading areas...</div>
                         </div>
-                    </div>
-                    
-                    <a href="about.html" class="hover:text-blue-200 transition">About SMP</a>
-                </nav>
-                
-                <!-- Mobile menu button -->
-                <button class="md:hidden text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Mobile menu (hidden by default) -->
-            <div class="md:hidden hidden pt-4 pb-2">
-                <a href="index.html" class="block py-2 font-semibold">Home</a>
-                <a href="areas.html" class="block py-2 hover:text-blue-200 transition">Areas</a>
-                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
-            </div>
+                    </li>
+                    <li><a href="/about.html">About</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="relative">
-        <div class="bg-blue-700 text-white relative overflow-hidden">
-            <!-- Background Image -->
-            <div class="absolute inset-0 z-0">
-                <img src="images/scalp micropigmentation in los angeles.png" 
-                     alt="Scalp Micropigmentation in Los Angeles" 
-                     class="w-full h-full object-cover opacity-30 object-top scale-100 origin-top">
-            </div>
-            <div class="container mx-auto px-4 py-20 md:py-32 relative z-10 text-center">
-                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Top SMP Clinics in Los Angeles</h1>
-                <p class="text-xl md:text-2xl mb-8 mx-auto max-w-2xl" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Find the best scalp micropigmentation (SMP) clinics in LA, sorted by customer ratings and reviews.</p>
+    <section class="hero">
+        <div class="container">
+            <h1>Find Top Scalp Micropigmentation Clinics</h1>
+            <p>Compare reviews, services, and pricing for the best hair tattoo treatment in your area.</p>
+            <div class="search-box">
+                <input type="text" placeholder="Search for clinics by name or location...">
+                <button type="button">Search</button>
             </div>
         </div>
     </section>
 
-    <!-- Top Rated Clinics Section -->
-    <section id="clinics" class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-12 text-center">Top-Rated Hair Tattoo Clinics in Los Angeles</h2>
-            <div id="top-clinics-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Clinic cards will be loaded here via JavaScript -->
-                <p id="loading-message" class="text-center py-8 col-span-full">Loading clinics...</p>
+    <!-- Clinics Section -->
+    <section class="clinics">
+        <div class="container">
+            <h2>Top SMP Clinics</h2>
+            <div class="service-filter">
+                <label for="service">Filter by service:</label>
+                <select id="service">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+            <div class="clinic-cards">
+                <div class="loading-text">Loading clinics...</div>
             </div>
         </div>
     </section>
 
-    <!-- LA Neighborhoods Section -->
-    <section class="py-16 bg-gray-100">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-12 text-center">Browse by Los Angeles Areas</h2>
-            <div id="neighborhoods-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- Areas will be loaded here via JavaScript -->
-                <p id="loading-message" class="text-center py-8 col-span-full">Loading areas...</p>
+    <!-- Areas Section -->
+    <section class="areas">
+        <div class="container">
+            <h2>Browse SMP Clinics by Area</h2>
+            <div class="areas-map">
+                <div class="loading-text">Loading areas...</div>
             </div>
         </div>
     </section>
 
-    <!-- Information Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center">About Hair Tattoo Procedures</h2>
-            <div class="max-w-4xl mx-auto">
-                <p class="mb-4">Scalp Micropigmentation (SMP) is a non-surgical, advanced cosmetic tattoo technique that replicates the appearance of hair follicles on the scalp. This innovative procedure creates the illusion of a closely shaved head for those with hair loss or thinning hair.</p>
-                <p class="mb-4">SMP uses specialized equipment and pigments to deposit tiny dots on the scalp, matching your natural hair color and creating a natural-looking hairline. Unlike traditional hair transplants, SMP requires minimal downtime and provides immediate results.</p>
-                <p class="mb-4">The procedure is suitable for various types of hair loss, including male pattern baldness, alopecia, thinning hair, and scalp scars. SMP can also be used to enhance the results of a hair transplant by adding density to the appearance of the transplanted area.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- LA Highlights Section -->
-    <section class="py-16 bg-blue-50">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center">Why Choose Los Angeles for Hair Tattoo</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold mb-3">Top Industry Professionals</h3>
-                    <p>Los Angeles is home to some of the world's most skilled SMP artists and technicians, many with celebrity clientele and international recognition.</p>
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <h2>About Scalp Micropigmentation</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Scalp Micropigmentation (SMP) is a non-surgical, non-invasive, immediate solution to hair loss. This specialized technique uses micro-needles to deposit pigment into the scalp, creating the appearance of tiny hair follicles to restore the look of a fuller head of hair.</p>
+                    <p>SMP can help with various conditions, including general hair loss, pattern baldness, alopecia, and scar camouflage. It's an excellent alternative to hair transplantation surgery, medication, or temporary concealment products.</p>
+                    <h3>Key Benefits of SMP</h3>
+                    <ul>
+                        <li>Immediate results with minimal downtime</li>
+                        <li>Non-surgical procedure with no incisions or stitches</li>
+                        <li>Creates a natural-looking hairline and density</li>
+                        <li>Low maintenance and long-lasting results</li>
+                        <li>Cost-effective compared to hair transplants</li>
+                    </ul>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold mb-3">Cutting-Edge Technology</h3>
-                    <p>LA clinics consistently invest in the latest SMP equipment and techniques, ensuring you receive the most advanced treatments available.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold mb-3">Personalized Experience</h3>
-                    <p>Many Los Angeles clinics offer customized consultations and tailored treatment plans to achieve your desired look.</p>
+                <div class="about-image">
+                    <img src="img/smp-treatment.jpg" alt="Scalp Micropigmentation Treatment">
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
-            <div class="max-w-3xl mx-auto">
-                <!-- FAQ Dropdown Items -->
-                <div class="faq-item mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="faq-question w-full bg-white px-6 py-4 text-left font-medium flex justify-between items-center hover:bg-gray-50 transition-all">
-                        <span>How long does a scalp micropigmentation procedure take?</span>
-                        <svg class="h-5 w-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="faq-answer hidden px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <p>Most SMP procedures require 2-4 sessions, each lasting 2-4 hours depending on the extent of the treatment area. These sessions are typically spaced 10-14 days apart.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="faq-question w-full bg-white px-6 py-4 text-left font-medium flex justify-between items-center hover:bg-gray-50 transition-all">
-                        <span>Is scalp micropigmentation painful?</span>
-                        <svg class="h-5 w-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="faq-answer hidden px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <p>Most clients report minimal discomfort during the procedure. Topical numbing cream is typically applied before the treatment to minimize any pain.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="faq-question w-full bg-white px-6 py-4 text-left font-medium flex justify-between items-center hover:bg-gray-50 transition-all">
-                        <span>How long does SMP last?</span>
-                        <svg class="h-5 w-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="faq-answer hidden px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <p>Scalp micropigmentation can last 4-6 years on average before a touch-up is needed. The longevity depends on factors like skin type, lifestyle, and sun exposure.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item mb-4 border border-gray-200 rounded-lg overflow-hidden">
-                    <button class="faq-question w-full bg-white px-6 py-4 text-left font-medium flex justify-between items-center hover:bg-gray-50 transition-all">
-                        <span>What's the recovery time after SMP?</span>
-                        <svg class="h-5 w-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="faq-answer hidden px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <p>There's minimal downtime with SMP. The scalp may appear red for 1-2 days after each session, but most clients can return to normal activities immediately.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Add JavaScript for FAQ dropdowns -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const faqQuestions = document.querySelectorAll('.faq-question');
-                
-                faqQuestions.forEach(question => {
-                    question.addEventListener('click', function() {
-                        // Toggle active class on the question
-                        this.classList.toggle('active');
-                        
-                        // Toggle the arrow rotation
-                        const arrow = this.querySelector('svg');
-                        arrow.classList.toggle('rotate-180');
-                        
-                        // Toggle the answer visibility
-                        const answer = this.nextElementSibling;
-                        answer.classList.toggle('hidden');
-                    });
-                });
-            });
-        </script>
-        
-        <!-- FAQ Schema Markup -->
-        <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "How long does a scalp micropigmentation procedure take?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Most SMP procedures require 2-4 sessions, each lasting 2-4 hours depending on the extent of the treatment area. These sessions are typically spaced 10-14 days apart."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "Is scalp micropigmentation painful?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Most clients report minimal discomfort during the procedure. Topical numbing cream is typically applied before the treatment to minimize any pain."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "How long does SMP last?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "Scalp micropigmentation can last 4-6 years on average before a touch-up is needed. The longevity depends on factors like skin type, lifestyle, and sun exposure."
-                    }
-                },
-                {
-                    "@type": "Question",
-                    "name": "What's the recovery time after SMP?",
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": "There's minimal downtime with SMP. The scalp may appear red for 1-2 days after each session, but most clients can return to normal activities immediately."
-                    }
-                }
-            ]
-        }
-        </script>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-10">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Column 1: About -->
-                <div>
-                    <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo</h3>
-                    <p class="text-gray-300">
-                        The premier resource for Scalp Micropigmentation clinics in Los Angeles. 
-                        Find top-rated SMP providers and restore your confidence.
-                    </p>
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>SMP Directory</h3>
+                    <p>The comprehensive guide to finding top-rated scalp micropigmentation clinics across the country.</p>
+                    <p>Contact: info@smpdirectory.com</p>
                 </div>
-                
-                <!-- Column 2: Quick Links -->
-                <div>
-                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2 text-gray-300">
-                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
-                        <li><a href="areas.html" class="hover:text-white transition">Areas</a></li>
-                        <li><a href="about.html" class="hover:text-white transition">About SMP</a></li>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about.html">About SMP</a></li>
+                        <li><a href="/privacy.html">Privacy Policy</a></li>
+                        <li><a href="/terms.html">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
-            
-            <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
-                <p>&copy; 2025 SMP Hair Tattoo. All rights reserved.</p>
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year">2023</span> SMP Directory. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <!-- JavaScript -->
-    <script src="/scripts.js"></script>
+    <script src="scripts.js"></script>
+    <script src="areas.js"></script>
     
     <!-- Add dropdown handler script -->
     <script>

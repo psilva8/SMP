@@ -117,6 +117,14 @@
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Detect environment
+            const isLocalDev = window.location.protocol === 'file:' 
+                || window.location.hostname === 'localhost' 
+                || window.location.hostname === '127.0.0.1';
+            
+            console.log('Is local development:', isLocalDev);
+            console.log('Current path:', window.location.pathname);
+            
             // Check if there's a specific neighborhood in the URL
             const urlParams = new URLSearchParams(window.location.search);
             const area = urlParams.get('area');
@@ -125,7 +133,12 @@
                 // Convert to URL-friendly format
                 const urlFriendlyArea = area.toLowerCase().replace(/\s+/g, '-');
                 // Redirect to the new URL structure
-                window.location.href = `areas/${encodeURIComponent(urlFriendlyArea)}/`;
+                const redirectPath = isLocalDev
+                    ? `areas/${encodeURIComponent(urlFriendlyArea)}/index.html`
+                    : `/areas/${encodeURIComponent(urlFriendlyArea)}/`;
+                    
+                console.log(`Redirecting to ${redirectPath}`);
+                window.location.href = redirectPath;
                 return;
             }
             
@@ -139,12 +152,19 @@
                 // Remove the .html extension if present
                 const neighborhoodName = neighborhoodFile.replace('.html', '');
                 // Redirect to the new URL structure
-                window.location.href = `/areas/${neighborhoodName}/`;
+                const redirectPath = isLocalDev 
+                    ? `areas/${neighborhoodName}/index.html`
+                    : `/areas/${neighborhoodName}/`;
+                    
+                console.log(`Redirecting to ${redirectPath}`);
+                window.location.href = redirectPath;
                 return;
             }
             
             // Default redirect to areas.html
-            window.location.href = '/areas.html';
+            const defaultPath = isLocalDev ? 'areas.html' : '/areas.html';
+            console.log(`Default redirect to ${defaultPath}`);
+            window.location.href = defaultPath;
         });
     </script>
 </body>
