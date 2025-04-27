@@ -127,7 +127,7 @@
             
             // Check if there's a specific neighborhood in the URL
             const urlParams = new URLSearchParams(window.location.search);
-            const area = urlParams.get('area');
+            const area = urlParams.get('area') || urlParams.get('name');
             
             if (area) {
                 // Convert to URL-friendly format
