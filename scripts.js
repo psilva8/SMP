@@ -52,503 +52,55 @@ function initSite() {
 
 // Initialize dropdown menus
 function initDropdowns() {
-    const dropdowns = document.querySelectorAll('.dropdown');
+    // Get all dropdown toggles
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
     
-    dropdowns.forEach(dropdown => {
-        const dropdownLink = dropdown.querySelector('a');
-        if (dropdownLink) {
-            dropdownLink.addEventListener('click', function(e) {
-                // Prevent navigation to areas.html
-                e.preventDefault();
-                
-                // Toggle the active class
-                dropdown.classList.toggle('active');
-                
-                // Close other dropdowns
-                dropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
-                        otherDropdown.classList.remove('active');
+    // Add click handlers to each dropdown toggle
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Find the menu associated with this toggle
+            const menu = this.nextElementSibling;
+            
+            // Toggle the 'visible' class
+            if (menu.classList.contains('visible')) {
+                menu.classList.remove('visible');
+            } else {
+                // Close all other dropdowns first
+                document.querySelectorAll('.dropdown-menu.visible').forEach(visibleMenu => {
+                    if (visibleMenu !== menu) {
+                        visibleMenu.classList.remove('visible');
                     }
                 });
-            });
-        }
+                
+                menu.classList.add('visible');
+            }
+        });
     });
     
     // Close dropdowns when clicking outside
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.dropdown')) {
-            dropdowns.forEach(dropdown => {
-                dropdown.classList.remove('active');
+            document.querySelectorAll('.dropdown-menu.visible').forEach(menu => {
+                menu.classList.remove('visible');
             });
         }
     });
 }
 
-// Handle search functionality
-function handleSearch() {
-    const searchButton = document.getElementById('search-button');
-    const searchInput = document.getElementById('search-input');
-    
-    if (searchButton && searchInput) {
-        // Create the suggestions container 
-        const suggestionsContainer = document.createElement('div');
-        suggestionsContainer.id = 'search-suggestions';
-        suggestionsContainer.style.position = 'absolute';
-        suggestionsContainer.style.zIndex = '1000';
-        suggestionsContainer.style.backgroundColor = 'white';
-        suggestionsContainer.style.width = '100%';
-        suggestionsContainer.style.maxHeight = '300px';
-        suggestionsContainer.style.overflowY = 'auto';
-        suggestionsContainer.style.borderRadius = '0 0 5px 5px';
-        suggestionsContainer.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-        suggestionsContainer.style.display = 'none';
-        
-        // Insert suggestions container right after search input
-        if (searchInput.parentNode) {
-            // Make parent position relative to contain absolute-positioned dropdown
-            searchInput.parentNode.style.position = 'relative';
-            searchInput.parentNode.appendChild(suggestionsContainer);
-        }
-        
-        // Perform the search
-        const performSearch = (query) => {
-            if (query.trim()) {
-                // Track the search query
-                trackSearch(query);
-                
-                // Update URL with search query
-                const currentUrl = new URL(window.location.href);
-                
-                // If we're already on the search page, just update the URL
-                if (window.location.pathname.includes('search.html')) {
-                    currentUrl.searchParams.set('q', query);
-                    
-                    // Update URL without reloading the page
-                    window.history.pushState({ query }, '', currentUrl.toString());
-                    
-                    // Manually trigger search results display
-                    displaySearchResults(query);
-                } else {
-                    // Navigate to search page with query
-                    window.location.href = `search.html?q=${encodeURIComponent(query)}`;
-                }
-            }
-        };
-        
-        // Add click handler to search button
-        searchButton.addEventListener('click', function() {
-            const query = searchInput.value.trim();
-            performSearch(query);
-        });
-        
-        // Function to generate and display search suggestions
-        const updateSuggestions = () => {
-            const query = searchInput.value.trim().toLowerCase();
-            if (query.length < 2) {
-                suggestionsContainer.style.display = 'none';
-                return;
-            }
-            
-            // Wait for businesses to load
-            if (!window.filteredBusinesses || window.filteredBusinesses.length === 0) {
-                return;
-            }
-            
-            // Find matching business names, cities, and neighborhoods
-            const nameMatches = [];
-            const cityMatches = new Set();
-            const neighborhoodMatches = new Set();
-            
-            window.filteredBusinesses.forEach(business => {
-                // Check business name
-                if (business.name && business.name.toLowerCase().includes(query)) {
-                    nameMatches.push(business.name);
-                }
-                
-                // Check city
-                if (business.city && business.city.toLowerCase().includes(query)) {
-                    cityMatches.add(business.city);
-                }
-                
-                // Check neighborhood
-                if (business.neighborhood && business.neighborhood.toLowerCase().includes(query)) {
-                    neighborhoodMatches.add(business.neighborhood);
-                }
-            });
-            
-            // Get popular search terms from analytics that match the query
-            const popularSearches = [];
-            if (Object.keys(searchAnalytics).length > 0) {
-                // Sort by count (highest first) and filter to those containing the query
-                const sortedAnalytics = Object.entries(searchAnalytics)
-                    .filter(([term]) => term.includes(query) && term !== query) // exclude exact match
-                    .sort((a, b) => b[1].count - a[1].count)
-                    .slice(0, 3); // top 3 popular searches
-                
-                popularSearches.push(...sortedAnalytics.map(([term]) => term));
-            }
-            
-            // Limit to top 5 business names
-            const topNameMatches = [...new Set(nameMatches)].slice(0, 5);
-            
-            // Prepare all suggestions
-            const allSuggestions = [
-                ...popularSearches,
-                ...topNameMatches,
-                ...[...cityMatches].slice(0, 3).map(city => `${city} SMP`),
-                ...[...neighborhoodMatches].slice(0, 3).map(neighborhood => `${neighborhood} hair tattoo`)
-            ];
-            
-            // Get unique suggestions (no duplicates)
-            const uniqueSuggestions = [...new Set(allSuggestions)].slice(0, 10);
-            
-            // Display suggestions
-            if (uniqueSuggestions.length > 0) {
-                suggestionsContainer.innerHTML = '';
-                
-                uniqueSuggestions.forEach(suggestion => {
-                    const suggestionItem = document.createElement('div');
-                    suggestionItem.className = 'suggestion-item';
-                    suggestionItem.textContent = suggestion;
-                    suggestionItem.style.padding = '10px 15px';
-                    suggestionItem.style.borderBottom = '1px solid #eee';
-                    suggestionItem.style.cursor = 'pointer';
-                    
-                    // Add "Popular" badge for suggestions from analytics
-                    if (popularSearches.includes(suggestion)) {
-                        const popularBadge = document.createElement('span');
-                        popularBadge.textContent = 'Popular';
-                        popularBadge.style.fontSize = '10px';
-                        popularBadge.style.backgroundColor = '#4F46E5';
-                        popularBadge.style.color = 'white';
-                        popularBadge.style.padding = '2px 5px';
-                        popularBadge.style.borderRadius = '3px';
-                        popularBadge.style.marginLeft = '8px';
-                        suggestionItem.appendChild(popularBadge);
-                    }
-                    
-                    // Highlight the matching part
-                    const matchIndex = suggestion.toLowerCase().indexOf(query);
-                    if (matchIndex >= 0) {
-                        const matchEnd = matchIndex + query.length;
-                        const beforeMatch = suggestion.substring(0, matchIndex);
-                        const matchText = suggestion.substring(matchIndex, matchEnd);
-                        const afterMatch = suggestion.substring(matchEnd);
-                        
-                        suggestionItem.innerHTML = 
-                            beforeMatch +
-                            `<strong>${matchText}</strong>` +
-                            afterMatch;
-                        
-                        // Re-add the badge if it was a popular search
-                        if (popularSearches.includes(suggestion)) {
-                            const popularBadge = document.createElement('span');
-                            popularBadge.textContent = 'Popular';
-                            popularBadge.style.fontSize = '10px';
-                            popularBadge.style.backgroundColor = '#4F46E5';
-                            popularBadge.style.color = 'white';
-                            popularBadge.style.padding = '2px 5px';
-                            popularBadge.style.borderRadius = '3px';
-                            popularBadge.style.marginLeft = '8px';
-                            suggestionItem.appendChild(popularBadge);
-                        }
-                    }
-                    
-                    // Click handler for suggestion
-                    suggestionItem.addEventListener('click', () => {
-                        searchInput.value = suggestion;
-                        suggestionsContainer.style.display = 'none';
-                        performSearch(suggestion);
-                    });
-                    
-                    // Hover effect
-                    suggestionItem.addEventListener('mouseenter', () => {
-                        suggestionItem.style.backgroundColor = '#f0f0f0';
-                    });
-                    
-                    suggestionItem.addEventListener('mouseleave', () => {
-                        suggestionItem.style.backgroundColor = '';
-                    });
-                    
-                    suggestionsContainer.appendChild(suggestionItem);
-                });
-                
-                suggestionsContainer.style.display = 'block';
-            } else {
-                suggestionsContainer.style.display = 'none';
-            }
-        };
-        
-        // Add input handler for suggestions
-        searchInput.addEventListener('input', updateSuggestions);
-        
-        // Add focus handler
-        searchInput.addEventListener('focus', updateSuggestions);
-        
-        // Hide suggestions when clicking outside
-        document.addEventListener('click', (e) => {
-            if (e.target !== searchInput && e.target !== suggestionsContainer) {
-                suggestionsContainer.style.display = 'none';
-            }
-        });
-        
-        // Handle keyboard navigation in suggestions
-        searchInput.addEventListener('keydown', function(e) {
-            const suggestions = suggestionsContainer.querySelectorAll('.suggestion-item');
-            const isVisible = suggestionsContainer.style.display === 'block';
-            
-            // Currently focused suggestion index
-            let focusedIndex = Array.from(suggestions).findIndex(
-                item => item === document.activeElement
-            );
-            
-            switch (e.key) {
-                case 'ArrowDown':
-                    if (isVisible) {
-                        e.preventDefault();
-                        if (focusedIndex < 0) {
-                            // Focus first suggestion
-                            suggestions[0]?.focus();
-                        } else if (focusedIndex < suggestions.length - 1) {
-                            // Focus next suggestion
-                            suggestions[focusedIndex + 1].focus();
-                        }
-                    }
-                    break;
-                    
-                case 'ArrowUp':
-                    if (isVisible) {
-                        e.preventDefault();
-                        if (focusedIndex > 0) {
-                            // Focus previous suggestion
-                            suggestions[focusedIndex - 1].focus();
-                        } else if (focusedIndex === 0) {
-                            // Back to search input
-                            searchInput.focus();
-                        }
-                    }
-                    break;
-                    
-                case 'Escape':
-                    suggestionsContainer.style.display = 'none';
-                    break;
-                    
-                case 'Enter':
-                    if (isVisible && focusedIndex >= 0) {
-                        e.preventDefault();
-                        // Use the focused suggestion
-                        searchInput.value = suggestions[focusedIndex].textContent;
-                        suggestionsContainer.style.display = 'none';
-                        performSearch(searchInput.value);
-                    } else if (searchInput.value.trim()) {
-                        // Normal search with input value
-                        performSearch(searchInput.value);
-                    }
-                    break;
-            }
-        });
-        
-        // Make suggestion items focusable
-        const makeItemsFocusable = () => {
-            suggestionsContainer.querySelectorAll('.suggestion-item').forEach(item => {
-                item.setAttribute('tabindex', '0');
-            });
-        };
-        
-        // Setup mutation observer to make new suggestion items focusable
-        const observer = new MutationObserver(makeItemsFocusable);
-        observer.observe(suggestionsContainer, { childList: true });
-    }
-}
-
-// Load search results on the search page
+// Load search results from query parameter
 function loadSearchResults() {
-    // Get query parameter from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('q');
+    console.log('loadSearchResults() called [DEBUG]');
     
-    // Update search input with query
-    const searchInput = document.getElementById('search-input');
-    if (searchInput && query) {
-        searchInput.value = query;
-    }
-    
-    // Update search term display
-    const searchTerm = document.getElementById('search-term');
-    if (searchTerm && query) {
-        searchTerm.textContent = query;
-    }
-    
-    // Filter businesses based on search query
-    if (window.filteredBusinesses && window.filteredBusinesses.length > 0) {
-        displaySearchResults(query);
-    } else {
-        // If businesses not loaded yet, wait for them
-        const checkInterval = setInterval(() => {
-            if (window.filteredBusinesses && window.filteredBusinesses.length > 0) {
-                clearInterval(checkInterval);
-                displaySearchResults(query);
-            }
-        }, 100);
-        
-        // Clear interval after 10 seconds to prevent infinite checking
-        setTimeout(() => clearInterval(checkInterval), 10000);
-    }
-    
-    // Add popstate handler to handle browser back/forward navigation
-    window.addEventListener('popstate', (event) => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const newQuery = urlParams.get('q');
-        
-        // Update search input
-        if (searchInput) {
-            searchInput.value = newQuery || '';
-        }
-        
-        // Update search results
-        displaySearchResults(newQuery);
-    });
+    // This function has been removed as part of eliminating search functionality
 }
 
 // Display search results based on query
 function displaySearchResults(query) {
-    const resultsContainer = document.getElementById('search-results-container');
-    if (!resultsContainer) return;
+    console.log('displaySearchResults() called [DEBUG]');
     
-    // Clear container
-    resultsContainer.innerHTML = '';
-    
-    // Update the search term display
-    const searchTerm = document.getElementById('search-term');
-    if (searchTerm) {
-        searchTerm.textContent = query || '';
-    }
-    
-    if (!query) {
-        // If no query, display all businesses
-        displayClinics(window.filteredBusinesses.slice(0, 20), resultsContainer);
-        return;
-    }
-    
-    // Search with ranking system
-    const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
-    
-    // Score and rank results
-    const scoredResults = window.filteredBusinesses.map(business => {
-        // Gather business text fields for searching
-        const businessName = (business.name || '').toLowerCase();
-        const businessDesc = (business.description || '').toLowerCase();
-        const businessAddress = (business.address || business.full_address || '').toLowerCase();
-        const businessCity = (business.city || '').toLowerCase();
-        const businessNeighborhood = (business.neighborhood || '').toLowerCase();
-        
-        // Initialize score
-        let score = 0;
-        let matched = true;
-        
-        // Check each search term
-        for (const term of searchTerms) {
-            let termMatched = false;
-            
-            // Exact name match (highest score)
-            if (businessName === term) {
-                score += 100;
-                termMatched = true;
-            }
-            // Name contains term as a whole word
-            else if (businessName.includes(' ' + term + ' ') || 
-                     businessName.startsWith(term + ' ') || 
-                     businessName.endsWith(' ' + term)) {
-                score += 50;
-                termMatched = true;
-            }
-            // Name contains term as part of a word
-            else if (businessName.includes(term)) {
-                score += 25;
-                termMatched = true;
-            }
-            
-            // City/neighborhood exact match
-            if (businessCity === term || businessNeighborhood === term) {
-                score += 40;
-                termMatched = true;
-            }
-            // City/neighborhood contains term
-            else if (businessCity.includes(term) || businessNeighborhood.includes(term)) {
-                score += 20;
-                termMatched = true;
-            }
-            
-            // Address contains term
-            if (businessAddress.includes(term)) {
-                score += 15;
-                termMatched = true;
-            }
-            
-            // Description contains term
-            if (businessDesc.includes(term)) {
-                score += 10;
-                termMatched = true;
-            }
-            
-            // If this term didn't match anything, the result isn't relevant
-            if (!termMatched) {
-                matched = false;
-                break;
-            }
-        }
-        
-        // Return scored business with match status
-        return {
-            business,
-            score,
-            matched
-        };
-    });
-    
-    // Filter to only matched results and sort by score
-    const results = scoredResults
-        .filter(item => item.matched)
-        .sort((a, b) => b.score - a.score)
-        .map(item => item.business);
-    
-    // Update analytics with result count
-    const normalizedQuery = query.toLowerCase().trim();
-    if (searchAnalytics[normalizedQuery]) {
-        searchAnalytics[normalizedQuery].results = results.length;
-        try {
-            localStorage.setItem('smp_search_analytics', JSON.stringify(searchAnalytics));
-        } catch (e) {
-            console.error('Failed to update search analytics results:', e);
-        }
-    }
-    
-    // Update results count and no-results message
-    const noResultsMessage = document.getElementById('no-results-message');
-    
-    if (results.length > 0) {
-        if (noResultsMessage) {
-            noResultsMessage.classList.add('hidden');
-        }
-        // Pass search terms for highlighting
-        displayClinics(results, resultsContainer, searchTerms);
-    } else {
-        if (noResultsMessage) {
-            noResultsMessage.classList.remove('hidden');
-        } else {
-            resultsContainer.innerHTML = `
-                <p id="no-results-message" class="text-center py-8 text-gray-500 text-lg">
-                    No results found for "${query}". Try different keywords or browse our <a href="index.html" class="text-blue-600 hover:underline">top clinics</a>.
-                </p>
-            `;
-        }
-    }
-    
-    // Remove the loading message if it exists
-    const loadingMessage = document.getElementById('loading-message');
-    if (loadingMessage) {
-        loadingMessage.remove();
-    }
+    // This function has been removed as part of eliminating search functionality
 }
 
 // Fetch business data from JSON file
@@ -1540,9 +1092,6 @@ function initializePage() {
         loadAreaClinics();
     }
     
-    // Initialize search functionality
-    initializeSearch();
-    
     // Initialize service filter
     initializeServiceFilter();
 }
@@ -1776,92 +1325,6 @@ function updateClinicCount(count, areaName) {
         const clinicText = count === 1 ? 'clinic' : 'clinics';
         countElement.textContent = `${count} scalp micropigmentation ${clinicText} found in ${areaName}`;
     }
-}
-
-// Initialize search functionality
-function initializeSearch() {
-    const searchInput = document.querySelector('.search-box input');
-    if (!searchInput) return;
-    
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase().trim();
-        filterClinicsBySearch(searchTerm);
-    });
-}
-
-// Filter clinics by search term
-function filterClinicsBySearch(searchTerm) {
-    const clinicsContainer = document.querySelector('.clinic-cards');
-    if (!clinicsContainer) return;
-    
-    // If on area page, only filter the area's clinics
-    let businessesToFilter = businessData;
-    
-    const pathname = window.location.pathname;
-    if (pathname.includes('/areas/')) {
-        const match = pathname.match(/\/areas\/([^\/]+)/i);
-        if (match) {
-            const areaSlug = match[1];
-            const areaName = decodeUrlFriendlyName(areaSlug);
-            
-            businessesToFilter = businessData.filter(business => {
-                return (
-                    (business.city && business.city.toLowerCase() === areaName.toLowerCase()) ||
-                    (business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase()) ||
-                    (business.address && business.address.toLowerCase().includes(areaName.toLowerCase()))
-                );
-            });
-        }
-    }
-    
-    // If search term is empty, show all relevant clinics
-    if (!searchTerm) {
-        clinicsContainer.innerHTML = '';
-        
-        if (pathname === '/' || pathname === '/index.html') {
-            // Home page - show top 12
-            const sortedBusinesses = [...businessesToFilter].sort((a, b) => b.rating - a.rating);
-            const topBusinesses = sortedBusinesses.slice(0, 12);
-            
-            topBusinesses.forEach(business => {
-                createClinicCard(business, clinicsContainer);
-            });
-        } else {
-            // Area page - show all area clinics
-            const sortedBusinesses = [...businessesToFilter].sort((a, b) => b.rating - a.rating);
-            
-            sortedBusinesses.forEach(business => {
-                createClinicCard(business, clinicsContainer);
-            });
-        }
-        
-        return;
-    }
-    
-    // Filter by search term
-    const filteredBusinesses = businessesToFilter.filter(business => {
-        return (
-            (business.name && business.name.toLowerCase().includes(searchTerm)) ||
-            (business.description && business.description.toLowerCase().includes(searchTerm)) ||
-            (business.address && business.address.toLowerCase().includes(searchTerm)) ||
-            (business.city && business.city.toLowerCase().includes(searchTerm))
-        );
-    });
-    
-    // Clear container
-    clinicsContainer.innerHTML = '';
-    
-    if (filteredBusinesses.length === 0) {
-        clinicsContainer.innerHTML = `<p class="loading-text">No clinics found matching "${searchTerm}". Please try another search term.</p>`;
-        return;
-    }
-    
-    // Sort and display filtered businesses
-    const sortedBusinesses = [...filteredBusinesses].sort((a, b) => b.rating - a.rating);
-    
-    sortedBusinesses.forEach(business => {
-        createClinicCard(business, clinicsContainer);
-    });
 }
 
 // Initialize service filter
