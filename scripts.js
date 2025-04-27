@@ -23,6 +23,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Initialize the site
+function initSite() {
+    console.log('Initializing site...');
+    // Set up event listeners and initial state
+    
+    // Initialize dropdowns
+    initDropdowns();
+    
+    // Load business data if we're on a page that needs it
+    if (document.getElementById('clinics-container') || 
+        document.getElementById('neighborhood-clinics') || 
+        document.getElementById('area-clinics')) {
+        
+        loadBusinessData()
+            .then(data => {
+                // Store data globally
+                window.businessData = data;
+                
+                // Update UI based on page type
+                updateUI(data);
+            })
+            .catch(error => {
+                console.error('Error loading business data:', error);
+            });
+    }
+}
+
 // Initialize dropdown menus
 function initDropdowns() {
     const dropdowns = document.querySelectorAll('.dropdown');
