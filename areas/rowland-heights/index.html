@@ -190,51 +190,18 @@
             console.log('Area page DOM content loaded');
             
             // Fetch business data if not already loaded
-            if (!window.allBusinesses || window.allBusinesses.length === 0) {
-                console.log('No cached business data found, fetching data...');
-                try {
-                    if (typeof fetchBusinessData === 'function') {
-                        fetchBusinessData();
-                    } else {
-                        console.error('fetchBusinessData function not found');
-                    }
-                } catch (e) {
-                    console.error('Error fetching business data:', e);
-                }
-            }
-            
-            // Set up the areas dropdown
-            try {
-                if (typeof populateAreasDropdown === 'function') {
-                    populateAreasDropdown();
-                } else {
-                    console.error('populateAreasDropdown function not found');
-                }
-            } catch (e) {
-                console.error('Error setting up areas dropdown:', e);
-            }
-            
-            // Load clinics for this area
-            try {
-                if (typeof loadNeighborhoodClinics === 'function') {
+            fetchBusinessData()
+                .then(data => {
+                    console.log('Business data loaded, length:', data.length);
+                    
+                    // Call functions to populate the page
+                    populateAreasDropdown(data);
                     loadNeighborhoodClinics();
-                } else {
-                    console.error('loadNeighborhoodClinics function not found');
-                }
-            } catch (e) {
-                console.error('Error loading neighborhood clinics:', e);
-            }
-            
-            // Populate the neighborhood map (for "Other Areas" section)
-            try {
-                if (typeof populateNeighborhoodMap === 'function') {
-                    populateNeighborhoodMap();
-                } else {
-                    console.error('populateNeighborhoodMap function not found');
-                }
-            } catch (e) {
-                console.error('Error populating neighborhood map:', e);
-            }
+                    populateNeighborhoodMap(data);
+                })
+                .catch(error => {
+                    console.error('Error loading business data:', error);
+                });
         });
     </script>
 </body>

@@ -3,89 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debug Clinic Loading</title>
+    <title>SMP Clinic Debugger</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 { color: #2563eb; }
+        pre { background: #f1f1f1; padding: 15px; border-radius: 5px; overflow: auto; }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover { background: #1d4ed8; }
+        #status { margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fee2e2; color: #b91c1c; }
+        #clinic-results { margin-top: 20px; }
+        .clinic-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .clinic-name { font-weight: bold; font-size: 18px; }
+    </style>
 </head>
 <body>
-    <h1>Debug Clinic Loading</h1>
+    <h1>SMP Clinic Debugger</h1>
     
     <div>
-        <h2>Clinic Data Status</h2>
-        <div id="status"></div>
+        <h2>1. Test Data Loading</h2>
+        <button id="load-data">Load Business Data</button>
+        <div id="data-status"></div>
+        <pre id="data-sample"></pre>
     </div>
     
     <div>
-        <h2>Test Area: Beverly Hills</h2>
-        <div id="test-clinics"></div>
+        <h2>2. Test Beverly Hills Clinics</h2>
+        <button id="test-beverly-hills">Display Beverly Hills Clinics</button>
+        <div id="clinic-status"></div>
+        <div id="clinic-results"></div>
     </div>
     
-    <script src="scripts.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const statusDiv = document.getElementById('status');
-            const testClinicsDiv = document.getElementById('test-clinics');
+        // Reference to status elements
+        const dataStatus = document.getElementById('data-status');
+        const dataSample = document.getElementById('data-sample');
+        const clinicStatus = document.getElementById('clinic-status');
+        const clinicResults = document.getElementById('clinic-results');
+        
+        // Load business data
+        document.getElementById('load-data').addEventListener('click', async function() {
+            dataStatus.innerHTML = 'Loading data...';
+            dataStatus.className = '';
             
-            // Check if business data is loaded
-            statusDiv.innerHTML = `
-                <p>allBusinesses: ${window.allBusinesses ? window.allBusinesses.length : 'not loaded'}</p>
-                <p>filteredBusinesses: ${window.filteredBusinesses ? window.filteredBusinesses.length : 'not loaded'}</p>
-            `;
-            
-            // Manually fetch business data if not loaded
-            if (!window.filteredBusinesses || window.filteredBusinesses.length === 0) {
-                statusDiv.innerHTML += '<p>Fetching business data...</p>';
+            try {
+                // Fetch the data from the JSON file
+                const response = await fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json');
+                if (!response.ok) throw new Error('Failed to load data: ' + response.status);
                 
-                fetchBusinessData().then(data => {
-                    statusDiv.innerHTML += `<p>Fetched ${data.length} businesses</p>`;
-                    testFilterForBeverlyHills();
-                }).catch(error => {
-                    statusDiv.innerHTML += `<p>Error fetching data: ${error.message}</p>`;
-                });
-            } else {
-                testFilterForBeverlyHills();
+                const data = await response.json();
+                window.businessData = data;
+                
+                // Show success and sample
+                dataStatus.innerHTML = `Successfully loaded ${data.length} businesses`;
+                dataStatus.className = 'success';
+                
+                // Show a sample of the first business
+                if (data.length > 0) {
+                    dataSample.textContent = JSON.stringify(data[0], null, 2);
+                }
+                
+            } catch (error) {
+                dataStatus.innerHTML = 'Error: ' + error.message;
+                dataStatus.className = 'error';
+                console.error(error);
+            }
+        });
+        
+        // Test Beverly Hills clinics
+        document.getElementById('test-beverly-hills').addEventListener('click', function() {
+            clinicStatus.innerHTML = 'Finding clinics...';
+            clinicStatus.className = '';
+            clinicResults.innerHTML = '';
+            
+            if (!window.businessData) {
+                clinicStatus.innerHTML = 'Please load the business data first';
+                clinicStatus.className = 'error';
+                return;
             }
             
-            function testFilterForBeverlyHills() {
+            try {
+                // Filter businesses for Beverly Hills
                 const areaName = 'Beverly Hills';
-                const areaNameLower = areaName.toLowerCase();
-                
-                // Log the first 10 businesses to see their structure
-                statusDiv.innerHTML += '<p>First 10 businesses:</p><ul>';
-                for (let i = 0; i < Math.min(10, window.filteredBusinesses.length); i++) {
-                    const b = window.filteredBusinesses[i];
-                    statusDiv.innerHTML += `<li>${b.name} - City: "${b.city || 'N/A'}", Neighborhood: "${b.neighborhood || 'N/A'}"</li>`;
-                }
-                statusDiv.innerHTML += '</ul>';
-                
-                // Try to filter for Beverly Hills
-                const bevHillsClinics = window.filteredBusinesses.filter(business => {
-                    if ((business.city && business.city.toLowerCase() === areaNameLower) || 
-                        (business.neighborhood && business.neighborhood.toLowerCase() === areaNameLower)) {
-                        return true;
-                    }
-                    
-                    if (business.address && business.address.toLowerCase().includes(areaNameLower)) {
-                        return true;
-                    }
-                    
-                    return false;
+                const filteredBusinesses = window.businessData.filter(business => {
+                    return (
+                        (business.city && business.city.toLowerCase() === areaName.toLowerCase()) ||
+                        (business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase()) ||
+                        (business.address && business.address.toLowerCase().includes(areaName.toLowerCase()))
+                    );
                 });
                 
-                testClinicsDiv.innerHTML = `<p>Found ${bevHillsClinics.length} clinics in Beverly Hills</p>`;
-                
-                if (bevHillsClinics.length > 0) {
-                    testClinicsDiv.innerHTML += '<ul>';
-                    bevHillsClinics.forEach(clinic => {
-                        testClinicsDiv.innerHTML += `
-                            <li>
-                                <strong>${clinic.name}</strong><br>
-                                City: ${clinic.city || 'N/A'}<br>
-                                Neighborhood: ${clinic.neighborhood || 'N/A'}<br>
-                                Address: ${clinic.address || clinic.full_address || 'N/A'}
-                            </li>
-                        `;
-                    });
-                    testClinicsDiv.innerHTML += '</ul>';
+                if (filteredBusinesses.length === 0) {
+                    clinicStatus.innerHTML = 'No clinics found for Beverly Hills';
+                    clinicStatus.className = 'error';
+                    return;
                 }
+                
+                // Show success message
+                clinicStatus.innerHTML = `Found ${filteredBusinesses.length} clinics in Beverly Hills`;
+                clinicStatus.className = 'success';
+                
+                // Display each clinic
+                filteredBusinesses.forEach(business => {
+                    const card = document.createElement('div');
+                    card.className = 'clinic-card';
+                    
+                    // Format address
+                    const addressParts = [
+                        business.address || '',
+                        business.city || '',
+                        business.state || '',
+                        business.zip_code || ''
+                    ].filter(Boolean);
+                    
+                    const formattedAddress = addressParts.join(', ');
+                    
+                    card.innerHTML = `
+                        <div class="clinic-name">${business.name}</div>
+                        <div>${formattedAddress}</div>
+                        <div>Rating: ${business.rating || 'N/A'}</div>
+                    `;
+                    
+                    clinicResults.appendChild(card);
+                });
+                
+            } catch (error) {
+                clinicStatus.innerHTML = 'Error: ' + error.message;
+                clinicStatus.className = 'error';
+                console.error(error);
             }
         });
     </script>
