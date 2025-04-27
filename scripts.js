@@ -1134,7 +1134,14 @@ function createClinicCard(business, container) {
     const services = getBusinessServices(business);
     
     // Create star rating
-    const starRating = createStarRating(business.rating);
+    // Debug rating value
+    console.log("Business rating:", business.rating, typeof business.rating);
+    
+    // If rating is not available or is NaN, use rating_value or default to 0
+    const ratingValue = parseFloat(business.rating) || parseFloat(business.rating_value) || 0;
+    const reviewsCount = business.reviews_count || business.reviews || 0;
+    
+    const starRating = createStarRating(ratingValue);
     
     card.innerHTML = `
         <div class="clinic-image" style="background-image: url(${business.image_url || 'img/default-clinic.jpg'})"></div>
@@ -1142,7 +1149,7 @@ function createClinicCard(business, container) {
             <h3>${business.name}</h3>
             <div class="clinic-rating">
                 <div class="stars">${starRating}</div>
-                <span>${business.rating || 'N/A'} (${business.reviews_count || 0} reviews)</span>
+                <span>${ratingValue.toFixed(1) || 'N/A'} (${reviewsCount} reviews)</span>
             </div>
             <div class="clinic-address">${formattedAddress}</div>
             <div class="clinic-services">
