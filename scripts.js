@@ -1104,8 +1104,24 @@ function displayAllClinics() {
     // Clear loading text
     clinicsContainer.innerHTML = '';
     
-    // Sort businesses by rating
-    const sortedBusinesses = [...businessData].sort((a, b) => b.rating - a.rating);
+    // Debug data
+    console.log("Total businesses:", businessData.length);
+    
+    // Sort businesses by rating (highest first)
+    const sortedBusinesses = [...businessData].sort((a, b) => {
+        // Get rating values, handling various field names and formats
+        const ratingA = parseFloat(a.rating) || parseFloat(a.rating_value) || 0;
+        const ratingB = parseFloat(b.rating) || parseFloat(b.rating_value) || 0;
+        
+        // Sort by rating desc
+        return ratingB - ratingA;
+    });
+    
+    // Log top clinics for debugging
+    console.log("Top 12 businesses by rating:", sortedBusinesses.slice(0, 12).map(business => ({
+        name: business.name,
+        rating: parseFloat(business.rating) || parseFloat(business.rating_value) || 0
+    })));
     
     // Display top 12 businesses
     const topBusinesses = sortedBusinesses.slice(0, 12);
@@ -1328,8 +1344,15 @@ function loadAreaClinics() {
         return;
     }
     
-    // Sort businesses by rating
-    const sortedBusinesses = [...filteredBusinesses].sort((a, b) => b.rating - a.rating);
+    // Sort businesses by rating (highest first)
+    const sortedBusinesses = [...filteredBusinesses].sort((a, b) => {
+        // Get rating values, handling various field names and formats
+        const ratingA = parseFloat(a.rating) || parseFloat(a.rating_value) || 0;
+        const ratingB = parseFloat(b.rating) || parseFloat(b.rating_value) || 0;
+        
+        // Sort by rating desc
+        return ratingB - ratingA;
+    });
     
     sortedBusinesses.forEach(business => {
         createClinicCard(business, clinicsContainer);
