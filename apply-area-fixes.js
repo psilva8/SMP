@@ -79,7 +79,6 @@ const fallbackScript = `
                                 <p class="text-gray-600 mb-3 truncate">\${address}</p>
                                 <div class="flex justify-between items-center">
                                     <span class="text-blue-600 font-medium">\${business.phone_number || 'No phone'}</span>
-                                    <a href="\${business.url || '#'}" target="_blank" class="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition">View Details</a>
                                 </div>
                             </div>
                         \`;
