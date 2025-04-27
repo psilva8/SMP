@@ -1172,8 +1172,8 @@ function createClinicCard(business, container) {
     });
     
     // If rating is not available or is NaN, use rating_value or default to 0
-    const ratingValue = parseFloat(business.rating) || parseFloat(business.rating_value) || 0;
-    const reviewsCount = business.reviews_count || business.reviews || 0;
+    const ratingValue = parseFloat(business.rating) || 0;
+    const reviewsCount = parseInt(business.reviews) || 0;
     
     // Format phone number
     const phoneNumber = business.phone || business.phone_number || 'N/A';
@@ -1185,14 +1185,14 @@ function createClinicCard(business, container) {
     const starRating = createStarRating(ratingValue);
     
     card.innerHTML = `
-        <div class="clinic-image" style="background-image: url(${business.image_url || business.photo || 'img/default-clinic.jpg'})"></div>
+        <div class="clinic-image" style="background-image: url(${business.image_url || business.photo || business.photos && business.photos[0] || 'img/default-clinic.jpg'})"></div>
         <div class="clinic-info">
             <h3>${business.name}</h3>
             <div class="clinic-rating">
                 <div class="stars">${starRating}</div>
-                <span>${ratingValue.toFixed(1) || 'N/A'} (${reviewsCount} reviews)</span>
+                <span>${ratingValue.toFixed(1) !== '0.0' ? ratingValue.toFixed(1) : 'N/A'} (${reviewsCount} reviews)</span>
             </div>
-            <div class="clinic-address">${formattedAddress}</div>
+            <div class="clinic-address">${formattedAddress || business.full_address || 'Address not available'}</div>
             <div class="clinic-contact">
                 <div class="clinic-phone">${formattedPhone}</div>
                 ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank">Website</a></div>` : ''}
@@ -1326,14 +1326,32 @@ function loadAreaClinics() {
     // Update page title
     updatePageTitle(areaName);
     
+    if (!businessData || businessData.length === 0) {
+        console.log("No business data available, fetching...");
+        fetchBusinessData()
+            .then(data => {
+                filterAndDisplayAreaBusinesses(areaName, data);
+            })
+            .catch(error => {
+                console.error("Error fetching business data:", error);
+            });
+        return;
+    }
+    
+    filterAndDisplayAreaBusinesses(areaName, businessData);
+}
+
+// Helper function to filter and display businesses for an area
+function filterAndDisplayAreaBusinesses(areaName, businesses) {
     // Filter businesses by area
-    const filteredBusinesses = businessData.filter(business => {
+    const filteredBusinesses = businesses.filter(business => {
         // Check if business city or neighborhood matches the area name
+        const areaNameLower = areaName.toLowerCase();
         return (
-            (business.city && business.city.toLowerCase() === areaName.toLowerCase()) ||
-            (business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase()) ||
-            (business.address && business.address.toLowerCase().includes(areaName.toLowerCase())) ||
-            (business.full_address && business.full_address.toLowerCase().includes(areaName.toLowerCase()))
+            (business.city && business.city.toLowerCase() === areaNameLower) ||
+            (business.neighborhood && business.neighborhood.toLowerCase() === areaNameLower) ||
+            (business.address && business.address.toLowerCase().includes(areaNameLower)) ||
+            (business.full_address && business.full_address.toLowerCase().includes(areaNameLower))
         );
     });
     
@@ -1355,12 +1373,14 @@ function loadAreaClinics() {
     // Sort businesses by rating (highest first)
     const sortedBusinesses = [...filteredBusinesses].sort((a, b) => {
         // Get rating values, handling various field names and formats
-        const ratingA = parseFloat(a.rating) || parseFloat(a.rating_value) || 0;
-        const ratingB = parseFloat(b.rating) || parseFloat(b.rating_value) || 0;
+        const ratingA = parseFloat(a.rating) || 0;
+        const ratingB = parseFloat(b.rating) || 0;
         
         // Sort by rating desc
         return ratingB - ratingA;
     });
+    
+    console.log(`Displaying ${sortedBusinesses.length} clinics for ${areaName}`);
     
     sortedBusinesses.forEach(business => {
         createClinicCard(business, clinicsContainer);
