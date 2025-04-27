@@ -1269,6 +1269,8 @@ function loadAreaClinics() {
     const areaSlug = match[1];
     const areaName = decodeUrlFriendlyName(areaSlug);
     
+    console.log("Loading area clinics for:", areaName);
+    
     // Update page title
     updatePageTitle(areaName);
     
@@ -1278,7 +1280,8 @@ function loadAreaClinics() {
         return (
             (business.city && business.city.toLowerCase() === areaName.toLowerCase()) ||
             (business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase()) ||
-            (business.address && business.address.toLowerCase().includes(areaName.toLowerCase()))
+            (business.address && business.address.toLowerCase().includes(areaName.toLowerCase())) ||
+            (business.full_address && business.full_address.toLowerCase().includes(areaName.toLowerCase()))
         );
     });
     
@@ -1429,18 +1432,15 @@ function filterClinicsByService(service) {
     });
 }
 
-// Helper function to generate URL-friendly name
+// Generate URL-friendly name
 function generateUrlFriendlyName(name) {
-    return name
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-        .replace(/\s+/g, '-')          // Replace spaces with hyphens
-        .replace(/-+/g, '-');          // Remove consecutive hyphens
+    if (!name) return '';
+    return name.trim().toLowerCase().replace(/\s+/g, '-');
 }
 
-// Helper function to decode URL-friendly name
+// Decode URL-friendly name back to normal text
 function decodeUrlFriendlyName(slug) {
-    return slug
-        .replace(/-/g, ' ')            // Replace hyphens with spaces
-        .replace(/(?:^|\s)\S/g, c => c.toUpperCase()); // Capitalize first letter of each word
+    if (!slug) return '';
+    return slug.replace(/-/g, ' ')
+        .replace(/\b\w/g, letter => letter.toUpperCase()); // Capitalize first letter of each word
 }
