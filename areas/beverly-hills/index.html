@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>SMP Clinics in Beverly Hills | Hair Tattoo Directory</title>
     <meta name="description" content="Find top-rated scalp micropigmentation (SMP) clinics in Beverly Hills, Los Angeles. Compare providers, services, and reviews.">
     <link rel="canonical" href="https://smpdirectory.com/areas/beverly-hills/">
@@ -188,18 +189,96 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Area page DOM content loaded');
             
+            // Debug element to show status directly on the page
+            const createDebugElement = () => {
+                const debugDiv = document.createElement('div');
+                debugDiv.id = 'debug-info';
+                debugDiv.style.position = 'fixed';
+                debugDiv.style.bottom = '10px';
+                debugDiv.style.right = '10px';
+                debugDiv.style.background = 'rgba(0,0,0,0.7)';
+                debugDiv.style.color = 'white';
+                debugDiv.style.padding = '10px';
+                debugDiv.style.borderRadius = '5px';
+                debugDiv.style.zIndex = '9999';
+                debugDiv.style.maxWidth = '80%';
+                debugDiv.style.maxHeight = '200px';
+                debugDiv.style.overflow = 'auto';
+                document.body.appendChild(debugDiv);
+                return debugDiv;
+            };
+            
+            const debugDiv = createDebugElement();
+            debugDiv.innerHTML = 'Starting data fetch...';
+            
+            // Enhanced debugging function
+            const debug = (message) => {
+                console.log(message);
+                debugDiv.innerHTML += `<br>${message}`;
+            };
+            
+            // Check if businessData is already loaded
+            if (window.businessData && window.businessData.length > 0) {
+                debug(`Business data already loaded: ${window.businessData.length} items`);
+                populateAreasDropdown(window.businessData);
+                loadAreaClinics();
+                populateNeighborhoodMap(window.businessData);
+                return;
+            }
+            
             // Fetch business data if not already loaded
+            debug('Fetching business data...');
             fetchBusinessData()
                 .then(data => {
-                    console.log('Business data loaded, length:', data.length);
+                    if (!data) {
+                        throw new Error('No data received from fetchBusinessData');
+                    }
+                    debug(`Business data loaded, length: ${data.length}`);
+                    
+                    // Store data in window object
+                    window.businessData = data;
                     
                     // Call functions to populate the page
-                    populateAreasDropdown(data);
-                    loadAreaClinics();
-                    populateNeighborhoodMap(data);
+                    try {
+                        debug('Populating areas dropdown...');
+                        populateAreasDropdown(data);
+                        
+                        debug('Loading area clinics...');
+                        loadAreaClinics();
+                        
+                        debug('Populating neighborhood map...');
+                        populateNeighborhoodMap(data);
+                        
+                        debug('All functions completed successfully');
+                    } catch (err) {
+                        debug(`Error in page initialization: ${err.message}`);
+                        console.error(err);
+                    }
                 })
                 .catch(error => {
-                    console.error('Error loading business data:', error);
+                    debug(`Error loading business data: ${error.message}`);
+                    console.error('Error:', error);
+                    
+                    // Try direct JSON fetch as fallback
+                    debug('Attempting direct fetch fallback...');
+                    fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Network response not ok: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            debug(`Direct fetch successful, got ${data.length} items`);
+                            window.businessData = data;
+                            
+                            populateAreasDropdown(data);
+                            loadAreaClinics();
+                            populateNeighborhoodMap(data);
+                        })
+                        .catch(fallbackError => {
+                            debug(`Fallback fetch also failed: ${fallbackError.message}`);
+                        });
                 });
         });
     </script>

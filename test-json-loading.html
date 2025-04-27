@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test JSON Loading</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; max-height: 400px; }
+        button { padding: 10px 15px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>JSON Loading Test</h1>
+    
+    <div>
+        <button id="test-load">Test Loading JSON</button>
+        <p id="status">Click the button to test JSON loading</p>
+    </div>
+    
+    <pre id="json-preview"></pre>
+    
+    <script>
+        document.getElementById('test-load').addEventListener('click', async function() {
+            const status = document.getElementById('status');
+            const preview = document.getElementById('json-preview');
+            
+            status.textContent = 'Loading JSON...';
+            
+            try {
+                // Try both relative and absolute paths
+                let response;
+                try {
+                    response = await fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json');
+                    status.textContent += ' (using absolute path)';
+                } catch (e) {
+                    status.textContent += ' (absolute path failed, trying relative)';
+                    response = await fetch('Outscraper-20250423020658xs04_micropigmentation_+1.json');
+                }
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                status.textContent = `Successfully loaded ${data.length} businesses`;
+                
+                // Show the first 3 items
+                const sampleData = data.slice(0, 3);
+                preview.textContent = JSON.stringify(sampleData, null, 2);
+                
+                // Check for Beverly Hills businesses
+                const bevHillsCount = data.filter(b => 
+                    (b.city && b.city.toLowerCase().includes('beverly hills')) || 
+                    (b.address && b.address.toLowerCase().includes('beverly hills')) ||
+                    (b.neighborhood && b.neighborhood.toLowerCase().includes('beverly hills'))
+                ).length;
+                
+                status.textContent += ` (found ${bevHillsCount} Beverly Hills businesses)`;
+                
+            } catch (error) {
+                status.textContent = `Error loading JSON: ${error.message}`;
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html> 

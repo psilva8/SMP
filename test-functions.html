@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .check { margin-bottom: 10px; padding: 8px; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Function Check</h1>
+    <div id="results"></div>
+    
+    <script src="/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const results = document.getElementById('results');
+            
+            const functionsToCheck = [
+                'fetchBusinessData',
+                'processBusinessData',
+                'populateAreasDropdown',
+                'loadAreaClinics',
+                'loadNeighborhoodClinics',
+                'populateNeighborhoodMap',
+                'updatePageTitle',
+                'updateClinicCount',
+                'createClinicCard',
+                'getBusinessServices',
+                'generateUrlFriendlyName',
+                'decodeUrlFriendlyName'
+            ];
+            
+            functionsToCheck.forEach(funcName => {
+                const checkDiv = document.createElement('div');
+                checkDiv.classList.add('check');
+                
+                if (typeof window[funcName] === 'function') {
+                    checkDiv.classList.add('success');
+                    checkDiv.textContent = `✓ ${funcName} is defined`;
+                } else {
+                    checkDiv.classList.add('error');
+                    checkDiv.textContent = `✗ ${funcName} is NOT defined`;
+                }
+                
+                results.appendChild(checkDiv);
+            });
+            
+            // Add specific function details
+            if (typeof window['loadAreaClinics'] === 'function') {
+                const funcString = window['loadAreaClinics'].toString();
+                const detailsDiv = document.createElement('div');
+                detailsDiv.innerHTML = `<h3>loadAreaClinics Function Code:</h3><pre>${funcString}</pre>`;
+                results.appendChild(detailsDiv);
+            }
+            
+            // Check businessData
+            const dataDiv = document.createElement('div');
+            dataDiv.classList.add('check');
+            
+            if (window.businessData && Array.isArray(window.businessData)) {
+                dataDiv.classList.add('success');
+                dataDiv.textContent = `✓ businessData is defined with ${window.businessData.length} items`;
+            } else {
+                dataDiv.classList.add('error');
+                dataDiv.textContent = `✗ businessData is NOT defined or empty`;
+                
+                // Try loading data
+                fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        const loadDiv = document.createElement('div');
+                        loadDiv.classList.add('check', 'success');
+                        loadDiv.textContent = `✓ Directly loaded ${data.length} items from JSON`;
+                        results.appendChild(loadDiv);
+                    })
+                    .catch(err => {
+                        const loadDiv = document.createElement('div');
+                        loadDiv.classList.add('check', 'error');
+                        loadDiv.textContent = `✗ Failed to load JSON directly: ${err.message}`;
+                        results.appendChild(loadDiv);
+                    });
+            }
+            
+            results.appendChild(dataDiv);
+        });
+    </script>
+</body>
+</html> 
