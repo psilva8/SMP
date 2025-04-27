@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Direct JSON Debug</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        pre { background: #f1f1f1; padding: 10px; overflow: auto; }
+        .result { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Direct JSON Debug</h1>
+    
+    <div>
+        <h2>Testing Beverly Hills Clinics</h2>
+        <button id="test-btn">Run Test</button>
+        <div id="status" class="result"></div>
+    </div>
+    
+    <script>
+        document.getElementById('test-btn').addEventListener('click', async function() {
+            const status = document.getElementById('status');
+            status.innerHTML = 'Loading data...';
+            
+            try {
+                // Direct fetch the JSON
+                const response = await fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json');
+                if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+                
+                const data = await response.json();
+                status.innerHTML += `<p>Loaded ${data.length} total businesses</p>`;
+                
+                // Filter for Beverly Hills
+                const areaName = 'Beverly Hills';
+                const matches = data.filter(business => {
+                    const cityMatch = business.city && business.city.toLowerCase() === areaName.toLowerCase();
+                    const addressMatch = business.address && business.address.toLowerCase().includes(areaName.toLowerCase());
+                    const neighborhoodMatch = business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase();
+                    
+                    return cityMatch || addressMatch || neighborhoodMatch;
+                });
+                
+                status.innerHTML += `<p>Found ${matches.length} matches for Beverly Hills</p>`;
+                
+                if (matches.length > 0) {
+                    status.innerHTML += '<h3>Matching Businesses:</h3><ul>';
+                    matches.forEach(business => {
+                        status.innerHTML += `
+                            <li>
+                                <strong>${business.name || 'Unnamed'}</strong><br>
+                                City: ${business.city || 'N/A'}<br>
+                                Address: ${business.address || business.full_address || 'N/A'}
+                            </li>
+                        `;
+                    });
+                    status.innerHTML += '</ul>';
+                } else {
+                    status.innerHTML += '<p>No businesses found for Beverly Hills.</p>';
+                    
+                    // Show first few businesses to understand data format
+                    status.innerHTML += '<h3>First 5 businesses in data:</h3><ul>';
+                    for (let i = 0; i < Math.min(5, data.length); i++) {
+                        const b = data[i];
+                        status.innerHTML += `
+                            <li>
+                                <strong>${b.name || 'Unnamed'}</strong><br>
+                                City: ${b.city || 'N/A'}<br>
+                                Address: ${b.address || b.full_address || 'N/A'}
+                            </li>
+                        `;
+                    }
+                    status.innerHTML += '</ul>';
+                }
+            } catch (error) {
+                status.innerHTML = `<p>Error: ${error.message}</p>`;
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html> 

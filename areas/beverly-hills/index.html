@@ -187,7 +187,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Area page DOM content loaded');
-            console.log('Area page DOM content loaded');
             
             // Fetch business data if not already loaded
             fetchBusinessData()
@@ -196,7 +195,7 @@
                     
                     // Call functions to populate the page
                     populateAreasDropdown(data);
-                    loadNeighborhoodClinics();
+                    loadAreaClinics();
                     populateNeighborhoodMap(data);
                 })
                 .catch(error => {
