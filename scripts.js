@@ -1133,18 +1133,35 @@ function createClinicCard(business, container) {
     // Format services
     const services = getBusinessServices(business);
     
-    // Create star rating
-    // Debug rating value
-    console.log("Business rating:", business.rating, typeof business.rating);
+    // Debug rating value and other important fields
+    console.log("Business data:", {
+        name: business.name,
+        rating: business.rating,
+        rating_value: business.rating_value,
+        reviews: business.reviews,
+        reviews_count: business.reviews_count,
+        phone: business.phone,
+        phone_number: business.phone_number,
+        site: business.site,
+        url: business.url,
+        website: business.website
+    });
     
     // If rating is not available or is NaN, use rating_value or default to 0
     const ratingValue = parseFloat(business.rating) || parseFloat(business.rating_value) || 0;
     const reviewsCount = business.reviews_count || business.reviews || 0;
     
+    // Format phone number
+    const phoneNumber = business.phone || business.phone_number || 'N/A';
+    const formattedPhone = phoneNumber !== 'N/A' ? formatPhoneNumber(phoneNumber) : 'N/A';
+    
+    // Get website URL
+    const websiteUrl = business.site || business.website || business.url || '#';
+    
     const starRating = createStarRating(ratingValue);
     
     card.innerHTML = `
-        <div class="clinic-image" style="background-image: url(${business.image_url || 'img/default-clinic.jpg'})"></div>
+        <div class="clinic-image" style="background-image: url(${business.image_url || business.photo || 'img/default-clinic.jpg'})"></div>
         <div class="clinic-info">
             <h3>${business.name}</h3>
             <div class="clinic-rating">
@@ -1152,6 +1169,10 @@ function createClinicCard(business, container) {
                 <span>${ratingValue.toFixed(1) || 'N/A'} (${reviewsCount} reviews)</span>
             </div>
             <div class="clinic-address">${formattedAddress}</div>
+            <div class="clinic-contact">
+                <div class="clinic-phone">${formattedPhone}</div>
+                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank">Website</a></div>` : ''}
+            </div>
             <div class="clinic-services">
                 ${services.map(service => `<span class="clinic-service">${service}</span>`).join('')}
             </div>
