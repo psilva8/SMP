@@ -1098,8 +1098,6 @@ function getBusinessServices(business) {
     
     // Define common SMP services
     const serviceKeywords = [
-        'scalp micropigmentation',
-        'smp',
         'hair tattoo',
         'scalp tattoo',
         'hair density',
@@ -1120,10 +1118,7 @@ function getBusinessServices(business) {
         }
     });
     
-    // If no services found, add a default
-    if (services.length === 0) {
-        services.push('Scalp Micropigmentation');
-    }
+    // Removed the default 'Scalp Micropigmentation' service
     
     return services;
 }

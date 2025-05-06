@@ -144,8 +144,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Get website URL with multiple fallbacks
                     const websiteUrl = business.site || business.website || business.url || '#';
                     
-                    // Add default services
-                    const services = ['Scalp Micropigmentation'];
+                    // Use empty services array instead of default Scalp Micropigmentation
+                    const services = [];
                     
                     // Default image - use placeholder image service instead of relying on local file
                     const imageUrl = business.image_url || business.photo || 
