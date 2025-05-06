@@ -169,41 +169,8 @@
     <!-- Script to remove Hair Tattoo Treatment from clinic cards -->
     <script src="/remove-smp-dom.js"></script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Fix dropdown menus
-    const dropdowns = document.querySelectorAll('.dropdown');
-    
-    dropdowns.forEach(dropdown => {
-        const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
-        const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
-        
-        if (button && content) {
-            // Add click event to toggle dropdown
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                dropdown.classList.toggle('active');
-                
-                // Close all other dropdowns
-                dropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== dropdown) {
-                        otherDropdown.classList.remove('active');
-                    }
-                });
-            });
-        }
-    });
-    
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown')) {
-            dropdowns.forEach(dropdown => {
-                dropdown.classList.remove('active');
-            });
-        }
-    });
-});
-</script>
 
+
+<script src="final-dropdown-fix.js"></script>
 </body>
 </html> 
