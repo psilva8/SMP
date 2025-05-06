@@ -28,14 +28,28 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const data = await response.json();
                 console.log(`Successfully loaded ${data.length} businesses`);
                 
-                // Sort by rating
+                // Sort by rating first, then by review count if ratings are equal
                 const sortedData = [...data].sort((a, b) => {
                     const ratingA = parseFloat(a.rating) || 0;
                     const ratingB = parseFloat(b.rating) || 0;
-                    return ratingB - ratingA;
+                    
+                    // First compare by rating
+                    if (ratingA !== ratingB) {
+                        return ratingB - ratingA;
+                    }
+                    
+                    // If ratings are equal, sort by review count
+                    const reviewsA = parseInt(a.reviews) || 0;
+                    const reviewsB = parseInt(b.reviews) || 0;
+                    return reviewsB - reviewsA;
                 });
                 
                 const topBusinesses = sortedData.slice(0, 12);
+                console.log('Top 12 businesses by rating:', topBusinesses.map(b => ({
+                    name: b.name, 
+                    rating: parseFloat(b.rating) || 0,
+                    reviews: parseInt(b.reviews) || 0
+                })));
                 
                 // Clear container and add clinics
                 clinicsContainer.innerHTML = '';

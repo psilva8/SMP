@@ -280,8 +280,8 @@ function processBusinessData(businessData) {
     // Sort businesses by rating (highest first)
     processedData.sort((a, b) => {
         // Get ratings, using proper properties with fallbacks
-        const ratingA = parseFloat(a.rating) || parseFloat(a.rating_value) || 0;
-        const ratingB = parseFloat(b.rating) || parseFloat(b.rating_value) || 0;
+        const ratingA = parseFloat(a.rating) || 0;
+        const ratingB = parseFloat(b.rating) || 0;
         
         // Compare ratings (higher first)
         if (ratingA !== ratingB) {
@@ -289,8 +289,8 @@ function processBusinessData(businessData) {
         }
         
         // If ratings are equal, sort by review count
-        const reviewsA = parseInt(a.reviews) || parseInt(a.reviews_count) || 0;
-        const reviewsB = parseInt(b.reviews) || parseInt(b.reviews_count) || 0;
+        const reviewsA = parseInt(a.reviews) || 0;
+        const reviewsB = parseInt(b.reviews) || 0;
         return reviewsB - reviewsA;
     });
     
@@ -369,15 +369,32 @@ function updateTopClinics(businessData) {
     // Clear loading message
     topClinicsContainer.innerHTML = '';
     
-    // Display top 12 clinics by default, now sorted primarily by review count
-    displayClinics(businessData.slice(0, 12), topClinicsContainer);
+    // Sort businesses by rating (highest first)
+    const sortedBusinesses = [...businessData].sort((a, b) => {
+        // Get ratings, using proper properties with fallbacks
+        const ratingA = parseFloat(a.rating) || 0;
+        const ratingB = parseFloat(b.rating) || 0;
+        
+        // Compare ratings (higher first)
+        if (ratingA !== ratingB) {
+            return ratingB - ratingA;
+        }
+        
+        // If ratings are equal, sort by review count
+        const reviewsA = parseInt(a.reviews) || 0;
+        const reviewsB = parseInt(b.reviews) || 0;
+        return reviewsB - reviewsA;
+    });
+    
+    // Display top 12 clinics by rating
+    displayClinics(sortedBusinesses.slice(0, 12), topClinicsContainer);
     
     // Log total clinic count and top clinics to console
     console.log(`Total clinics loaded: ${businessData.length}`);
-    console.log('Top 12 clinics (by review count):', businessData.slice(0, 12).map(clinic => ({
+    console.log('Top 12 clinics by rating:', sortedBusinesses.slice(0, 12).map(clinic => ({
         name: clinic.name,
-        reviews: parseInt(clinic.reviews) || parseInt(clinic.reviews_count) || 0,
-        rating: parseFloat(clinic.rating) || parseFloat(clinic.rating_value) || 0
+        rating: parseFloat(clinic.rating) || 0,
+        reviews: parseInt(clinic.reviews) || 0
     })));
 }
 
@@ -966,28 +983,28 @@ function displayAllClinics() {
     // Debug data
     console.log("Total businesses:", businessData.length);
     
-    // Sort businesses by review count first, then by rating
+    // Sort businesses primarily by rating, then by review count
     const sortedBusinesses = [...businessData].sort((a, b) => {
-        // Get review counts, handling various field names and formats
-        const reviewsA = parseInt(a.reviews_count) || parseInt(a.reviews) || 0;
-        const reviewsB = parseInt(b.reviews_count) || parseInt(b.reviews) || 0;
+        // Get rating values
+        const ratingA = parseFloat(a.rating) || 0;
+        const ratingB = parseFloat(b.rating) || 0;
         
-        // First sort by review count (descending)
-        if (reviewsB !== reviewsA) {
-            return reviewsB - reviewsA;
+        // First sort by rating (descending)
+        if (ratingA !== ratingB) {
+            return ratingB - ratingA;
         }
         
-        // If review counts are the same, sort by rating (descending)
-        const ratingA = parseFloat(a.rating) || parseFloat(a.rating_value) || 0;
-        const ratingB = parseFloat(b.rating) || parseFloat(b.rating_value) || 0;
-        return ratingB - ratingA;
+        // If ratings are equal, sort by review count (descending)
+        const reviewsA = parseInt(a.reviews) || 0;
+        const reviewsB = parseInt(b.reviews) || 0;
+        return reviewsB - reviewsA;
     });
     
     // Log top clinics for debugging
-    console.log("Top 12 businesses by review count:", sortedBusinesses.slice(0, 12).map(business => ({
+    console.log("Top 12 businesses by rating:", sortedBusinesses.slice(0, 12).map(business => ({
         name: business.name,
-        reviews: parseInt(business.reviews_count) || parseInt(business.reviews) || 0,
-        rating: parseFloat(business.rating) || parseFloat(business.rating_value) || 0
+        rating: parseFloat(business.rating) || 0,
+        reviews: parseInt(business.reviews) || 0
     })));
     
     // Display top 12 businesses
