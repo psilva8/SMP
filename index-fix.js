@@ -29,11 +29,29 @@ document.addEventListener('DOMContentLoaded', async function() {
                 console.log(`Successfully loaded ${data.length} businesses`);
                 
                 // Sort by rating
-                const sortedData = [...data].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                const sortedData = [...data].sort((a, b) => {
+                    const ratingA = parseFloat(a.rating) || 0;
+                    const ratingB = parseFloat(b.rating) || 0;
+                    return ratingB - ratingA;
+                });
+                
                 const topBusinesses = sortedData.slice(0, 12);
                 
                 // Clear container and add clinics
                 clinicsContainer.innerHTML = '';
+                
+                // Log one business for debugging
+                if (topBusinesses.length > 0) {
+                    console.log('Sample business data:', {
+                        name: topBusinesses[0].name,
+                        rating: topBusinesses[0].rating,
+                        reviews: topBusinesses[0].reviews,
+                        phone: topBusinesses[0].phone,
+                        site: topBusinesses[0].site,
+                        url: topBusinesses[0].url,
+                        website: topBusinesses[0].website
+                    });
+                }
                 
                 topBusinesses.forEach(business => {
                     // Create clinic card with consistent styling
@@ -45,14 +63,14 @@ document.addEventListener('DOMContentLoaded', async function() {
                         business.address || '',
                         business.city || '',
                         business.state || '',
-                        business.postal_code || ''
+                        business.postal_code || business.zip_code || ''
                     ].filter(Boolean);
                     
                     const formattedAddress = addressParts.join(', ') || business.full_address || 'Address not available';
                     
                     // Get rating and reviews
-                    const ratingValue = parseFloat(business.rating) || 0;
-                    const reviewsCount = parseInt(business.reviews) || 0;
+                    const ratingValue = business.rating ? parseFloat(business.rating) : 0;
+                    const reviewsCount = business.reviews ? parseInt(business.reviews) : 0;
                     
                     // Create star rating
                     let starRating = '';
@@ -75,10 +93,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                     }
                     
                     // Format phone
-                    let phoneNumber = business.phone || 'N/A';
+                    let phoneNumber = business.phone || 'No phone';
                     let formattedPhone = phoneNumber;
                     
-                    if (phoneNumber !== 'N/A') {
+                    if (phoneNumber !== 'No phone') {
                         // Simple phone formatting (XXX) XXX-XXXX
                         const cleaned = phoneNumber.replace(/\D/g, '');
                         if (cleaned.length === 10) {
@@ -94,14 +112,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Add default services
                     const services = ['Scalp Micropigmentation'];
                     
+                    // Default image
+                    const imageUrl = business.image_url || business.photo || 
+                        (business.photos && business.photos.length > 0 ? business.photos[0] : 'img/default-clinic.jpg');
+                    
                     // Set the card HTML
                     card.innerHTML = `
-                        <div class="clinic-image" style="background-image: url(${business.photo || (business.photos && business.photos[0]) || 'img/default-clinic.jpg'})"></div>
+                        <div class="clinic-image" style="background-image: url(${imageUrl})"></div>
                         <div class="clinic-info">
                             <h3>${business.name || 'Unnamed Clinic'}</h3>
                             <div class="clinic-rating">
                                 <div class="stars">${starRating}</div>
-                                <span>${ratingValue.toFixed(1) !== '0.0' ? ratingValue.toFixed(1) : 'N/A'} (${reviewsCount} reviews)</span>
+                                <span>${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
                             </div>
                             <div class="clinic-address">${formattedAddress}</div>
                             <div class="clinic-contact">

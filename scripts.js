@@ -1003,6 +1003,14 @@ function createClinicCard(business, container) {
     const card = document.createElement('div');
     card.className = 'clinic-card';
     
+    // Debug logging for all important fields
+    console.log(`Creating card for ${business.name}:`, {
+        rating: business.rating,
+        reviews: business.reviews,
+        phone: business.phone,
+        website: business.site || business.website || business.url
+    });
+    
     // Format address
     const addressParts = [
         business.address || '',
@@ -1011,47 +1019,36 @@ function createClinicCard(business, container) {
         business.zip_code || ''
     ].filter(Boolean);
     
-    const formattedAddress = addressParts.join(', ');
+    const formattedAddress = addressParts.join(', ') || business.full_address || 'Address not available';
     
-    // Format services
+    // Get services
     const services = getBusinessServices(business);
     
-    // Debug rating value and other important fields
-    console.log("Business data:", {
-        name: business.name,
-        rating: business.rating,
-        rating_value: business.rating_value,
-        reviews: business.reviews,
-        reviews_count: business.reviews_count,
-        phone: business.phone,
-        phone_number: business.phone_number,
-        site: business.site,
-        url: business.url,
-        website: business.website
-    });
-    
-    // Use rating property instead of rating_value, as rating is what's present in the JSON data
-    const ratingValue = parseFloat(business.rating) || parseFloat(business.rating_value) || 0;
-    const reviewsCount = parseInt(business.reviews) || parseInt(business.reviews_count) || 0;
-    
-    // Format phone number
-    const phoneNumber = business.phone || business.phone_number || 'N/A';
-    const formattedPhone = phoneNumber !== 'N/A' ? formatPhoneNumber(phoneNumber) : 'N/A';
-    
-    // Get website URL
+    // Get rating, reviews, phone and website with proper fallbacks
+    const ratingValue = business.rating ? parseFloat(business.rating) : 0;
+    const reviewsCount = business.reviews ? parseInt(business.reviews) : 0;
+    const phoneNumber = business.phone || 'No phone';
     const websiteUrl = business.site || business.website || business.url || '#';
     
+    // Format phone
+    const formattedPhone = phoneNumber !== 'No phone' ? formatPhoneNumber(phoneNumber) : 'No phone';
+    
+    // Create star rating
     const starRating = createStarRating(ratingValue);
     
+    // Default image
+    const imageUrl = business.image_url || business.photo || 
+                    (business.photos && business.photos.length > 0 ? business.photos[0] : 'img/default-clinic.jpg');
+    
     card.innerHTML = `
-        <div class="clinic-image" style="background-image: url(${business.image_url || business.photo || business.photos && business.photos[0] || 'img/default-clinic.jpg'})"></div>
+        <div class="clinic-image" style="background-image: url(${imageUrl})"></div>
         <div class="clinic-info">
-            <h3>${business.name}</h3>
+            <h3>${business.name || 'Unnamed Clinic'}</h3>
             <div class="clinic-rating">
                 <div class="stars">${starRating}</div>
-                <span>${ratingValue.toFixed(1) !== '0.0' ? ratingValue.toFixed(1) : 'N/A'} (${reviewsCount} reviews)</span>
+                <span>${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
             </div>
-            <div class="clinic-address">${formattedAddress || business.full_address || 'Address not available'}</div>
+            <div class="clinic-address">${formattedAddress}</div>
             <div class="clinic-contact">
                 <div class="clinic-phone">${formattedPhone}</div>
                 ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank">Website</a></div>` : ''}
