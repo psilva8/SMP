@@ -1,0 +1,21 @@
+Fix: Update area layout to match design requirements
+
+This commit fixes the area section layout to correctly match the design shown in the screenshot:
+
+1. Revised the content structure:
+   - Returned to a more standard vertical layout with text on top
+   - Added a proper button container for the "View All Areas" button
+   - Improved spacing between paragraph and button
+
+2. Adjusted the styling to match the screenshot:
+   - Increased padding for better visual appearance
+   - Improved text readability with adjusted line height
+   - Removed flex layout that was creating display issues
+   - Made the button align to the left as shown in the design
+
+3. Refined the button appearance:
+   - Adjusted button padding for proper proportions
+   - Maintained consistent coloring and hover effects
+   - Ensured proper alignment with the text content
+
+This update resolves the layout issues and makes the section match the expected design. 

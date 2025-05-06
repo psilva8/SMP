@@ -66,45 +66,34 @@
         .area-description {
             background-color: #f8f9fa;
             border-radius: 8px;
-            padding: 25px;
+            padding: 30px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 30px;
         }
         .seo-paragraph {
-            line-height: 1.6;
+            line-height: 1.7;
             color: #444;
-            margin-bottom: 0;
+            margin-bottom: 20px;
             font-size: 1.05rem;
-            flex: 1;
+            max-width: 100%;
+        }
+        .view-all-container {
+            text-align: left;
+            margin-top: 15px;
         }
         .area-description .view-all {
             display: inline-block;
             background-color: #4F46E5;
             color: white;
-            padding: 12px 24px;
+            padding: 12px 25px;
             border-radius: 4px;
             text-decoration: none;
             font-weight: 500;
             transition: background-color 0.3s;
-            white-space: nowrap;
         }
         .area-description .view-all:hover {
             background-color: #4338ca;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .area-description {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
-        }
-    </style>
+        }</style>
 </head>
 <body>
     <!-- Header -->
@@ -184,7 +173,9 @@
                     offers particularly extensive options for quality Hair Tattoo treatments with experienced practitioners who deliver 
                     exceptional results for all types of hair loss concerns.
                 </p>
-                <a href="/areas.html" class="area-item view-all">View All Areas</a>
+                <div class="view-all-container">
+                    <a href="/areas.html" class="area-item view-all">View All Areas</a>
+                </div>
             </div>
             </div>
         </div>
