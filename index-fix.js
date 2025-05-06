@@ -19,13 +19,25 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log('Clinics still loading after 2 seconds, attempting direct load');
             
             try {
-                // Try direct fetch
-                const response = await fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json');
-                if (!response.ok) {
-                    throw new Error(`Network error: ${response.status}`);
+                // Try direct fetch with both paths
+                let response;
+                let data;
+                
+                try {
+                    response = await fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json');
+                    if (!response.ok) {
+                        throw new Error(`Network error: ${response.status}`);
+                    }
+                    data = await response.json();
+                } catch (error) {
+                    console.log('Failed with absolute path, trying relative path');
+                    response = await fetch('Outscraper-20250423020658xs04_micropigmentation_+1.json');
+                    if (!response.ok) {
+                        throw new Error(`Network error: ${response.status}`);
+                    }
+                    data = await response.json();
                 }
                 
-                const data = await response.json();
                 console.log(`Successfully loaded ${data.length} businesses`);
                 
                 // Sort by rating first, then by review count if ratings are equal
@@ -54,18 +66,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                 // Clear container and add clinics
                 clinicsContainer.innerHTML = '';
                 
-                // Log one business for debugging
-                if (topBusinesses.length > 0) {
-                    console.log('Sample business data:', {
-                        name: topBusinesses[0].name,
-                        rating: topBusinesses[0].rating,
-                        reviews: topBusinesses[0].reviews,
-                        phone: topBusinesses[0].phone,
-                        site: topBusinesses[0].site,
-                        url: topBusinesses[0].url,
-                        website: topBusinesses[0].website
+                // Log detailed business data for debugging
+                topBusinesses.forEach((business, index) => {
+                    console.log(`Business #${index + 1}:`, {
+                        name: business.name,
+                        rating: business.rating,
+                        reviews: business.reviews,
+                        phone: business.phone,
+                        site: business.site,
+                        url: business.url,
+                        website: business.website
                     });
-                }
+                });
                 
                 topBusinesses.forEach(business => {
                     // Create clinic card with consistent styling
@@ -80,9 +92,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                         business.postal_code || business.zip_code || ''
                     ].filter(Boolean);
                     
-                    const formattedAddress = addressParts.join(', ') || business.full_address || 'Address not available';
+                    const formattedAddress = addressParts.join(', ') || business.full_address || business.formatted_address || 'Address not available';
                     
-                    // Get rating and reviews
+                    // Get rating and reviews with proper fallbacks
                     const ratingValue = business.rating ? parseFloat(business.rating) : 0;
                     const reviewsCount = business.reviews ? parseInt(business.reviews) : 0;
                     
@@ -106,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         starRating += '☆';
                     }
                     
-                    // Format phone
+                    // Format phone with proper fallback
                     let phoneNumber = business.phone || 'No phone';
                     let formattedPhone = phoneNumber;
                     
@@ -120,7 +132,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         }
                     }
                     
-                    // Get website URL
+                    // Get website URL with multiple fallbacks
                     const websiteUrl = business.site || business.website || business.url || '#';
                     
                     // Add default services
@@ -130,6 +142,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const imageUrl = business.image_url || business.photo || 
                         (business.photos && business.photos.length > 0 ? business.photos[0] : 'img/default-clinic.jpg');
                     
+                    // Enhanced debugging for specific items that might be causing issues
+                    console.log(`${business.name} - Rating: ${ratingValue}, Reviews: ${reviewsCount}, Phone: ${formattedPhone}, Website: ${websiteUrl}`);
+                    
                     // Set the card HTML
                     card.innerHTML = `
                         <div class="clinic-image" style="background-image: url(${imageUrl})"></div>
@@ -137,12 +152,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                             <h3>${business.name || 'Unnamed Clinic'}</h3>
                             <div class="clinic-rating">
                                 <div class="stars">${starRating}</div>
-                                <span>${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
+                                <span class="rating-text">${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
                             </div>
                             <div class="clinic-address">${formattedAddress}</div>
                             <div class="clinic-contact">
                                 <div class="clinic-phone">${formattedPhone}</div>
-                                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank">Website</a></div>` : ''}
+                                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a></div>` : ''}
                             </div>
                             <div class="clinic-services">
                                 ${services.map(service => `<span class="clinic-service">${service}</span>`).join('')}

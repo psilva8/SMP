@@ -249,12 +249,19 @@ section h2 {
 .clinic-rating {
   display: flex;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .clinic-rating .stars {
-  color: gold;
-  margin-right: 0.5rem;
+  color: #FFD700;
+  margin-right: 8px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.clinic-rating .rating-text {
+  font-size: 14px;
+  color: #666;
 }
 
 .clinic-address {
@@ -265,42 +272,41 @@ section h2 {
 .clinic-services {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  gap: 5px;
+  margin-top: 8px;
 }
 
 .clinic-service {
-  background-color: var(--light-gray);
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
+  background-color: #F3F4F6;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #4B5563;
 }
 
 .clinic-contact {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-  color: var(--primary-color);
-  font-size: 0.9rem;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .clinic-phone {
-  font-weight: 500;
+  font-size: 14px;
+  color: #444;
 }
 
 .clinic-website a {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  background-color: var(--primary-color);
-  color: white;
-  border-radius: 0.25rem;
+  color: #4F46E5;
   text-decoration: none;
-  transition: background-color 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
 .clinic-website a:hover {
-  background-color: var(--primary-dark);
+  color: #3730A3;
+  text-decoration: underline;
 }
 
 /* Areas Section */

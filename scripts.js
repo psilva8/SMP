@@ -118,82 +118,59 @@ function fetchBusinessData() {
         // Determine if we're in local development (file:// protocol)
         const isLocalDev = window.location.protocol === 'file:';
         
-        // Choose the appropriate path based on environment
-        const jsonUrl = isLocalDev 
-            ? 'Outscraper-20250423020658xs04_micropigmentation_+1.json' // Relative path for local development
-            : '/Outscraper-20250423020658xs04_micropigmentation_+1.json'; // Absolute path for production
+        // Try multiple paths in sequence
+        const paths = [
+            'Outscraper-20250423020658xs04_micropigmentation_+1.json', // Relative path first
+            '/Outscraper-20250423020658xs04_micropigmentation_+1.json', // Absolute path second
+            './Outscraper-20250423020658xs04_micropigmentation_+1.json' // Another relative path variant
+        ];
         
-        console.log('Fetching from URL:', jsonUrl, '[DEBUG]');
+        console.log('Will try these paths:', paths.join(', '), '[DEBUG]');
         
-        // FOR DEBUGGING: Log all scripts on the page
-        const scripts = document.querySelectorAll('script');
-        console.log('Scripts on page:', scripts.length, '[DEBUG]');
-        scripts.forEach((script, index) => {
-            console.log(`Script ${index}:`, script.src || 'inline script', '[DEBUG]');
-        });
-        
-        // Fetch the JSON data
-        fetch(jsonUrl)
-            .then(response => {
-                console.log('Fetch response status:', response.status, response.statusText, '[DEBUG]');
-                if (!response.ok) {
-                    console.error('Network response was not ok:', response.status, response.statusText, '[DEBUG]');
-                    throw new Error('Network response was not ok: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Received JSON data:', data ? data.length : 'null or empty', 'items [DEBUG]');
-                
-                // Process the data
-                const processedData = processBusinessData(data);
-                console.log('Processed data:', processedData.length, 'businesses after filtering [DEBUG]');
-                
-                // Cache the data
-                window.allBusinesses = processedData;
-                window.filteredBusinesses = processedData;
-                
-                // Update UI with the processed data
-                updateUI(processedData);
-                
-                resolve(processedData);
-            })
-            .catch(error => {
-                console.error('Error fetching business data:', error, '[DEBUG]');
-                
-                // Try relative path as fallback if not already tried
-                if (jsonUrl.startsWith('/')) {
-                    console.log('Trying relative path as fallback... [DEBUG]');
-                    const fallbackUrl = 'Outscraper-20250423020658xs04_micropigmentation_+1.json';
-                    console.log('Fallback URL:', fallbackUrl, '[DEBUG]');
+        // Function to try loading from a specific path
+        const tryPath = (pathIndex) => {
+            if (pathIndex >= paths.length) {
+                reject(new Error('Failed to load data from all paths'));
+                return;
+            }
+            
+            const jsonUrl = paths[pathIndex];
+            console.log(`Trying path (${pathIndex + 1}/${paths.length}):`, jsonUrl, '[DEBUG]');
+            
+            fetch(jsonUrl)
+                .then(response => {
+                    console.log('Fetch response status:', response.status, response.statusText, '[DEBUG]');
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Received JSON data:', data ? data.length : 'null or empty', 'items [DEBUG]');
                     
-                    fetch(fallbackUrl)
-                        .then(response => {
-                            console.log('Fallback fetch response:', response.status, response.statusText, '[DEBUG]');
-                            if (!response.ok) {
-                                throw new Error('Fallback fetch failed: ' + response.statusText);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Received data from fallback path:', data.length, 'businesses [DEBUG]');
-                            const processedData = processBusinessData(data);
-                            window.allBusinesses = processedData;
-                            window.filteredBusinesses = processedData;
-                            
-                            // Update UI with the processed data
-                            updateUI(processedData);
-                            
-                            resolve(processedData);
-                        })
-                        .catch(fallbackError => {
-                            console.error('Fallback fetch also failed:', fallbackError, '[DEBUG]');
-                            reject(fallbackError);
-                        });
-                } else {
-                    reject(error);
-                }
-            });
+                    // Process the data
+                    const processedData = processBusinessData(data);
+                    console.log('Processed data:', processedData.length, 'businesses after filtering [DEBUG]');
+                    
+                    // Cache the data
+                    window.allBusinesses = processedData;
+                    window.filteredBusinesses = processedData;
+                    
+                    // Update UI with the processed data
+                    updateUI(processedData);
+                    
+                    resolve(processedData);
+                })
+                .catch(error => {
+                    console.error(`Error fetching from path ${jsonUrl}:`, error, '[DEBUG]');
+                    
+                    // Try the next path
+                    tryPath(pathIndex + 1);
+                });
+        };
+        
+        // Start trying paths
+        tryPath(0);
     });
 }
 
@@ -364,10 +341,15 @@ function updateUI(businessData) {
 // Update top clinics section (similar to Top Restaurants in Eating Vancouver)
 function updateTopClinics(businessData) {
     const topClinicsContainer = document.getElementById('top-clinics-container');
-    if (!topClinicsContainer) return;
+    if (!topClinicsContainer) {
+        console.log('Top clinics container not found, might be on a different page');
+        return;
+    }
     
     // Clear loading message
     topClinicsContainer.innerHTML = '';
+    
+    console.log('Updating top clinics with', businessData.length, 'businesses');
     
     // Sort businesses by rating (highest first)
     const sortedBusinesses = [...businessData].sort((a, b) => {
@@ -386,16 +368,30 @@ function updateTopClinics(businessData) {
         return reviewsB - reviewsA;
     });
     
-    // Display top 12 clinics by rating
-    displayClinics(sortedBusinesses.slice(0, 12), topClinicsContainer);
-    
-    // Log total clinic count and top clinics to console
-    console.log(`Total clinics loaded: ${businessData.length}`);
+    // Log top clinics for debugging
     console.log('Top 12 clinics by rating:', sortedBusinesses.slice(0, 12).map(clinic => ({
         name: clinic.name,
         rating: parseFloat(clinic.rating) || 0,
-        reviews: parseInt(clinic.reviews) || 0
+        reviews: parseInt(clinic.reviews) || 0,
+        phone: clinic.phone || 'No phone',
+        website: clinic.site || clinic.website || clinic.url || 'No website'
     })));
+    
+    // Display top 12 clinics by rating
+    const clinicsToDisplay = sortedBusinesses.slice(0, 12);
+    
+    if (clinicsToDisplay.length === 0) {
+        topClinicsContainer.innerHTML = '<p>No clinics found. Please try again later.</p>';
+        return;
+    }
+    
+    // Directly create clinic cards instead of using displayClinics
+    clinicsToDisplay.forEach(business => {
+        createClinicCard(business, topClinicsContainer);
+    });
+    
+    // Log total clinic count
+    console.log(`Total clinics loaded: ${businessData.length}, displaying top ${clinicsToDisplay.length}`);
 }
 
 // Function to display clinics in the specified container
@@ -1033,10 +1029,10 @@ function createClinicCard(business, container) {
         business.address || '',
         business.city || '',
         business.state || '',
-        business.zip_code || ''
+        business.zip_code || business.postal_code || ''
     ].filter(Boolean);
     
-    const formattedAddress = addressParts.join(', ') || business.full_address || 'Address not available';
+    const formattedAddress = addressParts.join(', ') || business.full_address || business.formatted_address || 'Address not available';
     
     // Get services
     const services = getBusinessServices(business);
@@ -1057,18 +1053,21 @@ function createClinicCard(business, container) {
     const imageUrl = business.image_url || business.photo || 
                     (business.photos && business.photos.length > 0 ? business.photos[0] : 'img/default-clinic.jpg');
     
+    // Enhanced debugging for specific items that might be causing issues
+    console.log(`${business.name} - Rating: ${ratingValue}, Reviews: ${reviewsCount}, Phone: ${formattedPhone}, Website: ${websiteUrl}`);
+    
     card.innerHTML = `
         <div class="clinic-image" style="background-image: url(${imageUrl})"></div>
         <div class="clinic-info">
             <h3>${business.name || 'Unnamed Clinic'}</h3>
             <div class="clinic-rating">
                 <div class="stars">${starRating}</div>
-                <span>${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
+                <span class="rating-text">${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
             </div>
             <div class="clinic-address">${formattedAddress}</div>
             <div class="clinic-contact">
                 <div class="clinic-phone">${formattedPhone}</div>
-                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank">Website</a></div>` : ''}
+                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a></div>` : ''}
             </div>
             <div class="clinic-services">
                 ${services.map(service => `<span class="clinic-service">${service}</span>`).join('')}
