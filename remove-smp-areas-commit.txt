@@ -1,0 +1,9 @@
+Remove "Scalp Micropigmentation" from area page headings
+
+This commit completely removes the remaining "scalp micropigmentation" text from area pages:
+
+1. Created a script (remove-smp-from-areas.js) to update all 168 area HTML files
+2. Removed "scalp micropigmentation" from area page headings and counts
+3. Updated the inline JavaScript that generates clinic counts in area pages
+
+This completes the removal of redundant "Scalp Micropigmentation" text from the entire site, maintaining cleaner UI across all pages. 
