@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta>
+    <meta>
+    <meta>
     <title>SMP Clinics in Orange | Hair Tattoo Directory</title>
-    <meta name="description" content="Find top-rated scalp micropigmentation (SMP) clinics in Orange, Los Angeles. Compare providers, services, and reviews.">
-    <link rel="canonical" href="https://smpdirectory.com/areas/orange/">
+    <meta>
+    <link>
     
     <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link>
     <style>
         .dropdown {
             position: relative;
@@ -108,7 +109,7 @@
     <!-- Area Clinics Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-12 text-center">SMP Clinics in Orange</h2>
+            <h2 class="text-3xl font-bold mb-12 text-center">Clinics in Orange</h2>
             <div id="area-clinics" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Clinic cards will be loaded here via JavaScript -->
                 <p class="text-center py-8 col-span-full">Loading clinics...</p>
@@ -135,7 +136,7 @@
     <!-- Nearby Areas Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center">Other Areas with SMP Clinics</h2>
+            <h2 class="text-3xl font-bold mb-8 text-center">Other Areas with Clinics</h2>
             <div id="neighborhood-map" class="flex flex-wrap justify-center gap-4">
                 <!-- Areas will be populated by JavaScript -->
                 <p class="text-center py-8">Loading areas...</p>
@@ -152,7 +153,7 @@
                     <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo Directory</h3>
                     <p class="text-gray-300">
                         The premier directory of Scalp Micropigmentation clinics in Los Angeles. 
-                        Find top-rated SMP providers and restore your confidence.
+                        Find top-rated providers and restore your confidence.
                     </p>
                 </div>
                 
@@ -169,7 +170,7 @@
                 <!-- Column 3: Contact -->
                 <div>
                     <h3 class="text-xl font-semibold mb-4">Contact</h3>
-                    <p class="text-gray-300 mb-2">Email: info@smpdirectory.com</p>
+                    <p class="text-gray-300 mb-2">Email: info@hairtattoodirectory.com</p>
                     <p class="text-gray-300">Phone: (213) 555-1234</p>
                 </div>
             </div>
@@ -290,7 +291,7 @@
                     const countElement = document.querySelector('.area-hero p');
                     if (countElement) {
                         const clinicText = filteredData.length === 1 ? 'clinic' : 'clinics';
-                        countElement.textContent = `${filteredData.length} scalp micropigmentation ${clinicText} found in ${areaName}`;
+                        countElement.textContent = `${filteredData.length} ${clinicText} found in ${areaName}`;
                     }
                     
                 } catch (error) {
@@ -302,5 +303,7 @@
             }
         }, 3000);
     </script>
+    <!-- Script to remove Scalp Micropigmentation from clinic cards -->
+    <script src="/remove-smp-dom.js"></script>
 </body>
 </html> 
