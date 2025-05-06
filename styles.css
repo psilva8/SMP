@@ -116,7 +116,8 @@ nav a:hover {
   background-color: var(--light-gray);
 }
 
-.dropdown:hover .dropdown-menu {
+/* This is the class that gets toggled by JavaScript */
+.dropdown.active .dropdown-menu {
   display: block;
 }
 

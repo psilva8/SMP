@@ -52,6 +52,10 @@
         .dropdown.active .dropdown-content {
             display: block;
         }
+        /* Add this to ensure the dropdown-menu also works with the active class */
+        .dropdown.active .dropdown-menu {
+            display: block;
+        }
         header {
             position: relative;
             z-index: 40;
@@ -234,7 +238,7 @@
             });
             
             // Prevent scroll events in dropdown content from closing the dropdown
-            document.querySelectorAll('.dropdown-content').forEach(content => {
+            document.querySelectorAll('.dropdown-content, .dropdown-menu').forEach(content => {
                 content.addEventListener('wheel', function(e) {
                     e.stopPropagation();
                 });

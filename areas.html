@@ -22,7 +22,7 @@
                     <!-- Areas Dropdown -->
                     <div class="dropdown">
                         <a href="areas.html" class="font-semibold border-b-2 border-white">Areas ▾</a>
-                        <div id="areas-dropdown" class="dropdown-content">
+                        <div id="areas-dropdown" class="dropdown-content dropdown-menu">
                             <a href="/areas/alameda/">Alameda</a>
                             <a href="/areas/alamo/">Alamo</a>
                             <a href="/areas/auburn/">Auburn</a>
@@ -221,6 +221,49 @@
             
             mobileMenuButton.addEventListener('click', function() {
                 mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Add dropdown handling
+            const dropdownButtons = document.querySelectorAll('.dropdown > a');
+            
+            dropdownButtons.forEach(button => {
+                // Handle click on dropdown button
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const dropdown = this.parentElement;
+                    dropdown.classList.toggle('active');
+                    
+                    // Close other dropdowns
+                    dropdownButtons.forEach(otherButton => {
+                        if (otherButton !== button) {
+                            otherButton.parentElement.classList.remove('active');
+                        }
+                    });
+                });
+            });
+            
+            // Prevent scroll events in dropdown content from closing the dropdown
+            document.querySelectorAll('.dropdown-content, .dropdown-menu').forEach(content => {
+                content.addEventListener('wheel', function(e) {
+                    e.stopPropagation();
+                });
+                
+                content.addEventListener('touchmove', function(e) {
+                    e.stopPropagation();
+                });
+                
+                content.addEventListener('mousedown', function(e) {
+                    e.stopPropagation();
+                });
+            });
+            
+            // Close dropdowns when clicking outside, but not when interacting with dropdown content
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    document.querySelectorAll('.dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
             });
             
             // Call fetchBusinessData to load clinic data, but we no longer need to populate areas

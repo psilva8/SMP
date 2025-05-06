@@ -70,7 +70,7 @@
                     <!-- Areas Dropdown -->
                     <div class="dropdown">
                         <a href="neighborhoods.html" class="hover:text-blue-200 transition">Areas ▾</a>
-                        <div id="areas-dropdown" class="dropdown-content">
+                        <div id="areas-dropdown" class="dropdown-content dropdown-menu">
                             <a href="/areas/alameda/">Alameda</a>
                             <a href="/areas/alamo/">Alamo</a>
                             <a href="/areas/auburn/">Auburn</a>
@@ -254,7 +254,7 @@
             });
             
             // Prevent scroll events in dropdown content from closing the dropdown
-            document.querySelectorAll('.dropdown-content').forEach(content => {
+            document.querySelectorAll('.dropdown-content, .dropdown-menu').forEach(content => {
                 content.addEventListener('wheel', function(e) {
                     e.stopPropagation();
                 });
