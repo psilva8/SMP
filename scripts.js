@@ -279,15 +279,19 @@ function processBusinessData(businessData) {
     
     // Sort businesses by rating (highest first)
     processedData.sort((a, b) => {
-        // If both have ratings, compare them
-        if (a.rating_value && b.rating_value) {
-            return b.rating_value - a.rating_value;
+        // Get ratings, using proper properties with fallbacks
+        const ratingA = parseFloat(a.rating) || parseFloat(a.rating_value) || 0;
+        const ratingB = parseFloat(b.rating) || parseFloat(b.rating_value) || 0;
+        
+        // Compare ratings (higher first)
+        if (ratingA !== ratingB) {
+            return ratingB - ratingA;
         }
-        // If only one has a rating, prioritize the one with rating
-        if (a.rating_value) return -1;
-        if (b.rating_value) return 1;
-        // If neither has ratings, keep original order
-        return 0;
+        
+        // If ratings are equal, sort by review count
+        const reviewsA = parseInt(a.reviews) || parseInt(a.reviews_count) || 0;
+        const reviewsB = parseInt(b.reviews) || parseInt(b.reviews_count) || 0;
+        return reviewsB - reviewsA;
     });
     
     // Keep a copy of the complete dataset
@@ -372,8 +376,8 @@ function updateTopClinics(businessData) {
     console.log(`Total clinics loaded: ${businessData.length}`);
     console.log('Top 12 clinics (by review count):', businessData.slice(0, 12).map(clinic => ({
         name: clinic.name,
-        reviews: clinic.standardized_review_count,
-        rating: clinic.rating || 0
+        reviews: parseInt(clinic.reviews) || parseInt(clinic.reviews_count) || 0,
+        rating: parseFloat(clinic.rating) || parseFloat(clinic.rating_value) || 0
     })));
 }
 
@@ -428,10 +432,13 @@ function displayClinics(businesses, container) {
             imageUrl = 'https://via.placeholder.com/400x250?text=SMP+Clinic';
         }
         
-        // Format rating if available
+        // Format rating if available - use rating property instead of rating_value
         let ratingDisplay = '';
-        if (business.rating_value) {
-            ratingDisplay = `<div class="text-yellow-500 mb-2">${generateStarRating(business.rating_value)} <span class="text-gray-600">(${business.reviews || '0'})</span></div>`;
+        const ratingValue = parseFloat(business.rating) || parseFloat(business.rating_value) || 0;
+        const reviewCount = parseInt(business.reviews) || parseInt(business.reviews_count) || 0;
+        
+        if (ratingValue > 0) {
+            ratingDisplay = `<div class="text-yellow-500 mb-2">${generateStarRating(ratingValue)} <span class="text-gray-600">(${reviewCount})</span></div>`;
         } else {
             ratingDisplay = '<div class="text-gray-400 mb-2">No ratings yet</div>';
         }
@@ -440,7 +447,7 @@ function displayClinics(businesses, container) {
         const address = business.full_address || business.address || 'Address not available';
         
         // Format phone
-        const phone = business.phone_number ? formatPhoneNumber(business.phone_number) : 'No phone listed';
+        const phone = business.phone || business.phone_number ? formatPhoneNumber(business.phone || business.phone_number) : 'No phone listed';
         
         // Set the card HTML with improved image error handling
         card.innerHTML = `
@@ -1073,9 +1080,9 @@ function createClinicCard(business, container) {
         website: business.website
     });
     
-    // If rating is not available or is NaN, use rating_value or default to 0
-    const ratingValue = parseFloat(business.rating) || 0;
-    const reviewsCount = parseInt(business.reviews) || 0;
+    // Use rating property instead of rating_value, as rating is what's present in the JSON data
+    const ratingValue = parseFloat(business.rating) || parseFloat(business.rating_value) || 0;
+    const reviewsCount = parseInt(business.reviews) || parseInt(business.reviews_count) || 0;
     
     // Format phone number
     const phoneNumber = business.phone || business.phone_number || 'N/A';
