@@ -423,20 +423,36 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<script>// fix-area-dropdown.js - Script to fix the area dropdown loading issue
 
+<script>/**
+ * Improved fix-area-dropdown.js
+ * This script solves the issues with area dropdown menus not populating
+ */
+
+// Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Fix area dropdown script loaded');
+    console.log('[Debug] Improved area dropdown fix running');
+    
+    // Fix the parent link first - make sure it points to the right place
+    const areaLinks = document.querySelectorAll('.dropdown a[href="/areas.html"]');
+    if (areaLinks.length > 0) {
+        areaLinks.forEach(link => {
+            if (window.location.pathname.includes('/areas/')) {
+                link.href = "../../areas.html";
+            }
+        });
+    }
     
     // Get all dropdown elements that need to be populated
-    const areasDropdowns = document.querySelectorAll('#areas-dropdown');
+    // Use a more specific selector that matches both main and area pages
+    const areasDropdowns = document.querySelectorAll('#areas-dropdown, .dropdown-content');
     
     if (areasDropdowns.length === 0) {
-        console.log('No areas dropdown found, nothing to fix');
+        console.log('[Debug] No dropdown elements found to populate');
         return;
     }
     
-    console.log(`Found ${areasDropdowns.length} area dropdowns to populate`);
+    console.log(`[Debug] Found ${areasDropdowns.length} dropdown elements to populate`);
     
     // Define static list of areas (same as in the homepage)
     const areasList = [
@@ -466,76 +482,100 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: 'All Areas', url: '/areas.html' }
     ];
     
+    // Determine if we're in an area page for path correction
+    const isAreaPage = window.location.pathname.includes('/areas/');
+    console.log('[Debug] Is area page:', isAreaPage);
+    
     // Populate each dropdown with the area links
-    areasDropdowns.forEach(dropdown => {
-        // Clear the loading message
-        dropdown.innerHTML = '';
-        
-        // Handle paths based on current location (relative vs absolute)
-        let isAreaPage = window.location.pathname.includes('/areas/');
-        
-        // Create links for each area
-        areasList.forEach(area => {
-            const link = document.createElement('a');
+    areasDropdowns.forEach((dropdown, index) => {
+        // Only replace contents if it has the loading message
+        if (dropdown.textContent.includes('Loading areas') || dropdown.children.length === 0) {
+            // Clear the existing content
+            dropdown.innerHTML = '';
             
-            // If we're in an area page, use relative paths
-            if (isAreaPage) {
-                // Fix the URL for relative paths
-                let areaUrl = area.url;
-                if (areaUrl === '/areas.html') {
-                    areaUrl = '../../areas.html';
-                } else if (areaUrl.startsWith('/areas/')) {
-                    areaUrl = '../../' + areaUrl.slice(1);
+            // Create links for each area
+            areasList.forEach(area => {
+                const link = document.createElement('a');
+                
+                // Fix URLs based on current page location
+                if (isAreaPage) {
+                    // Fix the URL for relative paths
+                    let areaUrl = area.url;
+                    if (areaUrl === '/areas.html') {
+                        areaUrl = '../../areas.html';
+                    } else if (areaUrl.startsWith('/areas/')) {
+                        areaUrl = '../../' + areaUrl.slice(1);
+                    }
+                    link.href = areaUrl;
+                } else {
+                    link.href = area.url;
                 }
-                link.href = areaUrl;
-            } else {
-                link.href = area.url;
-            }
+                
+                link.textContent = area.name;
+                dropdown.appendChild(link);
+            });
             
-            link.textContent = area.name;
-            dropdown.appendChild(link);
-        });
-        
-        console.log(`Populated dropdown with ${areasList.length} areas`);
+            console.log(`[Debug] Populated dropdown #${index+1} with ${areasList.length} areas`);
+        } else {
+            console.log(`[Debug] Dropdown #${index+1} already has content, skipping`);
+        }
     });
     
-    // Also fix missing dropdown functionality if needed
+    // Fix dropdown toggle functionality
+    fixDropdownToggle();
+});
+
+// Separate function to fix dropdown toggle functionality
+function fixDropdownToggle() {
     const dropdowns = document.querySelectorAll('.dropdown');
+    console.log(`[Debug] Found ${dropdowns.length} dropdown containers to fix`);
     
-    // Only add event listeners if they're not already added
-    if (!window.dropdownsInitialized) {
-        dropdowns.forEach(dropdown => {
-            const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
-            const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
+    // Add click handlers to dropdown buttons
+    dropdowns.forEach((dropdown, index) => {
+        // Target either the .dropbtn class or the first anchor if no specific button
+        const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
+        // Target either the .dropdown-content or .dropdown-menu if available
+        const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
+        
+        if (button && content) {
+            // Remove any existing click listeners (to avoid duplicates)
+            const newButton = button.cloneNode(true);
+            if (button.parentNode) {
+                button.parentNode.replaceChild(newButton, button);
+            }
             
-            if (button && content) {
-                // Add click event to toggle dropdown
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    dropdown.classList.toggle('active');
-                    
-                    // Close all other dropdowns
-                    dropdowns.forEach(otherDropdown => {
-                        if (otherDropdown !== dropdown) {
-                            otherDropdown.classList.remove('active');
-                        }
-                    });
+            // Add new click event
+            newButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent event from bubbling up
+                console.log(`[Debug] Dropdown #${index+1} clicked`);
+                
+                // Toggle active class on parent dropdown
+                dropdown.classList.toggle('active');
+                
+                // Close other dropdowns
+                dropdowns.forEach((otherDropdown, otherIndex) => {
+                    if (otherDropdown !== dropdown) {
+                        otherDropdown.classList.remove('active');
+                    }
                 });
-            }
-        });
-        
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.dropdown')) {
-                dropdowns.forEach(dropdown => {
-                    dropdown.classList.remove('active');
-                });
-            }
-        });
-        
-        // Set flag to prevent duplicate initialization
-        window.dropdownsInitialized = true;
-    }
-}); </script>
+            });
+            
+            console.log(`[Debug] Added click handler to dropdown #${index+1}`);
+        } else {
+            console.log(`[Debug] Couldn't find button or content for dropdown #${index+1}`);
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            console.log('[Debug] Outside click detected, closing all dropdowns');
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+} </script>
 </body>
 </html> 
