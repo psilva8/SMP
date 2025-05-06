@@ -1,0 +1,11 @@
+Remove all instances of "SMP" and "Scalp Micropigmentation" from the site
+
+This commit thoroughly removes all instances of "SMP" and "Scalp Micropigmentation" from the site content:
+
+1. Created a comprehensive script (remove-all-smp.js) that updates all 189 HTML files
+2. Removed "SMP" from headings like "SMP Clinics in Beverly Hills" to just "Clinics in Beverly Hills"
+3. Removed "SMP" from "Other Areas with SMP Clinics" headings
+4. Removed "Find top-rated SMP providers" to just "Find top-rated providers"
+5. Fixed all JavaScript templates that generate text with "scalp micropigmentation"
+
+This ensures a cleaner interface across the entire site by removing redundant text from all user-facing content while preserving SEO content in titles and meta tags. 
