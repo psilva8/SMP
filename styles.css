@@ -538,3 +538,51 @@ section h2 {
     transform: translateY(0);
   }
 } 
+/* Area Description Styles */
+.area-description {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+.seo-paragraph {
+    line-height: 1.7;
+    color: #444;
+    margin-bottom: 0;
+    font-size: 1.05rem;
+    flex: 1;
+}
+.view-all-container {
+    flex-shrink: 0;
+}
+.area-description .view-all {
+    display: inline-block;
+    background-color: #4F46E5;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+}
+.area-description .view-all:hover {
+    background-color: #4338ca;
+}
+
+/* Responsive adjustments for area description */
+@media (max-width: 768px) {
+    .area-description {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    .seo-paragraph {
+        margin-bottom: 10px;
+    }
+}
