@@ -1,0 +1,10 @@
+Fix Content Security Policy to allow Google Images
+
+This commit updates the Content Security Policy across all pages to allow images from Google's servers:
+
+1. Updated the CSP to allow images from *.googleusercontent.com and *.googleapis.com domains
+2. Created and ran a script (update-csp.js) to update CSP on all HTML pages
+3. Added placeholder.com to the allowed image sources
+4. Applied consistent CSP settings across the entire site 
+
+This fixes the issue where Google images were being blocked due to restrictive CSP settings. 
