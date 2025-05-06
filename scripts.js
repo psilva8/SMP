@@ -935,57 +935,9 @@ function updateServiceTypesList(businessData) {
 
 // Populate the areas dropdown in the navigation menu
 function populateAreasDropdown(businessData) {
-    // Get the areas dropdown element
-    const areasDropdown = document.getElementById('areas-dropdown');
-    if (!areasDropdown) return;
-    
-    // Clear any existing content
-    areasDropdown.innerHTML = '';
-    
-    // Get all unique cities from the business data
-    const cities = {};
-    businessData.forEach(business => {
-        if (business.city && business.city !== 'Unknown Area') {
-            cities[business.city] = (cities[business.city] || 0) + 1;
-        }
-    });
-    
-    // Sort cities by count (descending) then alphabetically
-    const sortedCities = Object.keys(cities).sort((a, b) => {
-        // First sort by count (descending)
-        if (cities[b] !== cities[a]) {
-            return cities[b] - cities[a];
-        }
-        // If counts are equal, sort alphabetically
-        return a.localeCompare(b);
-    });
-    
-    // Check if we're on the neighborhoods page or areas page
-    const isAreasPage = window.location.pathname.includes('neighborhoods') || 
-                        window.location.pathname.includes('areas/') ||
-                        window.location.pathname.includes('area/');
-    
-    // Determine the base path
-    const basePath = isAreasPage ? '../' : '';
-    
-    // Check if we're in local development mode (file:// protocol)
-    const isLocalDev = window.location.protocol === 'file:';
-    
-    // Add a link for each city
-    sortedCities.forEach(city => {
-        const link = document.createElement('a');
-        const urlFriendlyCity = city.toLowerCase().replace(/\s+/g, '-');
-        
-        // Add .html extension for local development
-        if (isLocalDev) {
-            link.href = `${basePath}areas/${encodeURIComponent(urlFriendlyCity)}/index.html`;
-        } else {
-            link.href = `${basePath}areas/${encodeURIComponent(urlFriendlyCity)}/`;
-        }
-        
-        link.textContent = city;
-        areasDropdown.appendChild(link);
-    });
+    // Function intentionally left empty as areas are now statically defined in HTML
+    // This prevents the dynamic population of areas dropdown which was causing issues
+    return;
 }
 
 // Display all clinics on the neighborhoods page
@@ -1005,59 +957,9 @@ function displayAllClinics(businessData) {
 
 // Populate the neighborhood map container with areas
 function populateNeighborhoodMap(businessData) {
-    const mapContainer = document.getElementById('neighborhood-map-container');
-    if (!mapContainer) return;
-    
-    // Clear the container
-    mapContainer.innerHTML = '';
-    
-    // Get all unique neighborhoods and count occurrences
-    const neighborhoods = {};
-    
-    businessData.forEach(business => {
-        // Check for city field
-        if (business.city && business.city !== 'Unknown Area') {
-            neighborhoods[business.city] = (neighborhoods[business.city] || 0) + 1;
-        }
-        
-        // Check for neighborhood field
-        if (business.neighborhood && business.neighborhood !== 'Unknown Area') {
-            neighborhoods[business.neighborhood] = (neighborhoods[business.neighborhood] || 0) + 1;
-        }
-    });
-    
-    // Convert to array and sort
-    const sortedNeighborhoods = Object.keys(neighborhoods).sort((a, b) => {
-        // First sort by count (descending)
-        if (neighborhoods[b] !== neighborhoods[a]) {
-            return neighborhoods[b] - neighborhoods[a];
-        }
-        // If counts are equal, sort alphabetically
-        return a.localeCompare(b);
-    });
-    
-    // Check if we're in local development mode (file:// protocol)
-    const isLocalDev = window.location.protocol === 'file:';
-    
-    // Create links for each neighborhood
-    sortedNeighborhoods.forEach(neighborhood => {
-        const urlFriendlyName = neighborhood.toLowerCase().replace(/\s+/g, '-');
-        const link = document.createElement('a');
-        
-        // Add .html extension for local development
-        if (isLocalDev) {
-            link.href = `areas/${encodeURIComponent(urlFriendlyName)}/index.html`;
-        } else {
-            link.href = `areas/${encodeURIComponent(urlFriendlyName)}/`;
-        }
-        
-        link.className = 'block px-4 py-2 bg-white hover:bg-blue-50 border border-gray-300 rounded-lg transition';
-        link.innerHTML = `
-            <span class="font-medium">${neighborhood}</span>
-            <span class="text-gray-500 text-sm ml-2">(${neighborhoods[neighborhood]} clinics)</span>
-        `;
-        mapContainer.appendChild(link);
-    });
+    // Function intentionally left empty as areas are now statically defined in HTML
+    // This prevents the dynamic population of area lists which was causing issues
+    return;
 }
 
 // Load business data from JSON file
@@ -1272,42 +1174,9 @@ function createStarRating(rating) {
 
 // Populate area map
 function populateAreaMap() {
-    const areaMap = document.querySelector('.areas-map');
-    if (!areaMap) return;
-    
-    // Clear existing items
-    areaMap.innerHTML = '';
-    
-    // Count occurrences of each city
-    const cityCount = {};
-    
-    businessData.forEach(business => {
-        const city = business.city;
-        if (city && city !== 'Unknown Area') {
-            cityCount[city] = (cityCount[city] || 0) + 1;
-        }
-    });
-    
-    // Convert to array and sort by count (descending)
-    const sortedCities = Object.keys(cityCount)
-        .map(city => ({ name: city, count: cityCount[city] }))
-        .sort((a, b) => {
-            // Sort by count (descending), then alphabetically
-            if (b.count !== a.count) {
-                return b.count - a.count;
-            }
-            return a.name.localeCompare(b.name);
-        });
-    
-    // Add top 20 cities to area map
-    sortedCities.slice(0, 20).forEach(city => {
-        const urlFriendlyName = generateUrlFriendlyName(city.name);
-        const link = document.createElement('a');
-        link.href = `areas/${urlFriendlyName}`;
-        link.className = 'area-link';
-        link.innerHTML = `${city.name} <span class="area-count">${city.count}</span>`;
-        areaMap.appendChild(link);
-    });
+    // Function intentionally left empty as areas are now statically defined in HTML
+    // This prevents the dynamic population of area maps which was causing issues
+    return;
 }
 
 // Load area-specific clinics

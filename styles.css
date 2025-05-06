@@ -332,6 +332,41 @@ section h2 {
   color: rgba(255, 255, 255, 0.8);
 }
 
+.area-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.area-item {
+  display: block;
+  background-color: var(--white);
+  padding: 1rem;
+  border-radius: 0.25rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.area-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  color: var(--primary-color);
+}
+
+.area-item.view-all {
+  background-color: var(--primary-color);
+  color: var(--white);
+}
+
+.area-item.view-all:hover {
+  background-color: var(--primary-dark);
+  color: var(--white);
+}
+
 /* About Section */
 .about-content {
   display: grid;
