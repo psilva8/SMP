@@ -330,7 +330,7 @@
                     sortedBusinesses.forEach(business => {
                         const imageUrl = business.photos && business.photos.length > 0 && business.photos[0] 
                             ? business.photos[0] 
-                            : 'https://via.placeholder.com/400x250?text=SMP+Clinic';
+                            : 'https://via.placeholder.com/400x200/cccccc/666666?text=SMP+Clinic';
                         
                         const address = business.full_address || business.address || 'Address not available';
                         const rating = business.rating || 'N/A';
@@ -342,7 +342,7 @@
                         card.innerHTML = `
                             <div class="h-48 bg-gray-200 overflow-hidden">
                                 <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover" 
-                                    onerror="this.src='https://via.placeholder.com/400x250?text=SMP+Clinic'; this.onerror=null;">
+                                    onerror="this.src='https://via.placeholder.com/400x200/cccccc/666666?text=SMP+Clinic'; this.onerror=null;">
                             </div>
                             <div class="p-5">
                                 <h3 class="text-xl font-bold mb-2">${business.name || 'Unnamed Clinic'}</h3>
@@ -377,5 +377,8 @@
     
     <!-- Script to fix star ratings display -->
     <script src="/area-fix.js"></script>
+    
+    <!-- Script to fix image loading -->
+    <script src="/image-fix.js"></script>
 </body>
 </html> 

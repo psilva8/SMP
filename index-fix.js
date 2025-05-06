@@ -147,16 +147,21 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Add default services
                     const services = ['Scalp Micropigmentation'];
                     
-                    // Default image
+                    // Default image - use placeholder image service instead of relying on local file
                     const imageUrl = business.image_url || business.photo || 
-                        (business.photos && business.photos.length > 0 ? business.photos[0] : 'img/default-clinic.jpg');
+                        (business.photos && business.photos.length > 0 && business.photos[0]) 
+                        ? (business.image_url || business.photo || business.photos[0])
+                        : 'https://via.placeholder.com/400x200/cccccc/666666?text=SMP+Clinic';
                     
                     // Enhanced debugging for specific items that might be causing issues
                     console.log(`${business.name} - Rating: ${ratingValue}, Reviews: ${reviewsCount}, Phone: ${formattedPhone}, Website: ${websiteUrl}`);
                     
-                    // Set the card HTML
+                    // Set the card HTML - now supporting both background-image and img tag for better compatibility
                     card.innerHTML = `
-                        <div class="clinic-image" style="background-image: url(${imageUrl})"></div>
+                        <div class="clinic-image" style="background-image: url(${imageUrl}); background-size: cover; background-position: center;">
+                            <img src="${imageUrl}" alt="${business.name}" style="display: none;"
+                                onerror="this.onerror=null; this.parentElement.style.backgroundImage='url(https://via.placeholder.com/400x200/cccccc/666666?text=SMP+Clinic)';">
+                        </div>
                         <div class="clinic-info">
                             <h3>${business.name || 'Unnamed Clinic'}</h3>
                             <div class="clinic-rating">
