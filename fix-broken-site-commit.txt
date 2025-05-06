@@ -1,0 +1,8 @@
+Fix broken site by removing remaining SMP text from area page headers
+
+This commit addresses site-breaking issues by removing remaining instances of "Scalp Micropigmentation" text:
+
+1. Fixed updateClinicCount function to remove "scalp micropigmentation" text from area pages
+2. Removed "Scalp Micropigmentation" from the services dropdown options
+
+These changes ensure consistent removal of all SMP text from the interface for better site functionality. 

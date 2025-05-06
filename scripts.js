@@ -1225,7 +1225,7 @@ function updateClinicCount(count, areaName) {
     const countElement = document.querySelector('.area-hero p');
     if (countElement) {
         const clinicText = count === 1 ? 'clinic' : 'clinics';
-        countElement.textContent = `${count} scalp micropigmentation ${clinicText} found in ${areaName}`;
+        countElement.textContent = `${count} ${clinicText} found in ${areaName}`;
     }
 }
 
@@ -1249,7 +1249,6 @@ function populateServiceOptions(selectElement) {
     // Define common SMP services
     const services = [
         'All Services',
-        'Scalp Micropigmentation',
         'Hair Density',
         'Hairline Restoration',
         'Scar Concealment'
