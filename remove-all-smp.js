@@ -16,8 +16,8 @@ function removeReferences(content) {
             // Part outside of meta, title, or link tags
             let part = htmlParts[i];
             
-            // 1. Remove "scalp micropigmentation" from headings and text
-            part = part.replace(/(\d+) scalp micropigmentation (clinic|clinics)/gi, '$1 $2');
+            // 1. Remove "hair tattoo treatment" from headings and text
+            part = part.replace(/(\d+) hair tattoo treatment (clinic|clinics)/gi, '$1 $2');
             
             // 2. Remove "SMP Clinics in" headings to just "Clinics in"
             part = part.replace(/<h2[^>]*>SMP Clinics in ([^<]+)<\/h2>/gi, '<h2 class="text-3xl font-bold mb-12 text-center">Clinics in $1</h2>');
@@ -29,7 +29,7 @@ function removeReferences(content) {
             part = part.replace(/Find top-rated SMP providers/gi, 'Find top-rated providers');
             
             // 5. Remove references in scripts while preserving functionality
-            part = part.replace(/countElement\.textContent = `\${filteredData\.length} scalp micropigmentation \${clinicText} found in \${areaName}`/g, 
+            part = part.replace(/countElement\.textContent = `\${filteredData\.length} hair tattoo treatment \${clinicText} found in \${areaName}`/g, 
                         'countElement.textContent = `${filteredData.length} ${clinicText} found in ${areaName}`');
             
             result += part;

@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https://via.placeholder.com https://*.googleusercontent.com https://*.googleapis.com; font-src 'self'">
-    <meta>
-    <meta>
-    <meta>
-    <meta>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; connect-src *;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find top-rated Hair Tattoo clinics in your area. Compare services, reviews, and pricing.">
+    <meta name="keywords" content="Hair Tattoo, Hair Loss, Hairline Restoration, Hair Tattoo Clinic">
     <title>Hair Tattoo Directory | Find Top Clinics</title>
-    <meta>
-    <link>
+    <meta name="author" content="Hair Tattoo Directory">
+    <link rel="stylesheet" href="styles.css">
     <style>
         .dropdown {
             position: relative;
@@ -68,7 +68,7 @@
     <header class="site-header">
         <div class="container">
             <div class="logo">
-                <a href="/">SMP Directory</a>
+                <a href="/">Hair Tattoo Directory</a>
             </div>
             <nav>
                 <ul>
@@ -169,7 +169,7 @@
                 <div class="about-text">
                     <p>Hair Tattoo Treatment is a non-surgical, non-invasive, immediate solution to hair loss. This specialized technique uses micro-needles to deposit pigment into the scalp, creating the appearance of tiny hair follicles to restore the look of a fuller head of hair.</p>
                     <p>This treatment can help with various conditions, including general hair loss, pattern baldness, alopecia, and scar camouflage. It's an excellent alternative to hair transplantation surgery, medication, or temporary concealment products.</p>
-                    <h3>Key Benefits of SMP</h3>
+                    <h3>Key Benefits of Hair Tattoo</h3>
                     <ul>
                         <li>Immediate results with minimal downtime</li>
                         <li>Non-surgical procedure with no incisions or stitches</li>
@@ -179,7 +179,7 @@
                     </ul>
                 </div>
                 <div class="about-image">
-                    <img src="img/smp-treatment.jpg" alt="Scalp Micropigmentation Treatment">
+                    <img src="img/hair-tattoo-treatment.jpg" alt="Hair Tattoo Treatment Treatment">
                 </div>
             </div>
         </div>
@@ -191,7 +191,7 @@
             <div class="footer-content">
                 <div class="footer-info">
                     <h3>Hair Tattoo Directory</h3>
-                    <p>The comprehensive guide to finding top-rated scalp micropigmentation clinics across the country.</p>
+                    <p>The comprehensive guide to finding top-rated hair tattoo treatment clinics across the country.</p>
                     <p>Contact: info@hairtattoodirectory.com</p>
                 </div>
                 <div class="footer-links">
@@ -205,7 +205,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; <span id="current-year">2023</span> SMP Directory. All rights reserved.</p>
+                <p>&copy; <span id="current-year">2023</span> Hair Tattoo Directory. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -274,7 +274,44 @@
     
     <!-- Fix script to ensure clinics load -->
     <script src="index-fix.js"></script>
-    <!-- Script to remove Scalp Micropigmentation from clinic cards -->
+    <!-- Script to remove Hair Tattoo Treatment from clinic cards -->
     <script src="/remove-smp-dom.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix dropdown menus
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
+        const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
+        
+        if (button && content) {
+            // Add click event to toggle dropdown
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdown.classList.toggle('active');
+                
+                // Close all other dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        otherDropdown.classList.remove('active');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+});
+</script>
+
 </body>
 </html> 

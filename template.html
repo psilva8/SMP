@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; connect-src *;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="SMP Clinics - Find top-rated scalp micropigmentation providers">
-    <title>SMP Clinics | Scalp Micropigmentation Directory</title>
+    <meta name="description" content="Find top-rated Hair Tattoo clinics in your area. Compare services, reviews, and pricing.">
+    <meta name="keywords" content="Hair Tattoo, Hair Loss, Hairline Restoration, Hair Tattoo Clinic">
+    <title>Hair Tattoo Clinics | Hair Tattoo Treatment Directory</title>
+    <meta name="author" content="Hair Tattoo Directory">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="favicon.ico">
+    <link>
+    <link>
 </head>
 <body>
     <header>
         <div class="container">
             <div class="logo">
-                <a href="/">SMP Clinics</a>
+                <a href="/">Hair Tattoo Clinics</a>
             </div>
             <nav>
                 <ul>
@@ -32,15 +36,15 @@
 
     <section class="hero">
         <div class="container">
-            <h1>Find Top Scalp Micropigmentation Clinics</h1>
-            <p>Discover the best SMP providers for hair loss solutions</p>
+            <h1>Find Top Hair Tattoo Clinics</h1>
+            <p>Discover the best Hair Tattoo providers for hair loss solutions</p>
             <a href="#clinics" class="cta-button">Find Clinics</a>
         </div>
     </section>
 
     <section id="clinics" class="clinics-section">
         <div class="container">
-            <h2>Top SMP Clinics</h2>
+            <h2>Top Clinics</h2>
             <div class="filter-options">
                 <div class="search-box">
                     <input type="text" id="clinic-search" placeholder="Search clinics...">
@@ -71,9 +75,9 @@
 
     <section class="about-section">
         <div class="container">
-            <h2>About Scalp Micropigmentation</h2>
-            <p>Scalp micropigmentation (SMP) is a non-surgical hair loss solution that uses microneedles to deposit pigment into the scalp, creating the appearance of hair follicles. This cosmetic procedure can help those with thinning hair, baldness, or scarring.</p>
-            <p>Finding the right SMP clinic is crucial for achieving natural-looking results. Our directory helps you locate experienced providers in your area.</p>
+            <h2>About Hair Tattoo Treatment</h2>
+            <p>Scalp micropigmentation (Hair Tattoo) is a non-surgical hair loss solution that uses microneedles to deposit pigment into the scalp, creating the appearance of hair follicles. This cosmetic procedure can help those with thinning hair, baldness, or scarring.</p>
+            <p>Finding the right Hair Tattoo clinic is crucial for achieving natural-looking results. Our directory helps you locate experienced providers in your area.</p>
         </div>
     </section>
 
@@ -95,7 +99,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; <span id="current-year"></span> SMP Clinics Directory. All rights reserved.</p>
+                <p>&copy; <span id="current-year"></span> Hair Tattoo Clinics Directory. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -133,5 +137,44 @@
                 });
         });
     </script>
+    <!-- Script to remove Hair Tattoo Treatment from clinic cards -->
+    <script src="/remove-smp-dom.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix dropdown menus
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
+        const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
+        
+        if (button && content) {
+            // Add click event to toggle dropdown
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdown.classList.toggle('active');
+                
+                // Close all other dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        otherDropdown.classList.remove('active');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+});
+</script>
+
 </body>
 </html> 

@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; connect-src *;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find top-rated Hair Tattoo clinics in your area. Compare services, reviews, and pricing.">
+    <meta name="keywords" content="Hair Tattoo, Hair Loss, Hairline Restoration, Hair Tattoo Clinic">
     <title>Redirecting to Beverly Hills Area</title>
+    <meta name="author" content="Hair Tattoo Directory">
+    <link rel="stylesheet" href="styles.css">
     <script>
         // Redirect to the correct area path
         window.location.href = '/areas/beverly-hills/';
@@ -12,5 +17,42 @@
 <body>
     <h1>Redirecting to Beverly Hills Area</h1>
     <p>If you are not redirected automatically, please click <a href="/areas/beverly-hills/">here</a>.</p>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix dropdown menus
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
+        const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
+        
+        if (button && content) {
+            // Add click event to toggle dropdown
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdown.classList.toggle('active');
+                
+                // Close all other dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        otherDropdown.classList.remove('active');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+});
+</script>
+
 </body>
 </html> 

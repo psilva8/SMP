@@ -90,7 +90,7 @@ const fallbackScript = `
                     const countElement = document.querySelector('.area-hero p');
                     if (countElement) {
                         const clinicText = filteredData.length === 1 ? 'clinic' : 'clinics';
-                        countElement.textContent = \`\${filteredData.length} scalp micropigmentation \${clinicText} found in \${areaName}\`;
+                        countElement.textContent = \`\${filteredData.length} hair tattoo treatment \${clinicText} found in \${areaName}\`;
                     }
                     
                 } catch (error) {

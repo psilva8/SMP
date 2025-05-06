@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Area fix script loaded');
           
-    // Function to remove any remaining Scalp Micropigmentation text from clinic cards
+    // Function to remove any remaining Hair Tattoo Treatment text from clinic cards
     function removeScalpMicropigmentation() {
         // Find all clinic service containers
         const serviceContainers = document.querySelectorAll('.clinic-services');
@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.log('Found ' + serviceContainers.length + ' clinic service containers to check');
             
             serviceContainers.forEach(container => {
-                // Find and remove any service with "Scalp Micropigmentation" text
+                // Find and remove any service with "Hair Tattoo Treatment" text
                 const serviceSpans = container.querySelectorAll('.clinic-service');
                 serviceSpans.forEach(span => {
-                    if (span.textContent.includes('Scalp Micropigmentation')) {
+                    if (span.textContent.includes('Hair Tattoo Treatment')) {
                         span.remove();
-                        console.log('Removed Scalp Micropigmentation from a clinic card');
+                        console.log('Removed Hair Tattoo Treatment from a clinic card');
                     }
                 });
             });

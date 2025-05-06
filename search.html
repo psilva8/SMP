@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; connect-src *;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinics - SMP Directory</title>
-    <meta name="description" content="View all scalp micropigmentation (SMP) and hair tattoo clinics in Los Angeles.">
+    <meta name="description" content="Find top-rated Hair Tattoo clinics in your area. Compare services, reviews, and pricing.">
+    <meta name="keywords" content="Hair Tattoo, Hair Loss, Hairline Restoration, Hair Tattoo Clinic">
+    <title>Clinics - Hair Tattoo Directory</title>
+    <meta name="author" content="Hair Tattoo Directory">
+    <link rel="stylesheet" href="styles.css">
+    <meta>
     
     <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link>
     <style>
         .dropdown {
             position: relative;
@@ -63,7 +68,7 @@
     <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <a href="index.html" class="text-2xl font-bold">SMP Hair Tattoo Directory</a>
+                <a href="index.html" class="text-2xl font-bold">Hair Tattoo Directory</a>
                 <nav class="hidden md:flex space-x-6">
                     <a href="index.html" class="hover:text-blue-200 transition">Home</a>
                     
@@ -76,7 +81,7 @@
                         </div>
                     </div>
                     
-                    <a href="about.html" class="hover:text-blue-200 transition">About SMP</a>
+                    <a href="about.html" class="hover:text-blue-200 transition">About Hair Tattoo</a>
                 </nav>
                 
                 <!-- Mobile menu button -->
@@ -91,7 +96,7 @@
             <div class="md:hidden hidden pt-4 pb-2">
                 <a href="index.html" class="block py-2">Home</a>
                 <a href="neighborhoods.html" class="block py-2 hover:text-blue-200 transition">Areas</a>
-                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About Hair Tattoo</a>
             </div>
         </div>
     </header>
@@ -99,8 +104,8 @@
     <!-- Clinics Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-4 text-center">SMP Clinics Directory</h2>
-            <p class="text-center mb-12 text-lg">Showing all available scalp micropigmentation clinics in Los Angeles</p>
+            <h2 class="text-3xl font-bold mb-4 text-center">Hair Tattoo Clinics Directory</h2>
+            <p class="text-center mb-12 text-lg">Showing all available hair tattoo treatment clinics in Los Angeles</p>
             
             <div id="search-results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <!-- Clinics will be loaded here via JavaScript -->
@@ -117,10 +122,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Column 1: About -->
                 <div>
-                    <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo Directory</h3>
+                    <h3 class="text-xl font-semibold mb-4">Hair Tattoo Directory</h3>
                     <p class="text-gray-300">
-                        The premier directory of Scalp Micropigmentation clinics in Los Angeles. 
-                        Find top-rated SMP providers and restore your confidence.
+                        The premier directory of Hair Tattoo clinics in Los Angeles. 
+                        Find top-rated providers and restore your confidence.
                     </p>
                 </div>
                 
@@ -130,19 +135,19 @@
                     <ul class="space-y-2">
                         <li><a href="index.html" class="text-gray-300 hover:text-white transition">Home</a></li>
                         <li><a href="neighborhoods.html" class="text-gray-300 hover:text-white transition">LA Neighborhoods</a></li>
-                        <li><a href="about.html" class="text-gray-300 hover:text-white transition">About SMP</a></li>
+                        <li><a href="about.html" class="text-gray-300 hover:text-white transition">About Hair Tattoo</a></li>
                     </ul>
                 </div>
                 
                 <!-- Column 3: Contact -->
                 <div>
                     <h3 class="text-xl font-semibold mb-4">Contact</h3>
-                    <p class="text-gray-300 mb-2">Email: info@smpdirectory.com</p>
+                    <p class="text-gray-300 mb-2">Email: info@hairtattoodirectory.com</p>
                 </div>
             </div>
             
             <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
-                <p>&copy; 2023 SMP Hair Tattoo Directory. All rights reserved.</p>
+                <p>&copy; 2023 Hair Tattoo Directory. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -238,5 +243,44 @@
             });
         });
     </script>
+    <!-- Script to remove Hair Tattoo Treatment from clinic cards -->
+    <script src="/remove-smp-dom.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix dropdown menus
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
+        const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
+        
+        if (button && content) {
+            // Add click event to toggle dropdown
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdown.classList.toggle('active');
+                
+                // Close all other dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        otherDropdown.classList.remove('active');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+});
+</script>
+
 </body>
 </html> 

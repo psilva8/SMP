@@ -52,7 +52,7 @@ uniqueAreas.forEach(area => {
         .replace(/<script src=".*?scripts\.js"><\/script>/, '<script src="/scripts.js"></script>')
         // Update title and metadata
         .replace(/<title>.*?<\/title>/, `<title>SMP Clinics in ${area} | Hair Tattoo Directory</title>`)
-        .replace(/<meta name="description" content=".*?"/, `<meta name="description" content="Find top-rated scalp micropigmentation (SMP) clinics in ${area}, Los Angeles. Compare providers, services, and reviews."`)
+        .replace(/<meta name="description" content=".*?"/, `<meta name="description" content="Find top-rated hair tattoo treatment (SMP) clinics in ${area}, Los Angeles. Compare providers, services, and reviews."`)
         .replace(/<link rel="canonical" href=".*?"/, `<link rel="canonical" href="https://smpdirectory.com/areas/${urlFriendlyArea}/"`)
         // Add error handling
         .replace(/document\.addEventListener\('DOMContentLoaded', function\(\) {/, `document.addEventListener('DOMContentLoaded', function() {\n            console.log('Area page DOM content loaded');`);

@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Get website URL with multiple fallbacks
                     const websiteUrl = business.site || business.website || business.url || '#';
                     
-                    // Use empty services array instead of default Scalp Micropigmentation
+                    // Use empty services array instead of default Hair Tattoo Treatment
                     const services = [];
                     
                     // Default image - use placeholder image service instead of relying on local file

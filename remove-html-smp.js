@@ -11,15 +11,15 @@ function removeReferences(content) {
     content = content.replace(/<title>SMP Directory[^<]*<\/title>/g, '<title>Hair Tattoo Directory | Find Top Clinics</title>');
     
     // Fix h1 heading in hero section
-    content = content.replace(/<h1>Find Top Scalp Micropigmentation Clinics<\/h1>/g, '<h1>Find Top Hair Tattoo Clinics</h1>');
+    content = content.replace(/<h1>Find Top Hair Tattoo Treatment Clinics<\/h1>/g, '<h1>Find Top Hair Tattoo Clinics</h1>');
     
-    // Fix h2 sections with SMP or Scalp Micropigmentation
+    // Fix h2 sections with SMP or Hair Tattoo Treatment
     content = content.replace(/<h2>Top SMP Clinics<\/h2>/g, '<h2>Top Clinics</h2>');
     content = content.replace(/<h2>Browse SMP Clinics by Area<\/h2>/g, '<h2>Browse Clinics by Area</h2>');
-    content = content.replace(/<h2>About Scalp Micropigmentation<\/h2>/g, '<h2>About Hair Tattoo Treatment</h2>');
+    content = content.replace(/<h2>About Hair Tattoo Treatment<\/h2>/g, '<h2>About Hair Tattoo Treatment</h2>');
     
     // Fix the about section text - this can be a bit more extensive
-    const aboutSectionRegex = /<p>Scalp Micropigmentation \(SMP\) is[^<]*<\/p>/g;
+    const aboutSectionRegex = /<p>Hair Tattoo Treatment \(SMP\) is[^<]*<\/p>/g;
     content = content.replace(aboutSectionRegex, '<p>Hair Tattoo Treatment is a non-surgical, non-invasive, immediate solution to hair loss. This specialized technique uses micro-needles to deposit pigment into the scalp, creating the appearance of tiny hair follicles to restore the look of a fuller head of hair.</p>');
     
     // Fix the second paragraph in the about section

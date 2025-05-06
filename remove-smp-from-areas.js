@@ -11,16 +11,16 @@ function updateHtmlFile(filePath) {
         
         // 1. Replace in area hero section
         content = content.replace(
-            /(\d+) scalp micropigmentation (clinic|clinics)/gi, 
+            /(\d+) hair tattoo treatment (clinic|clinics)/gi, 
             '$1 $2'
         );
         
         // 2. Replace in inline scripts by updating the template text
-        const countElementRegex = /const countElement = document\.querySelector\('\.area-hero p'\);[\s\S]+?countElement\.textContent = `\${filteredData\.length} scalp micropigmentation \${clinicText} found in \${areaName}`/g;
+        const countElementRegex = /const countElement = document\.querySelector\('\.area-hero p'\);[\s\S]+?countElement\.textContent = `\${filteredData\.length} hair tattoo treatment \${clinicText} found in \${areaName}`/g;
         
         content = content.replace(
             countElementRegex,
-            (match) => match.replace('scalp micropigmentation ', '')
+            (match) => match.replace('hair tattoo treatment ', '')
         );
         
         // Write back the updated content

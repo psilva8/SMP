@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; connect-src *;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMP Clinics in Woodland Hills | Hair Tattoo Directory</title>
-    <meta name="description" content="Find top-rated scalp micropigmentation (SMP) clinics in Woodland Hills, Los Angeles. Compare providers, services, and read reviews.">
+    <meta name="description" content="Find top-rated Hair Tattoo clinics. Compare providers, services, and read reviews.">
+    <title>Hair Tattoo Clinics in Woodland Hills | Hair Tattoo Directory</title>
+    <meta name="description" content="Find top-rated hair tattoo treatment clinics in Woodland Hills, Los Angeles. Compare providers, services, and read reviews.">
     
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -63,7 +65,7 @@
     <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <a href="../index.html" class="text-2xl font-bold">SMP Hair Tattoo</a>
+                <a href="../index.html" class="text-2xl font-bold">Hair Tattoo</a>
                 <nav class="hidden md:flex space-x-6">
                     <a href="../index.html" class="hover:text-blue-200 transition">Home</a>
                     
@@ -76,7 +78,7 @@
                         </div>
                     </div>
                     
-                    <a href="../about.html" class="hover:text-blue-200 transition">About SMP</a>
+                    <a href="../about.html" class="hover:text-blue-200 transition">About Hair Tattoo</a>
                 </nav>
                 
                 <!-- Mobile menu button -->
@@ -91,7 +93,7 @@
             <div class="md:hidden hidden pt-4 pb-2">
                 <a href="../index.html" class="block py-2 hover:text-blue-200 transition">Home</a>
                 <a href="../neighborhoods.html" class="block py-2 font-semibold">Areas</a>
-                <a href="../about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
+                <a href="../about.html" class="block py-2 hover:text-blue-200 transition">About Hair Tattoo</a>
             </div>
         </div>
     </header>
@@ -99,15 +101,15 @@
     <!-- Area Hero Section -->
     <section class="bg-blue-700 text-white py-16">
         <div class="container mx-auto px-4">
-            <h1 class="text-4xl font-bold mb-4" id="area-title">Scalp Micropigmentation by Area</h1>
-            <p class="text-xl max-w-3xl" id="area-subtitle">Please select an area from the dropdown menu above to see SMP clinics in that location.</p>
+            <h1 class="text-4xl font-bold mb-4" id="area-title">Hair Tattoo Treatment by Area</h1>
+            <p class="text-xl max-w-3xl" id="area-subtitle">Please select an area from the dropdown menu above to see Hair Tattoo clinics in that location.</p>
         </div>
     </section>
 
     <!-- Area Clinics Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-12 text-center" id="clinics-title">SMP Clinics</h2>
+            <h2 class="text-3xl font-bold mb-12 text-center" id="clinics-title">Hair Tattoo Clinics</h2>
             <div id="area-clinics-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Clinic cards will be loaded here via JavaScript -->
                 <p id="loading-message" class="text-center py-8 col-span-full">Select an area to view clinics</p>
@@ -121,11 +123,11 @@
             <div class="max-w-4xl mx-auto">
                 <h2 class="text-3xl font-bold mb-8" id="about-area-title">About This Area</h2>
                 <div class="prose prose-lg" id="area-description">
-                    <p class="mb-4">Select an area from the menu above to see information about SMP clinics in that location.</p>
+                    <p class="mb-4">Select an area from the menu above to see information about Hair Tattoo clinics in that location.</p>
                     
-                    <p class="mb-4">When choosing an SMP clinic, consider factors such as the practitioner's experience, the clinic's portfolio of before-and-after photos, client reviews, and the overall cleanliness and professionalism of the facility.</p>
+                    <p class="mb-4">When choosing an Hair Tattoo clinic, consider factors such as the practitioner's experience, the clinic's portfolio of before-and-after photos, client reviews, and the overall cleanliness and professionalism of the facility.</p>
                     
-                    <p class="mb-4">Most SMP clinics offer free consultations where you can discuss your specific needs and goals with the practitioner. This is an excellent opportunity to ask questions and determine if the clinic is the right fit for you.</p>
+                    <p class="mb-4">Most Hair Tattoo clinics offer free consultations where you can discuss your specific needs and goals with the practitioner. This is an excellent opportunity to ask questions and determine if the clinic is the right fit for you.</p>
                 </div>
             </div>
         </div>
@@ -134,7 +136,7 @@
     <!-- Nearby Areas Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center">Other Areas with SMP Clinics</h2>
+            <h2 class="text-3xl font-bold mb-8 text-center">Other Areas with Hair Tattoo Clinics</h2>
             <div id="nearby-areas-container" class="flex flex-wrap justify-center gap-4">
                 <!-- Areas will be populated by JavaScript -->
                 <p id="loading-nearby" class="text-center py-8">Loading areas...</p>
@@ -148,10 +150,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Column 1: About -->
                 <div>
-                    <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo Directory</h3>
+                    <h3 class="text-xl font-semibold mb-4">Hair Tattoo Directory</h3>
                     <p class="text-gray-300">
-                        The premier directory of Scalp Micropigmentation clinics in Los Angeles. 
-                        Find top-rated SMP providers and restore your confidence.
+                        The premier directory of Hair Tattoo Treatment clinics in Los Angeles. 
+                        Find top-rated Hair Tattoo providers and restore your confidence.
                     </p>
                 </div>
                 
@@ -161,7 +163,7 @@
                     <ul class="space-y-2 text-gray-300">
                         <li><a href="../index.html" class="hover:text-white transition">Home</a></li>
                         <li><a href="../neighborhoods.html" class="hover:text-white transition">Areas</a></li>
-                        <li><a href="../about.html" class="hover:text-white transition">About SMP</a></li>
+                        <li><a href="../about.html" class="hover:text-white transition">About Hair Tattoo</a></li>
                     </ul>
                 </div>
                 
@@ -174,7 +176,7 @@
             </div>
             
             <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
-                <p>&copy; 2025 SMP Hair Tattoo Directory. All rights reserved.</p>
+                <p>&copy; 2025 Hair Tattoo Directory. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -203,28 +205,28 @@
             
             if (areaName) {
                 // Update page content with area name
-                document.title = `SMP Clinics in ${areaName} | Hair Tattoo Directory`;
+                document.title = `Hair Tattoo Clinics in ${areaName} | Hair Tattoo Directory`;
                 
                 // Update page metadata for SEO
                 const metaDescription = document.querySelector('meta[name="description"]');
                 if (metaDescription) {
-                    metaDescription.content = `Find the best scalp micropigmentation (SMP) clinics and hair tattoo providers in ${areaName}, Los Angeles. Compare services, prices, and read reviews.`;
+                    metaDescription.content = `Find the best hair tattoo treatment clinics and hair tattoo providers in ${areaName}, Los Angeles. Compare services, prices, and read reviews.`;
                 }
                 
                 // Update page sections
-                document.getElementById('area-title').textContent = `Scalp Micropigmentation in ${areaName}`;
-                document.getElementById('area-subtitle').textContent = `Find the best SMP clinics and hair tattoo providers in ${areaName}, Los Angeles. Compare services, prices, and read reviews.`;
-                document.getElementById('clinics-title').textContent = `Top SMP Clinics in ${areaName}`;
-                document.getElementById('about-area-title').textContent = `About SMP in ${areaName}`;
+                document.getElementById('area-title').textContent = `Hair Tattoo Treatment in ${areaName}`;
+                document.getElementById('area-subtitle').textContent = `Find the best Hair Tattoo clinics and hair tattoo providers in ${areaName}, Los Angeles. Compare services, prices, and read reviews.`;
+                document.getElementById('clinics-title').textContent = `Top Hair Tattoo Clinics in ${areaName}`;
+                document.getElementById('about-area-title').textContent = `About Hair Tattoo in ${areaName}`;
                 
                 // Update area description with more detailed, SEO-friendly content
                 const areaDescription = document.getElementById('area-description');
                 areaDescription.innerHTML = `
-                    <p class="mb-4">${areaName} is a sought-after location in the Los Angeles area for high-quality scalp micropigmentation services. The SMP clinics in ${areaName} are known for their skilled practitioners, state-of-the-art equipment, and excellent customer service.</p>
+                    <p class="mb-4">${areaName} is a sought-after location in the Los Angeles area for high-quality hair tattoo treatment services. The Hair Tattoo clinics in ${areaName} are known for their skilled practitioners, state-of-the-art equipment, and excellent customer service.</p>
                     
-                    <p class="mb-4">When choosing an SMP clinic in ${areaName}, we recommend considering several factors: the technician's experience and certification, the clinic's portfolio of before-and-after results, genuine client reviews, the cleanliness of the facility, and their use of quality pigments and equipment.</p>
+                    <p class="mb-4">When choosing an Hair Tattoo clinic in ${areaName}, we recommend considering several factors: the technician's experience and certification, the clinic's portfolio of before-and-after results, genuine client reviews, the cleanliness of the facility, and their use of quality pigments and equipment.</p>
                     
-                    <p class="mb-4">Most reputable SMP clinics in ${areaName} offer complimentary consultations where you can discuss your specific hair loss concerns and goals with a qualified practitioner. During this session, you'll have the opportunity to ask questions about the procedure, view examples of their work, and determine if the clinic is the right fit for your needs.</p>
+                    <p class="mb-4">Most reputable Hair Tattoo clinics in ${areaName} offer complimentary consultations where you can discuss your specific hair loss concerns and goals with a qualified practitioner. During this session, you'll have the opportunity to ask questions about the procedure, view examples of their work, and determine if the clinic is the right fit for your needs.</p>
                     
                     <p class="mb-4">Scalp micropigmentation in ${areaName} typically ranges from $2,000 to $4,000, depending on the extent of your hair loss and the number of sessions required. Most clients require 2-3 sessions spaced 10-14 days apart for optimal results.</p>
                 `;
@@ -350,5 +352,42 @@
             });
         });
     </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix dropdown menus
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
+        const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
+        
+        if (button && content) {
+            // Add click event to toggle dropdown
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdown.classList.toggle('active');
+                
+                // Close all other dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        otherDropdown.classList.remove('active');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+});
+</script>
+
 </body>
 </html> 

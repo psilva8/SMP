@@ -1,4 +1,4 @@
-// This script removes any "Scalp Micropigmentation" entry from clinic cards
+// This script removes any "Hair Tattoo Treatment" entry from clinic cards
 // Add this script to the bottom of all pages that show clinic cards
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -44,7 +44,7 @@ function cleanClinicCard(card) {
     if (serviceContainer) {
         const serviceSpans = serviceContainer.querySelectorAll('.clinic-service');
         serviceSpans.forEach(span => {
-            if (span.textContent.includes('Scalp Micropigmentation')) {
+            if (span.textContent.includes('Hair Tattoo Treatment')) {
                 console.log('Removing SMP from clinic card:', card.querySelector('h3').textContent);
                 span.remove();
             }
@@ -52,7 +52,7 @@ function cleanClinicCard(card) {
     }
 }
 
-// Function to find and remove all "Scalp Micropigmentation" entries
+// Function to find and remove all "Hair Tattoo Treatment" entries
 function removeScalpMicropigmentationEntries() {
     // Find all clinic cards
     const clinicCards = document.querySelectorAll('.clinic-card');

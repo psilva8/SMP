@@ -38,7 +38,7 @@ function addScriptToHtmlFiles(directory) {
           // Add the script before the closing body tag
           content = content.replace(
             '</body>',
-            '    <!-- Script to remove Scalp Micropigmentation from clinic cards -->\n    <script src="/remove-smp-dom.js"></script>\n</body>'
+            '    <!-- Script to remove Hair Tattoo Treatment from clinic cards -->\n    <script src="/remove-smp-dom.js"></script>\n</body>'
           );
           
           fs.writeFileSync(filePath, content, 'utf8');

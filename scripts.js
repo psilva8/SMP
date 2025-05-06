@@ -846,7 +846,7 @@ function updateServiceTypesList(businessData) {
     
     // Define service types (equivalent to cuisines in Eating Vancouver)
     const serviceTypes = [
-        'Scalp Micropigmentation',
+        'Hair Tattoo Treatment',
         'Hair Restoration',
         'Hair Transplant',
         'Hair Loss Treatment',
@@ -1096,7 +1096,7 @@ function getBusinessServices(business) {
     // Check business name and description for services
     const textToCheck = (business.name + ' ' + (business.description || '')).toLowerCase();
     
-    // Define common SMP services
+    // Define common Hair Tattoo services
     const serviceKeywords = [
         'hair tattoo',
         'scalp tattoo',
@@ -1118,7 +1118,7 @@ function getBusinessServices(business) {
         }
     });
     
-    // Removed the default 'Scalp Micropigmentation' service
+    // Removed the default 'Hair Tattoo Treatment' service
     
     return services;
 }
@@ -1246,7 +1246,7 @@ function initializeServiceFilter() {
 
 // Populate service filter options
 function populateServiceOptions(selectElement) {
-    // Define common SMP services
+    // Define common Hair Tattoo services
     const services = [
         'All Services',
         'Hair Density',

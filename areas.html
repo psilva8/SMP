@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https://via.placeholder.com https://*.googleusercontent.com https://*.googleapis.com; font-src 'self'">
-    <meta>
-    <meta>
-    <meta>
-    <title>Los Angeles SMP Areas | Hair Tattoo Directory</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; connect-src *;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Find top-rated Hair Tattoo clinics in your area. Compare services, reviews, and pricing.">
+    <meta name="keywords" content="Hair Tattoo, Hair Loss, Hairline Restoration, Hair Tattoo Clinic">
+    <title>Los Angeles Hair Tattoo Areas | Hair Tattoo Directory</title>
+    <meta name="author" content="Hair Tattoo Directory">
+    <link rel="stylesheet" href="styles.css">
     <meta>
     <link>
     <link>
@@ -17,7 +20,7 @@
     <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <a href="index.html" class="text-2xl font-bold">SMP Hair Tattoo</a>
+                <a href="index.html" class="text-2xl font-bold">Hair Tattoo</a>
                 <nav class="hidden md:flex space-x-6">
                     <a href="index.html" class="hover:text-blue-200 transition">Home</a>
                     
@@ -51,7 +54,7 @@
                         </div>
                     </div>
                     
-                    <a href="about.html" class="hover:text-blue-200 transition">About SMP</a>
+                    <a href="about.html" class="hover:text-blue-200 transition">About Hair Tattoo</a>
                 </nav>
                 <button id="mobile-menu-button" class="md:hidden bg-blue-700 text-white p-2 rounded">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +67,7 @@
             <div id="mobile-menu" class="md:hidden hidden pt-4 pb-2">
                 <a href="index.html" class="block py-2 hover:text-blue-200 transition">Home</a>
                 <a href="areas.html" class="block py-2 font-semibold">Areas</a>
-                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About SMP</a>
+                <a href="about.html" class="block py-2 hover:text-blue-200 transition">About Hair Tattoo</a>
             </div>
         </div>
     </header>
@@ -72,9 +75,9 @@
     <!-- Areas Hero Section -->
     <section class="py-16 bg-gradient-to-b from-blue-900 to-indigo-900 text-white">
         <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">SMP Clinics by Los Angeles Area</h1>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Hair Tattoo Clinics by Los Angeles Area</h1>
             <p class="text-xl max-w-3xl mx-auto">
-                Browse top-rated scalp micropigmentation providers throughout Los Angeles County. Find SMP clinics near you by selecting your area.
+                Browse top-rated hair tattoo treatment providers throughout Los Angeles County. Find Hair Tattoo clinics near you by selecting your area.
             </p>
         </div>
     </section>
@@ -160,12 +163,12 @@
     <!-- Why Choose By Area Section -->
     <section class="py-16 bg-gray-100">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center">Why Choose a Local SMP Provider?</h2>
+            <h2 class="text-3xl font-bold mb-8 text-center">Why Choose a Local Hair Tattoo Provider?</h2>
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-3">Convenience</h3>
                     <p class="text-gray-600">
-                        Choose a clinic close to home to simplify follow-up appointments and reduce travel time. SMP typically requires 2-3 sessions for optimal results.
+                        Choose a clinic close to home to simplify follow-up appointments and reduce travel time. Hair Tattoo typically requires 2-3 sessions for optimal results.
                     </p>
                 </div>
                 <div class="bg-white p-6 rounded-lg shadow-md">
@@ -190,9 +193,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Column 1: About -->
                 <div>
-                    <h3 class="text-xl font-semibold mb-4">SMP Hair Tattoo</h3>
+                    <h3 class="text-xl font-semibold mb-4">Hair Tattoo</h3>
                     <p class="text-gray-300">
-                        The premier resource for Scalp Micropigmentation clinics in Los Angeles. 
+                        The premier resource for Hair Tattoo clinics in Los Angeles. 
                         Find top-rated providers and restore your confidence.
                     </p>
                 </div>
@@ -203,13 +206,13 @@
                     <ul class="space-y-2 text-gray-300">
                         <li><a href="index.html" class="hover:text-white transition">Home</a></li>
                         <li><a href="areas.html" class="hover:text-white transition">Areas</a></li>
-                        <li><a href="about.html" class="hover:text-white transition">About SMP</a></li>
+                        <li><a href="about.html" class="hover:text-white transition">About Hair Tattoo</a></li>
                     </ul>
                 </div>
             </div>
             
             <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm">
-                <p>&copy; 2023 SMP Hair Tattoo Directory. All rights reserved.</p>
+                <p>&copy; 2023 Hair Tattoo Directory. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -272,7 +275,44 @@
             fetchBusinessData();
         });
     </script>
-    <!-- Script to remove Scalp Micropigmentation from clinic cards -->
+    <!-- Script to remove Hair Tattoo Treatment from clinic cards -->
     <script src="/remove-smp-dom.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix dropdown menus
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('.dropbtn') || dropdown.querySelector('a:first-child');
+        const content = dropdown.querySelector('.dropdown-content') || dropdown.querySelector('.dropdown-menu');
+        
+        if (button && content) {
+            // Add click event to toggle dropdown
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdown.classList.toggle('active');
+                
+                // Close all other dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        otherDropdown.classList.remove('active');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('active');
+            });
+        }
+    });
+});
+</script>
+
 </body>
 </html> 
