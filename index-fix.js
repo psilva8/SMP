@@ -36,32 +36,80 @@ document.addEventListener('DOMContentLoaded', async function() {
                 clinicsContainer.innerHTML = '';
                 
                 topBusinesses.forEach(business => {
-                    // Create clinic card
-                    const imageUrl = business.photos && business.photos.length > 0 && business.photos[0] 
-                    ? business.photos[0] 
-                    : 'https://via.placeholder.com/400x250?text=SMP+Clinic';
+                    // Create clinic card with consistent styling
+                    const card = document.createElement('div');
+                    card.className = 'clinic-card';
                     
                     // Format address
-                    const address = business.full_address || business.address || 'Address not available';
+                    const addressParts = [
+                        business.address || '',
+                        business.city || '',
+                        business.state || '',
+                        business.postal_code || ''
+                    ].filter(Boolean);
                     
-                    // Format rating
-                    const rating = business.rating || 'N/A';
-                    const reviews = business.reviews_count || 0;
+                    const formattedAddress = addressParts.join(', ') || business.full_address || 'Address not available';
                     
-                    const card = document.createElement('div');
-                    card.className = 'clinic-card bg-white rounded-lg shadow-md overflow-hidden';
+                    // Get rating and reviews
+                    const ratingValue = parseFloat(business.rating) || 0;
+                    const reviewsCount = parseInt(business.reviews) || 0;
                     
+                    // Create star rating
+                    let starRating = '';
+                    const roundedRating = Math.round(ratingValue * 2) / 2;
+                    
+                    // Add full stars
+                    for (let i = 1; i <= Math.floor(roundedRating); i++) {
+                        starRating += '★';
+                    }
+                    
+                    // Add half star if needed
+                    if (roundedRating % 1 !== 0) {
+                        starRating += '★';
+                    }
+                    
+                    // Add empty stars to make 5 stars total
+                    const emptyStars = 5 - Math.ceil(roundedRating);
+                    for (let i = 0; i < emptyStars; i++) {
+                        starRating += '☆';
+                    }
+                    
+                    // Format phone
+                    let phoneNumber = business.phone || 'N/A';
+                    let formattedPhone = phoneNumber;
+                    
+                    if (phoneNumber !== 'N/A') {
+                        // Simple phone formatting (XXX) XXX-XXXX
+                        const cleaned = phoneNumber.replace(/\D/g, '');
+                        if (cleaned.length === 10) {
+                            formattedPhone = `(${cleaned.substring(0, 3)}) ${cleaned.substring(3, 6)}-${cleaned.substring(6, 10)}`;
+                        } else if (cleaned.length === 11 && cleaned[0] === '1') {
+                            formattedPhone = `(${cleaned.substring(1, 4)}) ${cleaned.substring(4, 7)}-${cleaned.substring(7, 11)}`;
+                        }
+                    }
+                    
+                    // Get website URL
+                    const websiteUrl = business.site || business.website || business.url || '#';
+                    
+                    // Add default services
+                    const services = ['Scalp Micropigmentation'];
+                    
+                    // Set the card HTML
                     card.innerHTML = `
-                        <div class="h-48 bg-gray-200 overflow-hidden">
-                            <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover" 
-                                onerror="this.src='https://via.placeholder.com/400x250?text=SMP+Clinic'; this.onerror=null;">
-                        </div>
-                        <div class="p-5">
-                            <h3 class="text-xl font-bold mb-2">${business.name || 'Unnamed Clinic'}</h3>
-                            <div class="text-yellow-500 mb-2">Rating: ${rating} ⭐ (${reviews} reviews)</div>
-                            <p class="text-gray-600 mb-3 truncate">${address}</p>
-                            <div class="flex justify-between items-center">
-                                <span class="text-blue-600 font-medium">${business.phone_number || 'No phone'}</span>
+                        <div class="clinic-image" style="background-image: url(${business.photo || (business.photos && business.photos[0]) || 'img/default-clinic.jpg'})"></div>
+                        <div class="clinic-info">
+                            <h3>${business.name || 'Unnamed Clinic'}</h3>
+                            <div class="clinic-rating">
+                                <div class="stars">${starRating}</div>
+                                <span>${ratingValue.toFixed(1) !== '0.0' ? ratingValue.toFixed(1) : 'N/A'} (${reviewsCount} reviews)</span>
+                            </div>
+                            <div class="clinic-address">${formattedAddress}</div>
+                            <div class="clinic-contact">
+                                <div class="clinic-phone">${formattedPhone}</div>
+                                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank">Website</a></div>` : ''}
+                            </div>
+                            <div class="clinic-services">
+                                ${services.map(service => `<span class="clinic-service">${service}</span>`).join('')}
                             </div>
                         </div>
                     `;

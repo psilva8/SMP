@@ -416,59 +416,9 @@ function displayClinics(businesses, container) {
     businesses.forEach((business, index) => {
         console.log(`Creating card ${index + 1} for ${business.name} [DEBUG]`);
         
-        // Create clinic card
-        const card = document.createElement('div');
-        card.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition';
-        
-        // FIX: Ensure valid image URL with proper HTTPS placeholder
-        let imageUrl;
-        
-        if (business.photos && business.photos.length > 0 && business.photos[0] && 
-            typeof business.photos[0] === 'string' && business.photos[0].startsWith('http')) {
-            // Use the business photo if it's a valid URL
-            imageUrl = business.photos[0];
-        } else {
-            // Use a secure placeholder image
-            imageUrl = 'https://via.placeholder.com/400x250?text=SMP+Clinic';
-        }
-        
-        // Format rating if available - use rating property instead of rating_value
-        let ratingDisplay = '';
-        const ratingValue = parseFloat(business.rating) || parseFloat(business.rating_value) || 0;
-        const reviewCount = parseInt(business.reviews) || parseInt(business.reviews_count) || 0;
-        
-        if (ratingValue > 0) {
-            ratingDisplay = `<div class="text-yellow-500 mb-2">${generateStarRating(ratingValue)} <span class="text-gray-600">(${reviewCount})</span></div>`;
-        } else {
-            ratingDisplay = '<div class="text-gray-400 mb-2">No ratings yet</div>';
-        }
-        
-        // Format address
-        const address = business.full_address || business.address || 'Address not available';
-        
-        // Format phone
-        const phone = business.phone || business.phone_number ? formatPhoneNumber(business.phone || business.phone_number) : 'No phone listed';
-        
-        // Set the card HTML with improved image error handling
-        card.innerHTML = `
-            <div class="h-48 bg-gray-200 overflow-hidden">
-                <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover" 
-                     onerror="this.src='https://via.placeholder.com/400x250?text=SMP+Clinic'; this.onerror=null;">
-            </div>
-            <div class="p-5">
-                <h3 class="text-xl font-bold mb-2">${business.name}</h3>
-                ${ratingDisplay}
-                <p class="text-gray-600 mb-3 truncate">${address}</p>
-                <div class="flex justify-between items-center">
-                    <span class="text-blue-600 font-medium">${phone}</span>
-                    <a href="${business.url || '#'}" target="_blank" class="bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition">View on Maps</a>
-                </div>
-            </div>
-        `;
-        
-        // Add the card to the container
-        container.appendChild(card);
-        console.log(`Card ${index + 1} added to container [DEBUG]`);
+        // Instead of creating a custom card here, use the createClinicCard function
+        // This ensures consistency and uses the same styling
+        createClinicCard(business, container);
     });
     
     console.log('All clinic cards added to container [DEBUG]');
