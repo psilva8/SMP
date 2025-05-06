@@ -437,35 +437,40 @@ function displayClinics(businesses, container) {
     console.log('All clinic cards added to container [DEBUG]');
 }
 
-// Generate star rating HTML (simplified version for the filter/sort UI)
-function generateStarRating(rating) {
+// Create star rating HTML
+function createStarRating(rating) {
+    // If no rating, return a "No rating" message
     if (!rating) return '<span class="no-rating">No rating</span>';
     
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 >= 0.5;
+    // Round rating to nearest half star
+    const roundedRating = Math.round(rating * 2) / 2;
+    
+    // Calculate full, half, and empty stars
+    const fullStars = Math.floor(roundedRating);
+    const halfStar = roundedRating % 1 !== 0;
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
     
-    let starsHtml = '';
+    let stars = '';
     
     // Add numeric rating
-    starsHtml += `<span class="numeric-rating">${rating.toFixed(1)}</span> `;
+    stars += `<span class="numeric-rating">${rating.toFixed(1)}</span> `;
     
-    // Full stars
+    // Add full stars
     for (let i = 0; i < fullStars; i++) {
-        starsHtml += '<span class="star full">★</span>';
+        stars += '<span class="star full">★</span>';
     }
     
-    // Half star
+    // Add half star if needed
     if (halfStar) {
-        starsHtml += '<span class="star half">★</span>';
+        stars += '<span class="star half">★</span>';
     }
     
-    // Empty stars
+    // Add empty stars to make 5 stars total
     for (let i = 0; i < emptyStars; i++) {
-        starsHtml += '<span class="star empty">☆</span>';
+        stars += '<span class="star empty">☆</span>';
     }
     
-    return starsHtml;
+    return stars;
 }
 
 // Format phone number
@@ -1115,31 +1120,6 @@ function getBusinessServices(business) {
     }
     
     return services;
-}
-
-// Create star rating HTML
-function createStarRating(rating) {
-    // Round rating to nearest half star
-    const roundedRating = Math.round(rating * 2) / 2;
-    let stars = '';
-    
-    // Add full stars
-    for (let i = 1; i <= Math.floor(roundedRating); i++) {
-        stars += '★';
-    }
-    
-    // Add half star if needed
-    if (roundedRating % 1 !== 0) {
-        stars += '★';
-    }
-    
-    // Add empty stars to make 5 stars total
-    const emptyStars = 5 - Math.ceil(roundedRating);
-    for (let i = 0; i < emptyStars; i++) {
-        stars += '☆';
-    }
-    
-    return stars;
 }
 
 // Populate area map

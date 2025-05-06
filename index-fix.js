@@ -98,24 +98,33 @@ document.addEventListener('DOMContentLoaded', async function() {
                     const ratingValue = business.rating ? parseFloat(business.rating) : 0;
                     const reviewsCount = business.reviews ? parseInt(business.reviews) : 0;
                     
-                    // Create star rating
+                    // Create star rating with proper class names to match CSS
                     let starRating = '';
-                    const roundedRating = Math.round(ratingValue * 2) / 2;
                     
-                    // Add full stars
-                    for (let i = 1; i <= Math.floor(roundedRating); i++) {
-                        starRating += '★';
-                    }
-                    
-                    // Add half star if needed
-                    if (roundedRating % 1 !== 0) {
-                        starRating += '★';
-                    }
-                    
-                    // Add empty stars to make 5 stars total
-                    const emptyStars = 5 - Math.ceil(roundedRating);
-                    for (let i = 0; i < emptyStars; i++) {
-                        starRating += '☆';
+                    if (!ratingValue) {
+                        starRating = '<span class="no-rating">No rating</span>';
+                    } else {
+                        const fullStars = Math.floor(ratingValue);
+                        const halfStar = ratingValue % 1 >= 0.5;
+                        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+                        
+                        // Add numeric rating
+                        starRating += `<span class="numeric-rating">${ratingValue.toFixed(1)}</span> `;
+                        
+                        // Full stars
+                        for (let i = 0; i < fullStars; i++) {
+                            starRating += '<span class="star full">★</span>';
+                        }
+                        
+                        // Half star
+                        if (halfStar) {
+                            starRating += '<span class="star half">★</span>';
+                        }
+                        
+                        // Empty stars
+                        for (let i = 0; i < emptyStars; i++) {
+                            starRating += '<span class="star empty">☆</span>';
+                        }
                     }
                     
                     // Format phone with proper fallback

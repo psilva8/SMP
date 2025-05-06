@@ -10,6 +10,9 @@
   --white: #FFFFFF;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --max-width: 1200px;
+  --star-color: #FFD700;
+  --half-star-color: #FFD700;
+  --empty-star-color: #D1D5DB;
 }
 
 * {
@@ -257,6 +260,34 @@ section h2 {
   margin-right: 8px;
   font-size: 18px;
   line-height: 1;
+}
+
+/* Enhanced star rating styles */
+.clinic-rating .stars .star {
+  display: inline-block;
+  margin-right: 2px;
+}
+
+.clinic-rating .stars .star.full {
+  color: var(--star-color);
+}
+
+.clinic-rating .stars .star.half {
+  color: var(--half-star-color);
+}
+
+.clinic-rating .stars .star.empty {
+  color: var(--empty-star-color);
+}
+
+.clinic-rating .numeric-rating {
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.clinic-rating .no-rating {
+  color: var(--light-text);
+  font-style: italic;
 }
 
 .clinic-rating .rating-text {
