@@ -2,6 +2,29 @@
 
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Area fix script loaded');
+          
+    // Function to remove any remaining Scalp Micropigmentation text from clinic cards
+    function removeScalpMicropigmentation() {
+        // Find all clinic service containers
+        const serviceContainers = document.querySelectorAll('.clinic-services');
+        if (serviceContainers.length > 0) {
+            console.log('Found ' + serviceContainers.length + ' clinic service containers to check');
+            
+            serviceContainers.forEach(container => {
+                // Find and remove any service with "Scalp Micropigmentation" text
+                const serviceSpans = container.querySelectorAll('.clinic-service');
+                serviceSpans.forEach(span => {
+                    if (span.textContent.includes('Scalp Micropigmentation')) {
+                        span.remove();
+                        console.log('Removed Scalp Micropigmentation from a clinic card');
+                    }
+                });
+            });
+        }
+    }
+    
+    // Run the function to clean up existing cards
+    setTimeout(removeScalpMicropigmentation, 1000);
     
     // Wait 3 seconds to see if the main script loaded the clinics
     setTimeout(async function() {
