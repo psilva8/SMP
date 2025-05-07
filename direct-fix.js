@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
-    // Apply styles directly to the element
+    // Apply base styles
     areaDescription.style.display = 'flex';
     areaDescription.style.alignItems = 'center';
     areaDescription.style.justifyContent = 'space-between';
@@ -64,25 +64,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add responsive behavior
     function handleResize() {
-        if (window.innerWidth <= 768) {
-            areaDescription.style.flexDirection = 'column';
-            areaDescription.style.alignItems = 'flex-start';
-            areaDescription.style.gap = '20px';
-            if (seoParagraph) {
-                seoParagraph.style.marginBottom = '10px';
-            }
-        } else {
-            areaDescription.style.flexDirection = 'row';
-            areaDescription.style.alignItems = 'center';
-            areaDescription.style.gap = '40px';
-            if (seoParagraph) {
-                seoParagraph.style.marginBottom = '0';
-            }
+        const isMobile = window.innerWidth <= 768;
+        
+        // Set flex direction based on screen size
+        areaDescription.style.flexDirection = isMobile ? 'column' : 'row';
+        areaDescription.style.alignItems = isMobile ? 'flex-start' : 'center';
+        areaDescription.style.gap = isMobile ? '20px' : '40px';
+        
+        // Adjust paragraph margin
+        if (seoParagraph) {
+            seoParagraph.style.marginBottom = isMobile ? '10px' : '0';
         }
     }
 
-    // Initial call
-    handleResize();
+    // Initial call with a small delay to ensure styles are applied
+    setTimeout(handleResize, 100);
 
     // Add resize listener
     window.addEventListener('resize', handleResize);
