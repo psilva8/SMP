@@ -12,21 +12,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Set a fallback in case the image fails to load
-        aboutImage.onerror = function() {
-            console.error('Image failed to load, applying fallback');
-            aboutImage.src = 'img/hair-tattoo-treatment.jpg';
-            aboutImage.style.width = '100%';
-            aboutImage.style.height = 'auto';
-            aboutImage.style.display = 'block';
-            aboutImage.style.borderRadius = '8px';
-        };
-
-        // Force a reload of the image
-        const currentSrc = aboutImage.src;
-        aboutImage.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='; // Empty image
-        aboutImage.src = currentSrc + '?t=' + new Date().getTime(); // Add cache-busting parameter
+        // Force update the image source with direct path
+        aboutImage.src = 'img/hair-tattoo-los-angeles.png?t=' + new Date().getTime();
         
-        console.log('Applied image load fix');
-    }, 500);
+        // Set important styles
+        aboutImage.style.maxWidth = '100%'; 
+        aboutImage.style.height = 'auto';
+        aboutImage.style.display = 'block';
+        aboutImage.style.borderRadius = '8px';
+        aboutImage.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+        
+        console.log('Applied direct image fix');
+    }, 1000); // Increased delay to ensure DOM is ready
 }); 
