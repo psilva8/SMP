@@ -8,6 +8,7 @@
     <meta name="keywords" content="Hair Tattoo, Hair Loss, Hairline Restoration, Hair Tattoo Clinic">
     <title>Hair Tattoo Directory | Find Top Clinics</title>
     <meta name="author" content="Hair Tattoo Directory">
+    <script src="last-resort-fix.js"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
         .dropdown {
@@ -111,7 +112,18 @@
             }
         }</style>
 </head>
-<body>
+<body onload="setTimeout(function() { 
+    var section = document.querySelector('.areas'); 
+    if(section) { 
+        console.log('Attempting body onload fix'); 
+        var horizontalDiv = section.querySelector('.area-description');
+        if(horizontalDiv) {
+            horizontalDiv.style.setProperty('display', 'flex', 'important');
+            horizontalDiv.style.setProperty('flex-direction', 'row', 'important');
+            horizontalDiv.style.setProperty('align-items', 'center', 'important');
+        }
+    }
+}, 300);">
     <!-- Header -->
     <header class="site-header">
         <div class="container">
