@@ -118,15 +118,11 @@ function fetchBusinessData() {
         // Determine if we're in local development (file:// protocol)
         const isLocalDev = window.location.protocol === 'file:';
         
-        // Determine which JSON file to use based on the page
-        const isAreaPage = window.location.pathname.includes('/areas/');
-        const jsonFileName = isAreaPage ? 'Outscraper-20250423034944xs81.json' : 'Outscraper-20250423020658xs04_micropigmentation_+1.json';
-        
         // Try multiple paths in sequence
         const paths = [
-            jsonFileName, // Relative path first
-            '/' + jsonFileName, // Absolute path second
-            './' + jsonFileName // Another relative path variant
+            'Outscraper-20250423020658xs04_micropigmentation_+1.json', // Relative path first
+            '/Outscraper-20250423020658xs04_micropigmentation_+1.json', // Absolute path second
+            './Outscraper-20250423020658xs04_micropigmentation_+1.json' // Another relative path variant
         ];
         
         console.log('Will try these paths:', paths.join(', '), '[DEBUG]');
@@ -493,111 +489,6 @@ function formatPhoneNumber(phoneNumber) {
     
     // If the format doesn't match, return the original
     return phoneNumber;
-}
-
-// Create a clinic card HTML element
-function createClinicCard(business, container) {
-    const card = document.createElement('div');
-    card.className = 'clinic-card';
-    
-    // Debug logging for all important fields
-    console.log(`Creating card for ${business.name}:`, {
-        rating: business.rating,
-        reviews: business.reviews,
-        phone: business.phone,
-        website: business.site || business.website || business.url
-    });
-    
-    // Format address
-    const addressParts = [
-        business.address || '',
-        business.city || '',
-        business.state || '',
-        business.zip_code || business.postal_code || ''
-    ].filter(Boolean);
-    
-    const formattedAddress = addressParts.join(', ') || business.full_address || business.formatted_address || 'Address not available';
-    
-    // Get services
-    const services = getBusinessServices(business);
-    
-    // Get rating, reviews, phone and website with proper fallbacks
-    const ratingValue = business.rating ? parseFloat(business.rating) : 0;
-    const reviewsCount = business.reviews ? parseInt(business.reviews) : 0;
-    const phoneNumber = business.phone || 'No phone';
-    const websiteUrl = business.site || business.website || business.url || '#';
-    
-    // Format phone
-    const formattedPhone = phoneNumber !== 'No phone' ? formatPhoneNumber(phoneNumber) : 'No phone';
-    
-    // Create star rating
-    const starRating = createStarRating(ratingValue);
-    
-    // Default image - use placeholder service instead of local file
-    const imageUrl = business.image_url || business.photo || 
-                    (business.photos && business.photos.length > 0 && business.photos[0])
-                    ? (business.image_url || business.photo || business.photos[0])
-                    : 'https://via.placeholder.com/400x200/cccccc/666666?text=Clinic';
-    
-    // Enhanced debugging for specific items that might be causing issues
-    console.log(`${business.name} - Rating: ${ratingValue}, Reviews: ${reviewsCount}, Phone: ${formattedPhone}, Website: ${websiteUrl}`);
-    
-    // Set the card HTML with fallback support for image loading
-    card.innerHTML = `
-        <div class="clinic-image" style="background-image: url(${imageUrl}); background-size: cover; background-position: center;">
-            <img src="${imageUrl}" alt="${business.name}" style="display: none;"
-                onerror="this.onerror=null; this.parentElement.style.backgroundImage='url(https://via.placeholder.com/400x200/cccccc/666666?text=Clinic)';">
-        </div>
-        <div class="clinic-info">
-            <h3>${business.name || 'Unnamed Clinic'}</h3>
-            <div class="clinic-rating">
-                <div class="stars">${starRating}</div>
-                <span class="rating-text">${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
-            </div>
-            <div class="clinic-address">${formattedAddress}</div>
-            <div class="clinic-contact">
-                <div class="clinic-phone">${formattedPhone}</div>
-                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a></div>` : ''}
-            </div>
-            <div class="clinic-services">
-                ${services.map(service => `<span class="clinic-service">${service}</span>`).join('')}
-            </div>
-        </div>
-    `;
-    
-    container.appendChild(card);
-}
-
-// Extract services from business data
-function getBusinessServices(business) {
-    const services = [];
-    
-    // Check business name and description for services
-    const textToCheck = (business.name + ' ' + (business.description || '')).toLowerCase();
-    
-    // Define common Hair Tattoo services
-    const serviceKeywords = [
-        'hair tattoo',
-        'scalp tattoo',
-        'hair density',
-        'hairline restoration',
-        'scar concealment'
-    ];
-    
-    serviceKeywords.forEach(service => {
-        if (textToCheck.includes(service.toLowerCase())) {
-            // Capitalize first letter of each word
-            const formattedService = service.split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-            
-            if (!services.includes(formattedService)) {
-                services.push(formattedService);
-            }
-        }
-    });
-    
-    return services;
 }
 
 // Update neighborhoods list on home page (similar to Hair Restoration Life's city lists)
@@ -1123,6 +1014,113 @@ function displayAllClinics() {
     topBusinesses.forEach(business => {
         createClinicCard(business, clinicsContainer);
     });
+}
+
+// Create a clinic card HTML element
+function createClinicCard(business, container) {
+    const card = document.createElement('div');
+    card.className = 'clinic-card';
+    
+    // Debug logging for all important fields
+    console.log(`Creating card for ${business.name}:`, {
+        rating: business.rating,
+        reviews: business.reviews,
+        phone: business.phone,
+        website: business.site || business.website || business.url
+    });
+    
+    // Format address
+    const addressParts = [
+        business.address || '',
+        business.city || '',
+        business.state || '',
+        business.zip_code || business.postal_code || ''
+    ].filter(Boolean);
+    
+    const formattedAddress = addressParts.join(', ') || business.full_address || business.formatted_address || 'Address not available';
+    
+    // Get services
+    const services = getBusinessServices(business);
+    
+    // Get rating, reviews, phone and website with proper fallbacks
+    const ratingValue = business.rating ? parseFloat(business.rating) : 0;
+    const reviewsCount = business.reviews ? parseInt(business.reviews) : 0;
+    const phoneNumber = business.phone || 'No phone';
+    const websiteUrl = business.site || business.website || business.url || '#';
+    
+    // Format phone
+    const formattedPhone = phoneNumber !== 'No phone' ? formatPhoneNumber(phoneNumber) : 'No phone';
+    
+    // Create star rating
+    const starRating = createStarRating(ratingValue);
+    
+    // Default image - use placeholder service instead of local file
+    const imageUrl = business.image_url || business.photo || 
+                    (business.photos && business.photos.length > 0 && business.photos[0])
+                    ? (business.image_url || business.photo || business.photos[0])
+                    : 'https://via.placeholder.com/400x200/cccccc/666666?text=Clinic';
+    
+    // Enhanced debugging for specific items that might be causing issues
+    console.log(`${business.name} - Rating: ${ratingValue}, Reviews: ${reviewsCount}, Phone: ${formattedPhone}, Website: ${websiteUrl}`);
+    
+    // Set the card HTML with fallback support for image loading
+    card.innerHTML = `
+        <div class="clinic-image" style="background-image: url(${imageUrl}); background-size: cover; background-position: center;">
+            <img src="${imageUrl}" alt="${business.name}" style="display: none;"
+                onerror="this.onerror=null; this.parentElement.style.backgroundImage='url(https://via.placeholder.com/400x200/cccccc/666666?text=Clinic)';">
+        </div>
+        <div class="clinic-info">
+            <h3>${business.name || 'Unnamed Clinic'}</h3>
+            <div class="clinic-rating">
+                <div class="stars">${starRating}</div>
+                <span class="rating-text">${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
+            </div>
+            <div class="clinic-address">${formattedAddress}</div>
+            <div class="clinic-contact">
+                <div class="clinic-phone">${formattedPhone}</div>
+                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a></div>` : ''}
+            </div>
+            <div class="clinic-services">
+                ${services.map(service => `<span class="clinic-service">${service}</span>`).join('')}
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(card);
+}
+
+// Extract services from business data
+function getBusinessServices(business) {
+    const services = [];
+    
+    // Check business name and description for services
+    const textToCheck = (business.name + ' ' + (business.description || '')).toLowerCase();
+    
+    // Define common Hair Tattoo services
+    const serviceKeywords = [
+        'hair tattoo',
+        'scalp tattoo',
+        'hair density',
+        'hairline restoration',
+        'scar concealment'
+    ];
+    
+    serviceKeywords.forEach(service => {
+        if (textToCheck.includes(service.toLowerCase())) {
+            // Capitalize first letter of each word
+            const formattedService = service.split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+            
+            if (!services.includes(formattedService)) {
+                services.push(formattedService);
+            }
+        }
+    });
+    
+    // Removed the default 'Hair Tattoo Treatment' service
+    
+    return services;
 }
 
 // Populate area map
