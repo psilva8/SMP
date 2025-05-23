@@ -118,11 +118,15 @@ function fetchBusinessData() {
         // Determine if we're in local development (file:// protocol)
         const isLocalDev = window.location.protocol === 'file:';
         
+        // Determine which JSON file to use based on the page
+        const isAreaPage = window.location.pathname.includes('/areas/');
+        const jsonFileName = isAreaPage ? 'Outscraper-20250423034944xs81.json' : 'Outscraper-20250423020658xs04_micropigmentation_+1.json';
+        
         // Try multiple paths in sequence
         const paths = [
-            'Outscraper-20250423034944xs81.json', // Relative path first
-            '/Outscraper-20250423034944xs81.json', // Absolute path second
-            './Outscraper-20250423034944xs81.json' // Another relative path variant
+            jsonFileName, // Relative path first
+            '/' + jsonFileName, // Absolute path second
+            './' + jsonFileName // Another relative path variant
         ];
         
         console.log('Will try these paths:', paths.join(', '), '[DEBUG]');
@@ -1019,15 +1023,12 @@ function displayAllClinics() {
 // Create a clinic card HTML element
 function createClinicCard(business, container) {
     const card = document.createElement('div');
-    card.className = 'clinic-card';
+    card.className = 'clinic-card bg-white rounded-lg shadow-md overflow-hidden';
     
-    // Debug logging for all important fields
-    console.log(`Creating card for ${business.name}:`, {
-        rating: business.rating,
-        reviews: business.reviews,
-        phone: business.phone,
-        website: business.site || business.website || business.url
-    });
+    // Get the image URL with fallbacks
+    const imageUrl = business.image_url || business.photo || 
+                    (business.photos && business.photos.length > 0 && business.photos[0]) || 
+                    'https://via.placeholder.com/400x200/cccccc/666666?text=Clinic';
     
     // Format address
     const addressParts = [
@@ -1039,49 +1040,37 @@ function createClinicCard(business, container) {
     
     const formattedAddress = addressParts.join(', ') || business.full_address || business.formatted_address || 'Address not available';
     
-    // Get services
-    const services = getBusinessServices(business);
+    // Get rating and reviews with fallbacks
+    const rating = parseFloat(business.rating) || 0;
+    const reviews = parseInt(business.reviews) || 0;
     
-    // Get rating, reviews, phone and website with proper fallbacks
-    const ratingValue = business.rating ? parseFloat(business.rating) : 0;
-    const reviewsCount = business.reviews ? parseInt(business.reviews) : 0;
-    const phoneNumber = business.phone || 'No phone';
-    const websiteUrl = business.site || business.website || business.url || '#';
+    // Get phone and website with fallbacks
+    const phone = business.phone || 'No phone available';
+    const website = business.site || business.website || business.url || '#';
     
-    // Format phone
-    const formattedPhone = phoneNumber !== 'No phone' ? formatPhoneNumber(phoneNumber) : 'No phone';
+    // Create star rating HTML
+    const starRating = createStarRating(rating);
     
-    // Create star rating
-    const starRating = createStarRating(ratingValue);
-    
-    // Default image - use placeholder service instead of local file
-    const imageUrl = business.image_url || business.photo || 
-                    (business.photos && business.photos.length > 0 && business.photos[0])
-                    ? (business.image_url || business.photo || business.photos[0])
-                    : 'https://via.placeholder.com/400x200/cccccc/666666?text=Clinic';
-    
-    // Enhanced debugging for specific items that might be causing issues
-    console.log(`${business.name} - Rating: ${ratingValue}, Reviews: ${reviewsCount}, Phone: ${formattedPhone}, Website: ${websiteUrl}`);
-    
-    // Set the card HTML with fallback support for image loading
+    // Set the card HTML
     card.innerHTML = `
-        <div class="clinic-image" style="background-image: url(${imageUrl}); background-size: cover; background-position: center;">
-            <img src="${imageUrl}" alt="${business.name}" style="display: none;"
-                onerror="this.onerror=null; this.parentElement.style.backgroundImage='url(https://via.placeholder.com/400x200/cccccc/666666?text=Clinic)';">
+        <div class="clinic-image">
+            <img src="${imageUrl}" alt="${business.name}" 
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x200/cccccc/666666?text=Clinic';">
         </div>
-        <div class="clinic-info">
-            <h3>${business.name || 'Unnamed Clinic'}</h3>
-            <div class="clinic-rating">
-                <div class="stars">${starRating}</div>
-                <span class="rating-text">${ratingValue > 0 ? ratingValue.toFixed(1) : 'No rating'} (${reviewsCount} reviews)</span>
+        <div class="clinic-info p-4">
+            <h3 class="text-xl font-bold mb-2">${business.name || 'Unnamed Clinic'}</h3>
+            <div class="clinic-rating mb-2">
+                ${starRating}
             </div>
-            <div class="clinic-address">${formattedAddress}</div>
-            <div class="clinic-contact">
-                <div class="clinic-phone">${formattedPhone}</div>
-                ${websiteUrl !== '#' ? `<div class="clinic-website"><a href="${websiteUrl}" target="_blank" rel="noopener noreferrer">Website</a></div>` : ''}
-            </div>
-            <div class="clinic-services">
-                ${services.map(service => `<span class="clinic-service">${service}</span>`).join('')}
+            <div class="clinic-address text-gray-600 mb-2">${formattedAddress}</div>
+            <div class="clinic-contact flex justify-between items-center">
+                <div class="clinic-phone text-gray-600">${formatPhoneNumber(phone)}</div>
+                ${website !== '#' ? 
+                    `<div class="clinic-website">
+                        <a href="${website}" target="_blank" rel="noopener noreferrer" 
+                           class="text-blue-600 hover:text-blue-800">Website</a>
+                    </div>` : 
+                    ''}
             </div>
         </div>
     `;
