@@ -1,0 +1,6 @@
+Fix: Update image filename to remove spaces
+
+- Renamed the image file to remove spaces in the filename
+- Changed from "scalp micropigmentation in los angeles.png" to "hair-tattoo-los-angeles.png"
+- Updated the img src attribute in HTML to match the new filename
+- Fixed potential URL encoding issues caused by spaces in filenames 

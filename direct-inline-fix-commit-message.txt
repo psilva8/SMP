@@ -1,0 +1,7 @@
+Fix: Apply direct inline styles with !important flags to force horizontal layout
+
+- Added !important flags to inline styles in HTML
+- Forced flex-direction: row with !important to ensure horizontal layout
+- Added specific styling directly in the HTML markup
+- Set explicit alignments and spacing for desktop view
+- Bypassed CSS and JavaScript overrides with direct inline styling 

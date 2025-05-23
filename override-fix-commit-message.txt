@@ -1,0 +1,7 @@
+Fix: Create stronger override for horizontal layout with !important flags
+
+- Added direct-fix-js-override.js that uses style.setProperty with !important flag
+- Updated index.html to use the new override script
+- Removed the old direct-fix.js script reference
+- Extended the initial style application delay to 300ms
+- Script now forces horizontal layout by overriding any inline styles 

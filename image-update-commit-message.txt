@@ -1,0 +1,6 @@
+Update: Replace About section image with Los Angeles Hair Tattoo image
+
+- Updated the image in the About Hair Tattoo Treatment section
+- Changed from hair-tattoo-treatment.jpg to the Los Angeles-specific image
+- Updated alt text to be more descriptive and location-specific
+- Improved SEO with location-based image reference 
