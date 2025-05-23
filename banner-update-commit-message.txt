@@ -1,0 +1,9 @@
+Add hero banner image to homepage
+
+- Added hair_tattoo_in_los_angeles.png as hero banner
+- Implemented responsive background image styling
+- Added semi-transparent overlay for better text readability
+- Set minimum height to ensure proper display
+- Maintained existing hero text content
+
+The banner image provides a professional and visually appealing introduction to the site while maintaining readability of the hero text through a carefully balanced overlay. 
