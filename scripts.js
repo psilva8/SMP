@@ -120,9 +120,9 @@ function fetchBusinessData() {
         
         // Try multiple paths in sequence
         const paths = [
-            'Outscraper-20250423020658xs04_micropigmentation_+1.json', // Relative path first
-            '/Outscraper-20250423020658xs04_micropigmentation_+1.json', // Absolute path second
-            './Outscraper-20250423020658xs04_micropigmentation_+1.json' // Another relative path variant
+            'Outscraper-20250423034944xs81.json', // Relative path first
+            '/Outscraper-20250423034944xs81.json', // Absolute path second
+            './Outscraper-20250423034944xs81.json' // Another relative path variant
         ];
         
         console.log('Will try these paths:', paths.join(', '), '[DEBUG]');
