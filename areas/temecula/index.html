@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; connect-src *;">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Find top-rated Hair Tattoo clinics. Compare providers, services, and read reviews.">
-    <title>Hair Tattoo Clinics in Temecula | Hair Tattoo Directory</title>
-    <meta name="author" content="Hair Tattoo Directory">
-    <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <meta>
-    <link>
-    
-    <!-- Tailwind CSS CDN -->
-    <link>
-    <style>
-        .dropdown {
+ <head>
+  <meta content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; img-src * data: blob:; connect-src *;" http-equiv="Content-Security-Policy"/>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="Find top-rated Hair Tattoo clinics. Compare providers, services, and read reviews." name="description"/>
+  <title>
+   Hair Tattoo Clinics in Temecula | Hair Tattoo Directory
+  </title>
+  <meta content="Hair Tattoo Directory" name="author"/>
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+  <meta/>
+  <link/>
+  <!-- Tailwind CSS CDN -->
+  <link/>
+  <style>
+   .dropdown {
             position: relative;
             display: inline-block;
         }
@@ -62,135 +63,181 @@
             position: relative;
             z-index: 40;
         }
-    </style>
-</head>
-<body class="bg-gray-50 font-sans">
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <a href="../../ class="text-2xl font-bold">Hair Tattoo</a>
-                <nav class="hidden md:flex space-x-6">
-                    <a href="../../ class="hover:text-blue-200 transition">Home</a>
-                    
-                    <!-- Areas Dropdown -->
-                    <div class="dropdown">
-                        <a href="/areas.html" class="font-semibold border-b-2 border-white">Areas ▾</a>
-                        <div id="areas-dropdown" class="dropdown-content">
-                            <!-- Areas will be populated by JavaScript -->
-                            <div class="text-center py-2 text-gray-500 text-sm">Loading areas...</div>
-                        </div>
-                    </div>
-                    
-                    <a href="../../about.html" class="hover:text-blue-200 transition">About Hair Tattoo</a>
-                </nav>
-                
-                <!-- Mobile menu button -->
-                <button class="md:hidden text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- Mobile menu (hidden by default) -->
-            <div class="md:hidden hidden pt-4 pb-2">
-                <a href="../../ class="block py-2 hover:text-blue-200 transition">Home</a>
-                <a href="/areas.html" class="block py-2 font-semibold">Areas</a>
-                <a href="../../about.html" class="block py-2 hover:text-blue-200 transition">About Hair Tattoo</a>
-            </div>
+  </style>
+ </head>
+ <body class="bg-gray-50 font-sans">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-blue-800 to-indigo-800 text-white shadow-md">
+   <div class="container mx-auto px-4 py-4">
+    <div class="flex justify-between items-center">
+     <a font-bold"="" href="../../" text-2xl="">
+      Hair Tattoo
+     </a>
+     <nav class="hidden md:flex space-x-6">
+      <a hover:text-blue-200="" href="../../" transition"="">
+       Home
+      </a>
+      <!-- Areas Dropdown -->
+      <div class="dropdown">
+       <a class="font-semibold border-b-2 border-white" href="/areas.html">
+        Areas ▾
+       </a>
+       <div class="dropdown-content" id="areas-dropdown">
+        <!-- Areas will be populated by JavaScript -->
+        <div class="text-center py-2 text-gray-500 text-sm">
+         Loading areas...
         </div>
-    </header>
-
-    <!-- Area Hero Section -->
-    <section class="bg-blue-700 text-white py-16">
-        <div class="container mx-auto px-4">
-            <h1 class="text-4xl font-bold mb-4" id="area-title">Temecula</h1>
-            <p class="text-xl max-w-3xl">Find top-rated hair tattoo treatment clinics in Temecula. Compare providers and services.</p>
-        </div>
-    </section>
-
-    <!-- Area Clinics Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-12 text-center">Clinics in Temecula</h2>
-            <div id="area-clinics" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Clinic cards will be loaded here via JavaScript -->
-                <p class="text-center py-8 col-span-full">Loading clinics...</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Area Information Section -->
-    <section class="py-16 bg-gray-100" id="area-info-section">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold mb-8" id="about-area-title">About This Area</h2>
-                <div class="prose prose-lg" id="area-description">
-                    <p class="mb-4">Select an area from the menu above to see information about Hair Tattoo clinics in that location.</p>
-                    
-                    <p class="mb-4">When choosing an Hair Tattoo clinic, consider factors such as the practitioner's experience, the clinic's portfolio of before-and-after photos, client reviews, and the overall cleanliness and professionalism of the facility.</p>
-                    
-                    <p class="mb-4">Most Hair Tattoo clinics offer free consultations where you can discuss your specific needs and goals with the practitioner. This is an excellent opportunity to ask questions and determine if the clinic is the right fit for you.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Nearby Areas Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-8 text-center">Other Areas with Clinics</h2>
-            <div id="neighborhood-map" class="flex flex-wrap justify-center gap-4">
-                <!-- Areas will be populated by JavaScript -->
-                <p class="text-center py-8">Loading areas...</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-10">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Column 1: About -->
-                <div>
-                    <h3 class="text-xl font-semibold mb-4">Hair Tattoo Directory</h3>
-                    <p class="text-gray-300">
-                        The premier directory of Hair Tattoo clinics in Los Angeles. 
+       </div>
+      </div>
+      <a class="hover:text-blue-200 transition" href="../../about.html">
+       About Hair Tattoo
+      </a>
+     </nav>
+     <!-- Mobile menu button -->
+     <button class="md:hidden text-white">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+       <path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+       </path>
+      </svg>
+     </button>
+    </div>
+    <!-- Mobile menu (hidden by default) -->
+    <div class="md:hidden hidden pt-4 pb-2">
+     <a block="" hover:text-blue-200="" href="../../" py-2="" transition"="">
+      Home
+     </a>
+     <a class="block py-2 font-semibold" href="/areas.html">
+      Areas
+     </a>
+     <a class="block py-2 hover:text-blue-200 transition" href="../../about.html">
+      About Hair Tattoo
+     </a>
+    </div>
+   </div>
+  </header>
+  <!-- Area Hero Section -->
+  <section class="bg-blue-700 text-white py-16">
+   <div class="container mx-auto px-4">
+    <h1 class="text-4xl font-bold mb-4" id="area-title">
+     Temecula
+    </h1>
+    <p class="text-xl max-w-3xl">
+     Find top-rated hair tattoo treatment clinics in Temecula. Compare providers and services.
+    </p>
+   </div>
+  </section>
+  <!-- Area Clinics Section -->
+  <section class="py-16 bg-white">
+   <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-12 text-center">
+     Clinics in Temecula
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="area-clinics">
+     <!-- Clinic cards will be loaded here via JavaScript -->
+     <p class="text-center py-8 col-span-full">
+      Loading clinics...
+     </p>
+    </div>
+   </div>
+  </section>
+  <!-- Area Information Section -->
+  <section class="py-16 bg-gray-100" id="area-info-section">
+   <div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto">
+     <h2 class="text-3xl font-bold mb-8" id="about-area-title">
+      About This Area
+     </h2>
+     <div class="prose prose-lg" id="area-description">
+      <p class="mb-4">
+       Select an area from the menu above to see information about Hair Tattoo clinics in that location.
+      </p>
+      <p class="mb-4">
+       When choosing an Hair Tattoo clinic, consider factors such as the practitioner's experience, the clinic's portfolio of before-and-after photos, client reviews, and the overall cleanliness and professionalism of the facility.
+      </p>
+      <p class="mb-4">
+       Most Hair Tattoo clinics offer free consultations where you can discuss your specific needs and goals with the practitioner. This is an excellent opportunity to ask questions and determine if the clinic is the right fit for you.
+      </p>
+     </div>
+    </div>
+   </div>
+  </section>
+  <!-- Nearby Areas Section -->
+  <section class="py-16 bg-white">
+   <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-8 text-center">
+     Other Areas with Clinics
+    </h2>
+    <div class="flex flex-wrap justify-center gap-4" id="neighborhood-map">
+     <!-- Areas will be populated by JavaScript -->
+     <p class="text-center py-8">
+      Loading areas...
+     </p>
+    </div>
+   </div>
+  </section>
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-10">
+   <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+     <!-- Column 1: About -->
+     <div>
+      <h3 class="text-xl font-semibold mb-4">
+       Hair Tattoo Directory
+      </h3>
+      <p class="text-gray-300">
+       The premier directory of Hair Tattoo clinics in Los Angeles. 
                         Find top-rated providers and restore your confidence.
-                    </p>
-                </div>
-                
-                <!-- Column 2: Quick Links -->
-                <div>
-                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2 text-gray-300">
-                        <li><a href="../../ class="hover:text-white transition">Home</a></li>
-                        <li><a href="/areas.html" class="hover:text-white transition">Areas</a></li>
-                        <li><a href="../../about.html" class="hover:text-white transition">About Hair Tattoo</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Column 3: Contact -->
-                <div>
-                    <h3 class="text-xl font-semibold mb-4">Contact</h3>
-                    <p class="text-gray-300 mb-2">Email: info@hairtattoodirectory.com</p>
-                    <p class="text-gray-300">Phone: (213) 555-1234</p>
-                </div>
-            </div>
-            
-            <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
-                <p>&copy; 2025 Hair Tattoo Directory. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript -->
-    <script src="../../scripts.js"></script>
-    
-    <!-- Initialize area page -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+      </p>
+     </div>
+     <!-- Column 2: Quick Links -->
+     <div>
+      <h3 class="text-xl font-semibold mb-4">
+       Quick Links
+      </h3>
+      <ul class="space-y-2 text-gray-300">
+       <li>
+        <a hover:text-white="" href="../../" transition"="">
+         Home
+        </a>
+       </li>
+       <li>
+        <a class="hover:text-white transition" href="/areas.html">
+         Areas
+        </a>
+       </li>
+       <li>
+        <a class="hover:text-white transition" href="../../about.html">
+         About Hair Tattoo
+        </a>
+       </li>
+      </ul>
+     </div>
+     <!-- Column 3: Contact -->
+     <div>
+      <h3 class="text-xl font-semibold mb-4">
+       Contact
+      </h3>
+      <p class="text-gray-300 mb-2">
+       Email: info@hairtattoodirectory.com
+      </p>
+      <p class="text-gray-300">
+       Phone: (213) 555-1234
+      </p>
+     </div>
+    </div>
+    <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400">
+     <p>
+      © 2025 Hair Tattoo Directory. All rights reserved.
+     </p>
+    </div>
+   </div>
+  </footer>
+  <!-- JavaScript -->
+  <script src="../../scripts.js">
+  </script>
+  <!-- Initialize area page -->
+  <script>
+   document.addEventListener('DOMContentLoaded', function() {
             console.log('Area page DOM content loaded');
             console.log('Area page DOM content loaded');
             
@@ -208,11 +255,10 @@
                     console.error('Error loading business data:', error);
                 });
         });
-    </script>
-
-    <!-- Fallback script to ensure clinics load -->
-    <script>
-        // Wait 3 seconds to see if the main script loaded the clinics
+  </script>
+  <!-- Fallback script to ensure clinics load -->
+  <script>
+   // Wait 3 seconds to see if the main script loaded the clinics
         setTimeout(async function() {
             const clinicsContainer = document.getElementById('area-clinics');
             if (!clinicsContainer) return;
@@ -306,14 +352,11 @@
                 console.log('Clinics loaded successfully through normal process');
             }
         }, 3000);
-    </script>
-    <!-- Script to remove Hair Tattoo Treatment from clinic cards -->
-    <script src="/remove-smp-dom.js"></script>
-
-
-
-
-
-<script src="final-dropdown-fix.js"></script>
-</body>
-</html> 
+  </script>
+  <!-- Script to remove Hair Tattoo Treatment from clinic cards -->
+  <script src="/remove-smp-dom.js">
+  </script>
+  <script src="final-dropdown-fix.js">
+  </script>
+ </body>
+</html>
