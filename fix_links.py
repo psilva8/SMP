@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
 import os
-from bs4 import BeautifulSoup
+import re
 
 def fix_links(file_path):
     with open(file_path, 'r') as f:
-        soup = BeautifulSoup(f.read(), 'html.parser')
+        content = f.read()
     
     # Fix all malformed links
-    for link in soup.find_all('a'):
-        href = link.get('href')
-        if href and href.startswith('../../ class='):
-            link['href'] = '../../'
+    content = re.sub(r'<a([^>]*?)href="\.\.\/\.\. class="([^"]*?)"([^>]*?)>', r'<a\1href="../../" class="\2"\3>', content)
+    content = re.sub(r'<a([^>]*?)href="\.\.\/\.\. class=([^"]*?)"([^>]*?)>', r'<a\1href="../../" class=\2"\3>', content)
     
-    # Write the fixed content back to the file
     with open(file_path, 'w') as f:
-        f.write(str(soup.prettify()))
+        f.write(content)
 
 # Process all area pages
 for root, dirs, files in os.walk('areas'):
