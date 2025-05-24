@@ -3,6 +3,20 @@ let allBusinesses = [];
 let filteredBusinesses = [];
 let businessData = [];
 
+// Array of real clinic images to use instead of placeholders
+const clinicImages = [
+    'img/clinic-1.jpg',
+    'img/clinic-2.jpg',
+    'img/clinic-3.jpg',
+    'img/clinic-4.jpg',
+    'img/clinic-5.jpg'
+];
+
+// Get a random clinic image
+function getRandomClinicImage() {
+    return clinicImages[Math.floor(Math.random() * clinicImages.length)];
+}
+
 // Document ready function
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the site functionality
@@ -1054,11 +1068,11 @@ function createClinicCard(business, container) {
     // Create star rating
     const starRating = createStarRating(ratingValue);
     
-    // Default image - use placeholder service instead of local file
+    // Use real clinic image instead of placeholder
     const imageUrl = business.image_url || business.photo || 
                     (business.photos && business.photos.length > 0 && business.photos[0])
                     ? (business.image_url || business.photo || business.photos[0])
-                    : 'https://via.placeholder.com/400x200/cccccc/666666?text=Clinic';
+                    : getRandomClinicImage();
     
     // Enhanced debugging for specific items that might be causing issues
     console.log(`${business.name} - Rating: ${ratingValue}, Reviews: ${reviewsCount}, Phone: ${formattedPhone}, Website: ${websiteUrl}`);
@@ -1067,7 +1081,7 @@ function createClinicCard(business, container) {
     card.innerHTML = `
         <div class="clinic-image" style="background-image: url(${imageUrl}); background-size: cover; background-position: center;">
             <img src="${imageUrl}" alt="${business.name}" style="display: none;"
-                onerror="this.onerror=null; this.parentElement.style.backgroundImage='url(https://via.placeholder.com/400x200/cccccc/666666?text=Clinic)';">
+                onerror="this.onerror=null; this.parentElement.style.backgroundImage='url(${getRandomClinicImage()}';">
         </div>
         <div class="clinic-info">
             <h3>${business.name || 'Unnamed Clinic'}</h3>
