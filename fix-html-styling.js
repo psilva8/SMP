@@ -67,7 +67,15 @@ function fixHtmlStyling(filePath) {
             );
             
             // Fix navigation links
-            content = content.replace(/href="\/areas\//g, 'href="../../areas/');
+            // Fix navigation links - but avoid double areas paths
+            content = content.replace(/href="\/areas\//g, function(match, offset, string) {
+                // Check if we're already in an areas subdirectory
+                const beforeMatch = string.substring(0, offset);
+                if (beforeMatch.includes('../../areas/')) {
+                    return match; // Don't modify if already has relative path
+                }
+                return 'href="../../areas/';
+            });/g, 'href="../../areas/');
             content = content.replace(/href="\/about.html"/g, 'href="../../about.html"');
             content = content.replace(/href="\/"([^.])/g, 'href="../../$1');
         }
