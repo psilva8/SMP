@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: blob: https:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src *;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse Hair Tattoo clinics by area. Find top-rated scalp micropigmentation providers in Los Angeles, San Francisco, San Diego and throughout California.">
+    <meta name="keywords" content="Hair Tattoo, Hair Loss, Hairline Restoration, Hair Tattoo Clinic">
+    <meta name="google-site-verification" content="Ogu1SU_oO4sI5Jvs82rDQJ8P3CKn9lEF6qWrwvvMsEo" />
+    <link rel="canonical" href="https://micropigmentationla.com/areas/" />
+    <title>Hair Tattoo Clinics by Area | California Directory</title>
+    <meta name="author" content="Hair Tattoo Directory">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 50;
+            border-radius: 5px;
+            margin-top: 5px;
+            scrollbar-width: thin;
+            scrollbar-color: #4F46E5 #f1f1f1;
+        }
+        .dropdown-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .dropdown-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .dropdown-content::-webkit-scrollbar-thumb {
+            background-color: #4F46E5;
+            border-radius: 4px;
+        }
+        .dropdown-content a {
+            color: #333;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            color: #4F46E5;
+        }
+        .dropdown.active .dropdown-content {
+            display: block;
+        }
+        .dropdown.active .dropdown-menu {
+            display: block;
+        }
+        header {
+            position: relative;
+            z-index: 40;
+        }
+        
+        .areas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .area-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .area-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .area-card h3 {
+            margin: 0 0 10px 0;
+            color: #4F46E5;
+            font-size: 1.2rem;
+        }
+        
+        .area-card p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .areas-intro {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .areas-intro h1 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .areas-intro p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .search-box {
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .search-box input {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 400px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #4F46E5;
+        }
+        
+        @media (max-width: 768px) {
+            .areas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">
+                <a href="/">SMP Los Angeles</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0)" class="dropbtn">Areas</a>
+                        <div class="dropdown-menu dropdown-content">
+                            <a href="/areas/alameda/">Alameda</a>
+                            <a href="/areas/alamo/">Alamo</a>
+                            <a href="/areas/auburn/">Auburn</a>
+                            <a href="/areas/beaumont/">Beaumont</a>
+                            <a href="/areas/beverly-hills/">Beverly Hills</a>
+                            <a href="/areas/calabasas/">Calabasas</a>
+                            <a href="/areas/costa-mesa/">Costa Mesa</a>
+                            <a href="/areas/danville/">Danville</a>
+                            <a href="/areas/el-monte/">El Monte</a>
+                            <a href="/areas/encinitas/">Encinitas</a>
+                            <a href="/areas/glendale/">Glendale</a>
+                            <a href="/areas/irvine/">Irvine</a>
+                            <a href="/areas/los-angeles/">Los Angeles</a>
+                            <a href="/areas/mountain-view/">Mountain View</a>
+                            <a href="/areas/oakland/">Oakland</a>
+                            <a href="/areas/roseville/">Roseville</a>
+                            <a href="/areas/sacramento/">Sacramento</a>
+                            <a href="/areas/san-diego/">San Diego</a>
+                            <a href="/areas/san-francisco/">San Francisco</a>
+                            <a href="/areas/san-jose/">San Jose</a>
+                            <a href="/areas/santa-ana/">Santa Ana</a>
+                            <a href="/areas/stockton/">Stockton</a>
+                            <a href="/areas/temecula/">Temecula</a>
+                            <a href="/areas/">All Areas</a>
+                        </div>
+                    </li>
+                    <li><a href="/about.html">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="areas-intro">
+            <h1>Hair Tattoo Clinics by Los Angeles Area</h1>
+            <p>Browse top-rated hair tattoo treatment providers throughout Los Angeles County. Find Hair Tattoo clinics near you by selecting your area.</p>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="area-search" placeholder="Search for your area..." onkeyup="filterAreas()">
+        </div>
+
+        <section class="areas-section">
+            <h2>All Los Angeles Areas</h2>
+            <div class="areas-grid" id="areas-grid">
+                <a href="/areas/alameda/" class="area-card">
+                    <h3>Alameda</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Alameda</p>
+                </a>
+                <a href="/areas/alamo/" class="area-card">
+                    <h3>Alamo</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Alamo</p>
+                </a>
+                <a href="/areas/alhambra/" class="area-card">
+                    <h3>Alhambra</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Alhambra</p>
+                </a>
+                <a href="/areas/artesia/" class="area-card">
+                    <h3>Artesia</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Artesia</p>
+                </a>
+                <a href="/areas/azusa/" class="area-card">
+                    <h3>Azusa</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Azusa</p>
+                </a>
+                <a href="/areas/bellflower/" class="area-card">
+                    <h3>Bellflower</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Bellflower</p>
+                </a>
+                <a href="/areas/beverly-hills/" class="area-card">
+                    <h3>Beverly Hills</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Beverly Hills</p>
+                </a>
+                <a href="/areas/bolinas/" class="area-card">
+                    <h3>Bolinas</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Bolinas</p>
+                </a>
+                <a href="/areas/brookdale/" class="area-card">
+                    <h3>Brookdale</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Brookdale</p>
+                </a>
+                <a href="/areas/buellton/" class="area-card">
+                    <h3>Buellton</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Buellton</p>
+                </a>
+                <a href="/areas/calabasas/" class="area-card">
+                    <h3>Calabasas</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Calabasas</p>
+                </a>
+                <a href="/areas/canoga-park/" class="area-card">
+                    <h3>Canoga Park</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Canoga Park</p>
+                </a>
+                <a href="/areas/canyondam/" class="area-card">
+                    <h3>Canyondam</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Canyondam</p>
+                </a>
+                <a href="/areas/ceres/" class="area-card">
+                    <h3>Ceres</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Ceres</p>
+                </a>
+                <a href="/areas/chino-hills/" class="area-card">
+                    <h3>Chino Hills</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Chino Hills</p>
+                </a>
+                <a href="/areas/city-of-industry/" class="area-card">
+                    <h3>City of Industry</h3>
+                    <p>Find top-rated Hair Tattoo clinics in City of Industry</p>
+                </a>
+                <a href="/areas/compton/" class="area-card">
+                    <h3>Compton</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Compton</p>
+                </a>
+                <a href="/areas/costa-mesa/" class="area-card">
+                    <h3>Costa Mesa</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Costa Mesa</p>
+                </a>
+                <a href="/areas/danville/" class="area-card">
+                    <h3>Danville</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Danville</p>
+                </a>
+                <a href="/areas/dixon/" class="area-card">
+                    <h3>Dixon</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Dixon</p>
+                </a>
+                <a href="/areas/downey/" class="area-card">
+                    <h3>Downey</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Downey</p>
+                </a>
+                <a href="/areas/durham/" class="area-card">
+                    <h3>Durham</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Durham</p>
+                </a>
+                <a href="/areas/el-dorado-hills/" class="area-card">
+                    <h3>El Dorado Hills</h3>
+                    <p>Find top-rated Hair Tattoo clinics in El Dorado Hills</p>
+                </a>
+                <a href="/areas/el-monte/" class="area-card">
+                    <h3>El Monte</h3>
+                    <p>Find top-rated Hair Tattoo clinics in El Monte</p>
+                </a>
+                <a href="/areas/elk-grove/" class="area-card">
+                    <h3>Elk Grove</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Elk Grove</p>
+                </a>
+                <a href="/areas/encinitas/" class="area-card">
+                    <h3>Encinitas</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Encinitas</p>
+                </a>
+                <a href="/areas/escondido/" class="area-card">
+                    <h3>Escondido</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Escondido</p>
+                </a>
+                <a href="/areas/fair-oaks/" class="area-card">
+                    <h3>Fair Oaks</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Fair Oaks</p>
+                </a>
+                <a href="/areas/fullerton/" class="area-card">
+                    <h3>Fullerton</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Fullerton</p>
+                </a>
+                <a href="/areas/garden-grove/" class="area-card">
+                    <h3>Garden Grove</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Garden Grove</p>
+                </a>
+                <a href="/areas/grass-valley/" class="area-card">
+                    <h3>Grass Valley</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Grass Valley</p>
+                </a>
+                <a href="/areas/gridley/" class="area-card">
+                    <h3>Gridley</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Gridley</p>
+                </a>
+                <a href="/areas/helendale/" class="area-card">
+                    <h3>Helendale</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Helendale</p>
+                </a>
+                <a href="/areas/hemet/" class="area-card">
+                    <h3>Hemet</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Hemet</p>
+                </a>
+                <a href="/areas/irvine/" class="area-card">
+                    <h3>Irvine</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Irvine</p>
+                </a>
+                <a href="/areas/jamul/" class="area-card">
+                    <h3>Jamul</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Jamul</p>
+                </a>
+                <a href="/areas/kyburz/" class="area-card">
+                    <h3>Kyburz</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Kyburz</p>
+                </a>
+                <a href="/areas/lafayette/" class="area-card">
+                    <h3>Lafayette</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Lafayette</p>
+                </a>
+                <a href="/areas/laguna-hills/" class="area-card">
+                    <h3>Laguna Hills</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Laguna Hills</p>
+                </a>
+                <a href="/areas/lake-forest/" class="area-card">
+                    <h3>Lake Forest</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Lake Forest</p>
+                </a>
+                <a href="/areas/la-puente/" class="area-card">
+                    <h3>La Puente</h3>
+                    <p>Find top-rated Hair Tattoo clinics in La Puente</p>
+                </a>
+                <a href="/areas/long-beach/" class="area-card">
+                    <h3>Long Beach</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Long Beach</p>
+                </a>
+                <a href="/areas/los-gatos/" class="area-card">
+                    <h3>Los Gatos</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Los Gatos</p>
+                </a>
+                <a href="/areas/merced/" class="area-card">
+                    <h3>Merced</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Merced</p>
+                </a>
+                <a href="/areas/millbrae/" class="area-card">
+                    <h3>Millbrae</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Millbrae</p>
+                </a>
+                <a href="/areas/milpitas/" class="area-card">
+                    <h3>Milpitas</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Milpitas</p>
+                </a>
+                <a href="/areas/modesto/" class="area-card">
+                    <h3>Modesto</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Modesto</p>
+                </a>
+                <a href="/areas/monterey/" class="area-card">
+                    <h3>Monterey</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Monterey</p>
+                </a>
+                <a href="/areas/mountain-view/" class="area-card">
+                    <h3>Mountain View</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Mountain View</p>
+                </a>
+                <a href="/areas/murrieta/" class="area-card">
+                    <h3>Murrieta</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Murrieta</p>
+                </a>
+                <a href="/areas/newport-beach/" class="area-card">
+                    <h3>Newport Beach</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Newport Beach</p>
+                </a>
+                <a href="/areas/northridge/" class="area-card">
+                    <h3>Northridge</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Northridge</p>
+                </a>
+                <a href="/areas/orange-cove/" class="area-card">
+                    <h3>Orange Cove</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Orange Cove</p>
+                </a>
+                <a href="/areas/oroville/" class="area-card">
+                    <h3>Oroville</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Oroville</p>
+                </a>
+                <a href="/areas/palm-springs/" class="area-card">
+                    <h3>Palm Springs</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Palm Springs</p>
+                </a>
+                <a href="/areas/pasadena/" class="area-card">
+                    <h3>Pasadena</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Pasadena</p>
+                </a>
+                <a href="/areas/peabody/" class="area-card">
+                    <h3>Peabody</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Peabody</p>
+                </a>
+                <a href="/areas/philo/" class="area-card">
+                    <h3>Philo</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Philo</p>
+                </a>
+                <a href="/areas/pinole/" class="area-card">
+                    <h3>Pinole</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Pinole</p>
+                </a>
+                <a href="/areas/plymouth/" class="area-card">
+                    <h3>Plymouth</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Plymouth</p>
+                </a>
+                <a href="/areas/plumas-lake/" class="area-card">
+                    <h3>Plumas Lake</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Plumas Lake</p>
+                </a>
+                <a href="/areas/port-hueneme/" class="area-card">
+                    <h3>Port Hueneme</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Port Hueneme</p>
+                </a>
+                <a href="/areas/rancho-cucamonga/" class="area-card">
+                    <h3>Rancho Cucamonga</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Rancho Cucamonga</p>
+                </a>
+                <a href="/areas/rancho-mirage/" class="area-card">
+                    <h3>Rancho Mirage</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Rancho Mirage</p>
+                </a>
+                <a href="/areas/redding/" class="area-card">
+                    <h3>Redding</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Redding</p>
+                </a>
+                <a href="/areas/redlands/" class="area-card">
+                    <h3>Redlands</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Redlands</p>
+                </a>
+                <a href="/areas/rocklin/" class="area-card">
+                    <h3>Rocklin</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Rocklin</p>
+                </a>
+                <a href="/areas/rosemead/" class="area-card">
+                    <h3>Rosemead</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Rosemead</p>
+                </a>
+                <a href="/areas/roseville/" class="area-card">
+                    <h3>Roseville</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Roseville</p>
+                </a>
+                <a href="/areas/rowland-heights/" class="area-card">
+                    <h3>Rowland Heights</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Rowland Heights</p>
+                </a>
+                <a href="/areas/sacramento/" class="area-card">
+                    <h3>Sacramento</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Sacramento</p>
+                </a>
+                <a href="/areas/san-bruno/" class="area-card">
+                    <h3>San Bruno</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Bruno</p>
+                </a>
+                <a href="/areas/san-diego/" class="area-card">
+                    <h3>San Diego</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Diego</p>
+                </a>
+                <a href="/areas/san-dimas/" class="area-card">
+                    <h3>San Dimas</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Dimas</p>
+                </a>
+                <a href="/areas/san-francisco/" class="area-card">
+                    <h3>San Francisco</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Francisco</p>
+                </a>
+                <a href="/areas/san-gabriel/" class="area-card">
+                    <h3>San Gabriel</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Gabriel</p>
+                </a>
+                <a href="/areas/san-jacinto/" class="area-card">
+                    <h3>San Jacinto</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Jacinto</p>
+                </a>
+                <a href="/areas/san-jose/" class="area-card">
+                    <h3>San Jose</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Jose</p>
+                </a>
+                <a href="/areas/san-lorenzo/" class="area-card">
+                    <h3>San Lorenzo</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Lorenzo</p>
+                </a>
+                <a href="/areas/san-luis-obispo/" class="area-card">
+                    <h3>San Luis Obispo</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Luis Obispo</p>
+                </a>
+                <a href="/areas/san-mateo/" class="area-card">
+                    <h3>San Mateo</h3>
+                    <p>Find top-rated Hair Tattoo clinics in San Mateo</p>
+                </a>
+                <a href="/areas/santa-ana/" class="area-card">
+                    <h3>Santa Ana</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Santa Ana</p>
+                </a>
+                <a href="/areas/santa-clara/" class="area-card">
+                    <h3>Santa Clara</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Santa Clara</p>
+                </a>
+                <a href="/areas/santa-clarita/" class="area-card">
+                    <h3>Santa Clarita</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Santa Clarita</p>
+                </a>
+                <a href="/areas/santa-rosa/" class="area-card">
+                    <h3>Santa Rosa</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Santa Rosa</p>
+                </a>
+                <a href="/areas/saratoga/" class="area-card">
+                    <h3>Saratoga</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Saratoga</p>
+                </a>
+                <a href="/areas/solana-beach/" class="area-card">
+                    <h3>Solana Beach</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Solana Beach</p>
+                </a>
+                <a href="/areas/south-lake-tahoe/" class="area-card">
+                    <h3>South Lake Tahoe</h3>
+                    <p>Find top-rated Hair Tattoo clinics in South Lake Tahoe</p>
+                </a>
+                <a href="/areas/stateline/" class="area-card">
+                    <h3>Stateline</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Stateline</p>
+                </a>
+                <a href="/areas/stockton/" class="area-card">
+                    <h3>Stockton</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Stockton</p>
+                </a>
+                <a href="/areas/strathmore/" class="area-card">
+                    <h3>Strathmore</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Strathmore</p>
+                </a>
+                <a href="/areas/sunnyvale/" class="area-card">
+                    <h3>Sunnyvale</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Sunnyvale</p>
+                </a>
+                <a href="/areas/temecula/" class="area-card">
+                    <h3>Temecula</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Temecula</p>
+                </a>
+                <a href="/areas/temple-city/" class="area-card">
+                    <h3>Temple City</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Temple City</p>
+                </a>
+                <a href="/areas/twin-bridges/" class="area-card">
+                    <h3>Twin Bridges</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Twin Bridges</p>
+                </a>
+                <a href="/areas/valencia/" class="area-card">
+                    <h3>Valencia</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Valencia</p>
+                </a>
+                <a href="/areas/vallejo/" class="area-card">
+                    <h3>Vallejo</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Vallejo</p>
+                </a>
+                <a href="/areas/watsonville/" class="area-card">
+                    <h3>Watsonville</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Watsonville</p>
+                </a>
+                <a href="/areas/westminster/" class="area-card">
+                    <h3>Westminster</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Westminster</p>
+                </a>
+                <a href="/areas/wheatland/" class="area-card">
+                    <h3>Wheatland</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Wheatland</p>
+                </a>
+                <a href="/areas/wilbraham/" class="area-card">
+                    <h3>Wilbraham</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Wilbraham</p>
+                </a>
+                <a href="/areas/wilmington/" class="area-card">
+                    <h3>Wilmington</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Wilmington</p>
+                </a>
+                <a href="/areas/woodland/" class="area-card">
+                    <h3>Woodland</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Woodland</p>
+                </a>
+                <a href="/areas/woodland-hills/" class="area-card">
+                    <h3>Woodland Hills</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Woodland Hills</p>
+                </a>
+                <a href="/areas/woodlake/" class="area-card">
+                    <h3>Woodlake</h3>
+                    <p>Find top-rated Hair Tattoo clinics in Woodlake</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="why-choose-local" style="margin-top: 50px; background-color: #f8f9fa; padding: 40px; border-radius: 8px;">
+            <h2>Why Choose a Local Hair Tattoo Provider?</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 30px;">
+                <div>
+                    <h3 style="color: #4F46E5; margin-bottom: 15px;">Convenience</h3>
+                    <p>Choose a clinic close to home to simplify follow-up appointments and reduce travel time. Hair Tattoo typically requires 2-3 sessions for optimal results.</p>
+                </div>
+                <div>
+                    <h3 style="color: #4F46E5; margin-bottom: 15px;">Local Knowledge</h3>
+                    <p>Local providers understand the LA lifestyle and can create styles that complement the unique Southern California aesthetic.</p>
+                </div>
+                <div>
+                    <h3 style="color: #4F46E5; margin-bottom: 15px;">Community Reputation</h3>
+                    <p>Area-specific clinics build their reputation within local communities, often leading to more personalized care and accountability.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Hair Tattoo</h3>
+                    <p>The premier resource for Hair Tattoo clinics in Los Angeles. Find top-rated providers and restore your confidence.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/areas/">Areas</a></li>
+                        <li><a href="/about.html">About Hair Tattoo</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Hair Tattoo Directory. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                const dropbtn = dropdown.querySelector('.dropbtn');
+                
+                dropbtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('active');
+                    
+                    // Close other dropdowns
+                    dropdowns.forEach(otherDropdown => {
+                        if (otherDropdown !== dropdown) {
+                            otherDropdown.classList.remove('active');
+                        }
+                    });
+                });
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+        });
+
+        // Search functionality
+        function filterAreas() {
+            const searchInput = document.getElementById('area-search');
+            const filter = searchInput.value.toLowerCase();
+            const areasGrid = document.getElementById('areas-grid');
+            const areaCards = areasGrid.getElementsByClassName('area-card');
+
+            for (let i = 0; i < areaCards.length; i++) {
+                const areaName = areaCards[i].getElementsByTagName('h3')[0];
+                if (areaName) {
+                    const textValue = areaName.textContent || areaName.innerText;
+                    if (textValue.toLowerCase().indexOf(filter) > -1) {
+                        areaCards[i].style.display = '';
+                    } else {
+                        areaCards[i].style.display = 'none';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html> 
