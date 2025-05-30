@@ -234,130 +234,172 @@
    </div>
   </footer>
   <!-- JavaScript -->
-  <script src="../../scripts.js">
-  </script>
-  <!-- Initialize area page -->
-  <script>
-   document.addEventListener('DOMContentLoaded', function() {
-            console.log('Area page DOM content loaded');
-            console.log('Area page DOM content loaded');
+    <script src="../../scripts.js"></script>
+
+    <!-- Area page functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Area page loaded for: santa-clarita');
             
-            // Fetch business data if not already loaded
-            fetchBusinessData()
-                .then(data => {
-                    console.log('Business data loaded, length:', data.length);
-                    
-                    // Call functions to populate the page
-                    populateAreasDropdown(data);
-                    loadAreaClinics();
-                    populateNeighborhoodMap(data);
-                })
-                .catch(error => {
-                    console.error('Error loading business data:', error);
-                });
+            // Initialize dropdown functionality
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                const dropbtn = dropdown.querySelector('a');
+                
+                if (dropbtn) {
+                    dropbtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        dropdown.classList.toggle('active');
+                        
+                        // Close other dropdowns
+                        dropdowns.forEach(otherDropdown => {
+                            if (otherDropdown !== dropdown) {
+                                otherDropdown.classList.remove('active');
+                            }
+                        });
+                    });
+                }
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+            
+            // Load area clinics with proper error handling
+            loadAreaClinicsSimple();
         });
-  </script>
-  <!-- Fallback script to ensure clinics load -->
-  <script>
-   // Wait 3 seconds to see if the main script loaded the clinics
-        setTimeout(async function() {
+        
+        function loadAreaClinicsSimple() {
             const clinicsContainer = document.getElementById('area-clinics');
             if (!clinicsContainer) return;
             
-            // Check if container still has loading text
-            if (clinicsContainer.textContent.includes('Loading')) {
-                console.log('Area clinics still loading after 3 seconds, attempting direct load');
-                
-                try {
-                    // Direct fetch the JSON
-                    const response = await fetch('/Outscraper-20250423020658xs04_micropigmentation_+1.json');
-                    if (!response.ok) throw new Error(`Network error: ${response.status}`);
-                    
-                    const data = await response.json();
-                    console.log(`Successfully loaded ${data.length} businesses directly`);
-                    
-                    // Extract area name from URL path
-                    const pathname = window.location.pathname;
-                    const match = pathname.match(/\/areas\/([^\/]+)/i);
-                    if (!match) return;
-                    
-                    const areaSlug = match[1];
-                    let areaName = areaSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    
-                    const filteredData = data.filter(business => {
-                        return (
-                            (business.city && business.city.toLowerCase() === areaName.toLowerCase()) ||
-                            (business.neighborhood && business.neighborhood.toLowerCase() === areaName.toLowerCase()) ||
-                            (business.address && business.address.toLowerCase().includes(areaName.toLowerCase())) ||
-                            (business.full_address && business.full_address.toLowerCase().includes(areaName.toLowerCase()))
-                        );
-                    });
-                    
-                    console.log(`Found ${filteredData.length} clinics in ${areaName}`);
-                    
-                    // Clear the container
-                    clinicsContainer.innerHTML = '';
-                    
-                    if (filteredData.length === 0) {
-                        clinicsContainer.innerHTML = `<p class="text-center py-8 col-span-full">No clinics found in ${areaName}. Try another area nearby.</p>`;
-                        return;
-                    }
-                    
-                    // Sort by rating
-                    const sortedBusinesses = [...filteredData].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-                    
-                    // Create cards for each business
-                    sortedBusinesses.forEach(business => {
-                        const imageUrl = business.photos && business.photos.length > 0 && business.photos[0] 
-                            ? business.photos[0] 
-                            : 'https://via.placeholder.com/400x250?text=Hair Tattoo+Clinic';
-                        
-                        const address = business.full_address || business.address || 'Address not available';
-                        const rating = business.rating || 'N/A';
-                        const reviews = business.reviews_count || 0;
-                        
-                        const card = document.createElement('div');
-                        card.className = 'bg-white rounded-lg shadow-md overflow-hidden';
-                        
-                        card.innerHTML = `
-                            <div class="h-48 bg-gray-200 overflow-hidden">
-                                <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover" 
-                                    onerror="this.src='https://via.placeholder.com/400x250?text=Hair Tattoo+Clinic'; this.onerror=null;">
-                            </div>
-                            <div class="p-5">
-                                <h3 class="text-xl font-bold mb-2">${business.name || 'Unnamed Clinic'}</h3>
-                                <div class="text-yellow-500 mb-2">Rating: ${rating} ⭐ (${reviews} reviews)</div>
-                                <p class="text-gray-600 mb-3 truncate">${address}</p>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-blue-600 font-medium">${business.phone_number || 'No phone'}</span>
-                                    
-                                </div>
-                            </div>
-                        `;
-                        
-                        clinicsContainer.appendChild(card);
-                    });
-                    
-                    // Update the count text
-                    const countElement = document.querySelector('.area-hero p');
-                    if (countElement) {
-                        const clinicText = filteredData.length === 1 ? 'clinic' : 'clinics';
-                        countElement.textContent = `${filteredData.length} ${clinicText} found in ${areaName}`;
-                    }
-                    
-                } catch (error) {
-                    console.error('Error in direct load:', error);
-                    clinicsContainer.innerHTML = `<p class="text-center py-8 col-span-full">Error loading clinics: ${error.message}. Please try refreshing the page.</p>`;
-                }
-            } else {
-                console.log('Clinics loaded successfully through normal process');
+            // Check if we have cached data
+            if (window.filteredBusinesses && window.filteredBusinesses.length > 0) {
+                displayAreaClinics(window.filteredBusinesses);
+                return;
             }
-        }, 3000);
-  </script>
-  <!-- Script to remove Hair Tattoo Treatment from clinic cards -->
-  <script src="/remove-smp-dom.js">
-  </script>
-  <script src="final-dropdown-fix.js">
-  </script>
- </body>
+            
+            // Try to load from the main scripts.js functionality
+            if (typeof fetchBusinessData === 'function') {
+                fetchBusinessData()
+                    .then(data => {
+                        if (data && data.length > 0) {
+                            displayAreaClinics(data);
+                        } else {
+                            showNoDataMessage();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading business data:', error);
+                        showNoDataMessage();
+                    });
+            } else {
+                // Fallback: show a message that data is loading
+                setTimeout(() => {
+                    if (clinicsContainer.textContent.includes('Loading')) {
+                        showNoDataMessage();
+                    }
+                }, 5000);
+            }
+        }
+        
+        function displayAreaClinics(businessData) {
+            const clinicsContainer = document.getElementById('area-clinics');
+            if (!clinicsContainer) return;
+            
+            const areaName = 'santa clarita';
+            
+            // Filter businesses for this area
+            const filteredClinics = businessData.filter(business => {
+                const areaNameLower = areaName.toLowerCase();
+                return (
+                    (business.city && business.city.toLowerCase() === areaNameLower) ||
+                    (business.neighborhood && business.neighborhood.toLowerCase() === areaNameLower) ||
+                    (business.address && business.address.toLowerCase().includes(areaNameLower)) ||
+                    (business.full_address && business.full_address.toLowerCase().includes(areaNameLower))
+                );
+            });
+            
+            // Clear container
+            clinicsContainer.innerHTML = '';
+            
+            if (filteredClinics.length === 0) {
+                clinicsContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <p class="text-gray-500">No clinics found in ${areaName}.</p>
+                        <p class="text-gray-400 mt-2">Try searching in nearby areas.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by rating
+            const sortedClinics = [...filteredClinics].sort((a, b) => {
+                const ratingA = parseFloat(a.rating) || 0;
+                const ratingB = parseFloat(b.rating) || 0;
+                return ratingB - ratingA;
+            });
+            
+            // Create clinic cards
+            sortedClinics.forEach(business => {
+                const card = createClinicCardSimple(business);
+                clinicsContainer.appendChild(card);
+            });
+        }
+        
+        function createClinicCardSimple(business) {
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow';
+            
+            const imageUrl = (business.photos && business.photos.length > 0 && business.photos[0]) 
+                ? business.photos[0] 
+                : 'https://via.placeholder.com/400x200/f3f4f6/6b7280?text=Hair+Tattoo+Clinic';
+            
+            const address = business.full_address || business.address || 'Address not available';
+            const rating = business.rating ? parseFloat(business.rating).toFixed(1) : 'N/A';
+            const reviews = business.reviews_count || business.reviews || 0;
+            const phone = business.phone_number || business.phone || 'No phone';
+            const website = business.website || business.site || business.url || '';
+            
+            card.innerHTML = `
+                <div class="h-48 bg-gray-200 overflow-hidden">
+                    <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover" 
+                        onerror="this.src='https://via.placeholder.com/400x200/f3f4f6/6b7280?text=Hair+Tattoo+Clinic'; this.onerror=null;">
+                </div>
+                <div class="p-5">
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">${business.name || 'Unnamed Clinic'}</h3>
+                    <div class="flex items-center mb-2">
+                        <span class="text-yellow-500 mr-1">⭐</span>
+                        <span class="text-gray-700">${rating} (${reviews} reviews)</span>
+                    </div>
+                    <p class="text-gray-600 mb-3 text-sm">${address}</p>
+                    <div class="space-y-2">
+                        <div class="text-blue-600 font-medium text-sm">${phone}</div>
+                        ${website ? `<a href="${website}" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-700 text-sm">Visit Website</a>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        function showNoDataMessage() {
+            const clinicsContainer = document.getElementById('area-clinics');
+            if (clinicsContainer) {
+                clinicsContainer.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <p class="text-gray-500">Unable to load clinic data at this time.</p>
+                        <p class="text-gray-400 mt-2">Please try refreshing the page.</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
 </html>
