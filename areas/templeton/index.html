@@ -271,60 +271,91 @@
                 }
             });
             
-            // Load area clinics with proper error handling
-            loadAreaClinicsSimple();
+            // Wait for main scripts to load and then load area clinics
+            loadAreaClinicsWithRetry();
         });
         
-        function loadAreaClinicsSimple() {
+        function loadAreaClinicsWithRetry() {
             const clinicsContainer = document.getElementById('area-clinics');
             if (!clinicsContainer) return;
             
-            // Check if we have cached data
-            if (window.filteredBusinesses && window.filteredBusinesses.length > 0) {
-                displayAreaClinics(window.filteredBusinesses);
-                return;
+            let attempts = 0;
+            const maxAttempts = 10;
+            
+            function tryLoadClinics() {
+                attempts++;
+                
+                // Check if we have data from the main script
+                if (window.filteredBusinesses && window.filteredBusinesses.length > 0) {
+                    console.log('Found filtered businesses data, displaying area clinics');
+                    displayAreaClinics(window.filteredBusinesses);
+                    return;
+                }
+                
+                // Check if fetchBusinessData is available
+                if (typeof fetchBusinessData === 'function') {
+                    console.log('fetchBusinessData available, calling it');
+                    fetchBusinessData()
+                        .then(data => {
+                            if (data && data.length > 0) {
+                                displayAreaClinics(data);
+                            } else {
+                                showNoDataMessage();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading business data:', error);
+                            if (attempts < maxAttempts) {
+                                setTimeout(tryLoadClinics, 1000);
+                            } else {
+                                showNoDataMessage();
+                            }
+                        });
+                    return;
+                }
+                
+                // If neither is available and we haven't exceeded max attempts, try again
+                if (attempts < maxAttempts) {
+                    console.log(`Attempt ${attempts}/${maxAttempts}: Waiting for scripts to load...`);
+                    setTimeout(tryLoadClinics, 500);
+                } else {
+                    console.log('Max attempts reached, showing fallback message');
+                    showNoDataMessage();
+                }
             }
             
-            // Try to load from the main scripts.js functionality
-            if (typeof fetchBusinessData === 'function') {
-                fetchBusinessData()
-                    .then(data => {
-                        if (data && data.length > 0) {
-                            displayAreaClinics(data);
-                        } else {
-                            showNoDataMessage();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error loading business data:', error);
-                        showNoDataMessage();
-                    });
-            } else {
-                // Fallback: show a message that data is loading
-                setTimeout(() => {
-                    if (clinicsContainer.textContent.includes('Loading')) {
-                        showNoDataMessage();
-                    }
-                }, 5000);
-            }
+            // Start trying to load clinics
+            tryLoadClinics();
         }
         
         function displayAreaClinics(businessData) {
             const clinicsContainer = document.getElementById('area-clinics');
             if (!clinicsContainer) return;
             
-            const areaName = 'templeton';
+            const areaName = 'Templeton';
+            console.log(`Filtering ${businessData.length} businesses for area: ${areaName}`);
             
-            // Filter businesses for this area
+            // Filter businesses for this area with more flexible matching
             const filteredClinics = businessData.filter(business => {
                 const areaNameLower = areaName.toLowerCase();
+                const businessCity = (business.city || '').toLowerCase();
+                const businessNeighborhood = (business.neighborhood || '').toLowerCase();
+                const businessAddress = (business.address || '').toLowerCase();
+                const businessFullAddress = (business.full_address || '').toLowerCase();
+                
                 return (
-                    (business.city && business.city.toLowerCase() === areaNameLower) ||
-                    (business.neighborhood && business.neighborhood.toLowerCase() === areaNameLower) ||
-                    (business.address && business.address.toLowerCase().includes(areaNameLower)) ||
-                    (business.full_address && business.full_address.toLowerCase().includes(areaNameLower))
+                    businessCity === areaNameLower ||
+                    businessNeighborhood === areaNameLower ||
+                    businessAddress.includes(areaNameLower) ||
+                    businessFullAddress.includes(areaNameLower) ||
+                    // Also try matching without spaces for compound names
+                    businessCity === areaNameLower.replace(/\s+/g, '') ||
+                    businessAddress.includes(areaNameLower.replace(/\s+/g, '')) ||
+                    businessFullAddress.includes(areaNameLower.replace(/\s+/g, ''))
                 );
             });
+            
+            console.log(`Found ${filteredClinics.length} clinics in ${areaName}`);
             
             // Clear container
             clinicsContainer.innerHTML = '';
@@ -334,6 +365,7 @@
                     <div class="col-span-full text-center py-8">
                         <p class="text-gray-500">No clinics found in ${areaName}.</p>
                         <p class="text-gray-400 mt-2">Try searching in nearby areas.</p>
+                        <p class="text-gray-300 mt-1 text-xs">Searched ${businessData.length} total businesses</p>
                     </div>
                 `;
                 return;
@@ -351,15 +383,22 @@
                 const card = createClinicCardSimple(business);
                 clinicsContainer.appendChild(card);
             });
+            
+            // Update page title with count
+            const titleElement = document.getElementById('area-title');
+            if (titleElement) {
+                titleElement.textContent = `${areaName} (${filteredClinics.length} clinic${filteredClinics.length !== 1 ? 's' : ''})`;
+            }
         }
         
         function createClinicCardSimple(business) {
             const card = document.createElement('div');
             card.className = 'bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow';
             
+            // Use a more reliable placeholder image
             const imageUrl = (business.photos && business.photos.length > 0 && business.photos[0]) 
                 ? business.photos[0] 
-                : 'https://via.placeholder.com/400x200/f3f4f6/6b7280?text=Hair+Tattoo+Clinic';
+                : 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNsaW5pYyBJbWFnZTwvdGV4dD48L3N2Zz4=';
             
             const address = business.full_address || business.address || 'Address not available';
             const rating = business.rating ? parseFloat(business.rating).toFixed(1) : 'N/A';
@@ -370,7 +409,7 @@
             card.innerHTML = `
                 <div class="h-48 bg-gray-200 overflow-hidden">
                     <img src="${imageUrl}" alt="${business.name}" class="w-full h-full object-cover" 
-                        onerror="this.src='https://via.placeholder.com/400x200/f3f4f6/6b7280?text=Hair+Tattoo+Clinic'; this.onerror=null;">
+                        onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNsaW5pYyBJbWFnZTwvdGV4dD48L3N2Zz4='; this.onerror=null;">
                 </div>
                 <div class="p-5">
                     <h3 class="text-xl font-bold mb-2 text-gray-800">${business.name || 'Unnamed Clinic'}</h3>
