@@ -1,6 +1,0 @@
-Fix hero banner image path
-
-- Updated image path to use correct filename (hair-tattoo-los-angeles.png)
-- Fixed the banner visibility issue by using the existing image in img directory
-
-This change ensures the banner image is properly displayed on the homepage. 

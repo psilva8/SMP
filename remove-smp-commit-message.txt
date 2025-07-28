@@ -1,9 +1,0 @@
-Remove Scalp Micropigmentation from clinic cards
-
-This commit removes the "Scalp Micropigmentation" text from clinic cards:
-
-1. Modified the getBusinessServices function in scripts.js to no longer add Scalp Micropigmentation as a default service
-2. Updated index-fix.js to use an empty services array instead of including Scalp Micropigmentation
-3. Removed "smp" and "scalp micropigmentation" from the service keywords list
-
-This keeps clinic cards cleaner and avoids redundant information since all clinics in the directory provide SMP services. 

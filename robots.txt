@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-
-# Disallow double areas URLs that were created by mistake
-Disallow: /areas/areas/
-
-# Sitemap
-Sitemap: https://micropigmentationla.com/sitemap.xml

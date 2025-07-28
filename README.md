@@ -1,44 +1,75 @@
-# SMP Directory - Los Angeles Scalp Micropigmentation
+# SMP Treatment - Professional Scalp Micropigmentation Landing Page
 
-A directory website for finding top-rated Scalp Micropigmentation (SMP) clinics in Los Angeles. The site helps users discover SMP providers by area throughout Los Angeles County.
+A modern, responsive landing page for professional scalp micropigmentation (SMP) services. Built with clean HTML, CSS, and JavaScript following HubSpot's design principles.
 
 ## Features
 
-- Browse SMP clinics by LA neighborhoods and areas
-- View detailed information about each clinic including ratings and contact details
-- Clean, modern UI built with HTML, CSS (Tailwind), and JavaScript
-- Mobile-responsive design
-- SEO-optimized pages for each area
+- **Modern Design**: Clean, professional layout inspired by HubSpot's landing page design
+- **Responsive**: Fully responsive design that works on all devices
+- **Service Showcase**: Detailed sections for all SMP services including:
+  - Hairline Restoration
+  - Density Enhancement  
+  - Scar Concealment
+  - Complete Baldness Solutions
+- **Before/After Gallery**: Visual showcase of transformation results
+- **Contact Form**: Interactive consultation booking form with validation
+- **Smooth Animations**: Scroll-triggered animations and hover effects
+- **SEO Optimized**: Proper meta tags and semantic HTML structure
 
-## Project Structure
+## Technologies Used
 
-- `index.html` - Main homepage
-- `areas.html` - Directory of all areas covered
-- `about.html` - Information about SMP treatments
-- `areas/` - Area-specific pages (dynamically generated)
-- `scripts.js` - Core JavaScript functionality
-- `generate-area-pages.js` - Node.js script to generate area pages
+- **HTML5**: Semantic markup with proper accessibility
+- **CSS3**: Modern styling with Grid and Flexbox layouts
+- **JavaScript**: Interactive functionality and form handling
+- **Inter Font**: Professional typography from Google Fonts
 
 ## Getting Started
 
-1. Clone the repository
-2. Run a local server (e.g., `python -m http.server 8000`)
-3. Open `http://localhost:8000` in your browser
+1. Clone this repository
+2. Open `index.html` in your web browser
+3. No build process required - it's ready to use!
 
-## Area Pages
+## File Structure
 
-The site uses a clean URL structure for area pages (e.g., `/areas/beverly-hills/`). These pages are generated using the Node.js script `generate-area-pages.js`.
-
-To generate new area pages:
-
-```bash
-node generate-area-pages.js
+```
+├── index.html          # Main landing page
+├── styles.css          # All CSS styling
+├── scripts.js          # JavaScript functionality
+├── img/               # Image assets
+├── images/            # Additional image assets
+└── README.md          # This file
 ```
 
-## Data Source
+## Customization
 
-Clinic data is stored in a JSON file and dynamically loaded on the client side.
+### Colors
+The main brand color is `#2d5a47` (dark green) with sophisticated gray accents. This creates a professional, medical aesthetic perfect for SMP services.
+
+### Content
+- Update business information in `index.html`
+- Replace placeholder images in the `img/` directory
+- Modify service offerings and descriptions as needed
+
+### Form Handling
+The consultation form currently shows a success message. To connect to a real backend:
+1. Update the `handleFormSubmission()` function in `scripts.js`
+2. Replace the setTimeout simulation with an actual API call
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest) 
+- Safari (latest)
+- Edge (latest)
 
 ## License
 
-MIT License 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions about this landing page template, please reach out to our development team.
+
+---
+
+Built with ❤️ for the SMP industry 

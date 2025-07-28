@@ -1,9 +1,0 @@
-# Redirect all area requests to areas directory
-RewriteEngine On
-RewriteBase /area/
-
-# Capture the area name and redirect to the /areas/ equivalent
-RewriteRule ^([^/]+)/?$ /areas/$1/ [R=301,L]
-
-# Fallback - if no match, redirect to main areas page
-RewriteRule ^$ /areas/ [R=301,L] 

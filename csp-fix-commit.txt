@@ -1,9 +1,0 @@
-Fix Content-Security-Policy directive to resolve invalid character error
-
-This commit addresses the CSP error in the console by:
-
-1. Adding a properly formatted Content-Security-Policy meta tag to all HTML files (171 total)
-2. Using a correct syntax for the CSP directive that doesn't contain invalid characters
-3. Including necessary domains in the CSP for images (googleusercontent.com and placeholder.com)
-
-This resolves the error: "content.js:79 The Content-Security-Policy directive name '*' contains one or more invalid characters" 

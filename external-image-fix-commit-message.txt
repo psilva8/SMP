@@ -1,8 +1,0 @@
-Fix: Use external placeholder image for About section
-
-- Added inline-image-fix.js to use a reliable external image
-- Used placehold.co service to create a placeholder image
-- Updated Content Security Policy to allow images from placehold.co
-- Created a simpler, guaranteed-to-work solution
-- Bypassed issues with local image loading
-- Used branded colors to maintain site aesthetics 
