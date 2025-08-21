@@ -72,4 +72,6 @@ For questions about this landing page template, please reach out to our developm
 
 ---
 
-Built with ❤️ for the SMP industry 
+Built with ❤️ for the SMP industry
+
+*Updated: July 2024* 
