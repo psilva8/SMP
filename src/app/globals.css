@@ -258,8 +258,11 @@ body {
 
 .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 40px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .service-card {
@@ -554,6 +557,13 @@ body {
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+    .services-grid {
+        max-width: 800px;
+        gap: 30px;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 0 15px;
@@ -592,6 +602,8 @@ body {
     
     .services-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        max-width: none;
     }
     
     .about-content {
