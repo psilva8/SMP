@@ -87,7 +87,7 @@ export default function About() {
           <h2>Ready to Meet Our Team?</h2>
           <p>Schedule a consultation to discuss your SMP goals with our expert artists.</p>
           <div style={{ textAlign: 'center', marginTop: '30px' }}>
-            <a href="/contact" className="cta-button">Book Consultation</a>
+            <a href="/contact">Contact</a>
           </div>
         </div>
       </section>

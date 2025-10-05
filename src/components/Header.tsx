@@ -15,7 +15,7 @@ export default function Header() {
             <li><Link href="/services">Services</Link></li>
             <li><Link href="/gallery">Gallery</Link></li>
             <li><Link href="/about">About</Link></li>
-            <li><Link href="/contact" className="cta-button">Book Consultation</Link></li>
+            <li><Link href="/contact">Contact</Link></li>
           </ul>
         </nav>
       </div>

@@ -158,7 +158,7 @@ export default function Services() {
           <h2>Ready to Get Started?</h2>
           <p>Contact us today for a consultation and discover how SMP can transform your appearance.</p>
           <div style={{ textAlign: 'center', marginTop: '30px' }}>
-            <a href="/contact" className="cta-button">Book Consultation</a>
+            <a href="/contact">Contact</a>
           </div>
         </div>
       </section>

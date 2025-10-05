@@ -148,7 +148,7 @@ export default function Gallery() {
           <h2>Ready for Your Transformation?</h2>
           <p>Join hundreds of satisfied clients who have restored their confidence with our expert SMP treatments.</p>
           <div style={{ textAlign: 'center', marginTop: '30px' }}>
-            <a href="/contact" className="cta-button">Book Consultation</a>
+            <a href="/contact">Contact</a>
           </div>
         </div>
       </section>
